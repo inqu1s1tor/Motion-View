@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.R;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 
 public class SplashActivity extends Activity{
@@ -50,11 +50,7 @@ public class SplashActivity extends Activity{
     }
 
     private boolean bluetoothCheckConnection(BluetoothAdapter mBluetoothAdapter){
-        if(BluetoothAdapter.STATE_ON == mBluetoothAdapter.getState()) {
-            return true;
-        } else {
-            return false;
-        }
+        return BluetoothAdapter.STATE_ON == mBluetoothAdapter.getState();
     }
 
     private boolean isNetworkAvailable() {
@@ -65,12 +61,8 @@ public class SplashActivity extends Activity{
 
 
     private boolean isPlayServiceArePresents(Context context) {
-        int statusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-        if ((statusCode == ConnectionResult.SUCCESS)) {
-            return true;
-        } else {
-            return false;
-        }
+        int statusCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+        return statusCode == ConnectionResult.SUCCESS;
     }
 
 }
