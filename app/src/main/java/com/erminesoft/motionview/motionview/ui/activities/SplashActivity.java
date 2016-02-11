@@ -1,20 +1,13 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 
 
 public class SplashActivity extends GenericActivity {
@@ -35,17 +28,17 @@ public class SplashActivity extends GenericActivity {
 
     private void checkConnectivity() {
 
-        if (ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
+        if (!ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
             showShortToast("Play Services are missed");
             return;
         }
 
-        if (ConnectivityChecker.isNetworkAvailable(getApplicationContext())) {
+        if (!ConnectivityChecker.isNetworkAvailable(getApplicationContext())) {
             Toast.makeText(getBaseContext(), "Check internet connection", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if (ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
+        if (!ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
             Toast.makeText(getBaseContext(), "Check bluetooth", Toast.LENGTH_SHORT).show();
             return;
         }
