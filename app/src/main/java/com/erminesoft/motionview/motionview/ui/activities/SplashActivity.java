@@ -1,4 +1,4 @@
-package com.erminesoft.motionview.motionview;
+package com.erminesoft.motionview.motionview.ui.activities;
 
 
 import android.app.Activity;
@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
+import com.erminesoft.motionview.motionview.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 

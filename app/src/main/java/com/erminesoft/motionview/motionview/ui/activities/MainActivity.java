@@ -1,13 +1,14 @@
-package com.erminesoft.motionview.motionview;
+package com.erminesoft.motionview.motionview.ui.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.erminesoft.motionview.motionview.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,6 +22,7 @@ import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataSourcesRequest;
+import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DailyTotalResult;
@@ -33,9 +35,14 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     private static String TAG = MainActivity.class.getSimpleName();
 
+    private static final int DAILY_GOAL = 100;
+    private static final String TODAY = "TODAY";
+
     private GoogleApiClient mClient = null;
 
-    private TextView mTextView = null;
+    private TextView mDateTextView;
+    private TextView mStepsTextView;
+    private ProgressBar mProgressBar;
     private int mTotalStepsCount = 0;
     private static final Executor mExecutor = Executors.newSingleThreadExecutor();
     private OnDataPointListener mListener;
@@ -46,21 +53,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mStepsTextView = (TextView) findViewById(R.id.steps_text_view);
+        mDateTextView = (TextView) findViewById(R.id.date_text_view);
+        mDateTextView.setText(TODAY);
 
-        mTextView = (TextView) findViewById(R.id.text_view);
+        mProgressBar = (ProgressBar) findViewById(R.id.daily_progress_bar);
+
+        mProgressBar.setMax(DAILY_GOAL);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
         buildFitnessClient();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
+        unregisterListener();
         subscribeForStepCounter();
     }
 
@@ -109,7 +122,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void onClientConnected() {
         unSubscribeStepCounter();
-        readAndChangeTotalStepsPerDay();
+
+        if (mTotalStepsCount == 0) {
+            readAndChangeTotalStepsPerDay();
+        }
+
         registerListenerForStepCounter();
     }
 
@@ -142,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mTextView.setText(String.format("Total steps: %d", mTotalStepsCount));
+                mStepsTextView.setText(String.format("Total steps: %d", mTotalStepsCount));
+                mProgressBar.setProgress(mTotalStepsCount);
             }
         });
     }
@@ -217,7 +235,32 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void updateDataInHistory(DataPoint dataPoint) {
+    private void unregisterListener() {
+        Fitness.SensorsApi.remove(mClient, mListener);
+    }
 
+    private void updateDataInHistory(final DataPoint dataPoint) {
+        final DataSet dataSet = DataSet.create(dataPoint.getDataSource());
+
+        dataPoint.getValue(Field.FIELD_STEPS).setInt(mTotalStepsCount);
+
+        dataSet.add(dataPoint);
+
+        Log.i(TAG, dataSet.toString());
+
+        Fitness.HistoryApi.updateData(mClient, new DataUpdateRequest.Builder()
+                .setDataSet(dataSet)
+                .setTimeInterval(dataPoint.getStartTime(TimeUnit.MILLISECONDS), dataPoint.getEndTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
+                .build())
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        if (status.isSuccess()) {
+                            Log.i(TAG, "Data updated. " + dataSet.getDataPoints().contains(dataPoint));
+                        } else {
+                            Log.i(TAG, "Some error when updating data : " + status.toString());
+                        }
+                    }
+                });
     }
 }
