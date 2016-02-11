@@ -3,19 +3,25 @@ package com.erminesoft.motionview.motionview.core;
 import android.app.Application;
 
 import com.erminesoft.motionview.motionview.net.BluetoothManagerFacade;
+import com.erminesoft.motionview.motionview.net.GoogleClientHelper;
 
 public class MVApplication extends Application{
-
-    private BluetoothManagerFacade managerFacade;
+    private BluetoothManagerFacade mManagerFacade;
+    private GoogleClientHelper mGoogleClientHelper;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        managerFacade = new BluetoothManagerFacade();
+        mManagerFacade = new BluetoothManagerFacade();
+        mGoogleClientHelper = new GoogleClientHelper(this);
     }
 
     public BluetoothManagerFacade getManagerFacade() {
-        return managerFacade;
+        return mManagerFacade;
+    }
+
+    public GoogleClientHelper getGoogleClientHelper() {
+        return mGoogleClientHelper;
     }
 }

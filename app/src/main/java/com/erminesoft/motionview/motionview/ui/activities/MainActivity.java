@@ -3,53 +3,31 @@ package com.erminesoft.motionview.motionview.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.MVApplication;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.Fitness;
+import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.net.GoogleClientHelper;
 import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataSource;
-import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataSourcesRequest;
-import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.fitness.request.OnDataPointListener;
-import com.google.android.gms.fitness.request.SensorRequest;
-import com.google.android.gms.fitness.result.DailyTotalResult;
-import com.google.android.gms.fitness.result.DataSourcesResult;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-public class MainActivity extends AppCompatActivity {
-    private static String TAG = MainActivity.class.getSimpleName();
-
+public class MainActivity extends GenericActivity {
     private static final int DAILY_GOAL = 100;
-    private static final String TODAY = "TODAY";
 
-    private GoogleApiClient mClient = null;
+    private static final String TODAY = "TODAY";
+    private static final String STEPS_TEXT_VIEW_FORMAT = "Total steps: %d";
 
     private TextView mDateTextView;
     private TextView mStepsTextView;
     private ProgressBar mProgressBar;
-    private int mTotalStepsCount = 0;
-    private static final Executor mExecutor = Executors.newSingleThreadExecutor();
     private OnDataPointListener mListener;
+    private int mTotalStepsCount = 0;
 
+    private GoogleClientHelper mGoogleClientHelper;
 
     private MVApplication mApplication;
 
@@ -71,220 +49,51 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar.setMax(DAILY_GOAL);
 
         mApplication = (MVApplication) getApplication();
+        mGoogleClientHelper = mApplication.getGoogleClientHelper();
+
+        mGoogleClientHelper.getStepsPerDayFromHistory(new ResultListener<Integer>() {
+            @Override
+            public void onResult(@Nullable Integer result) {
+                if (result != null) {
+                    incrementStepsCount(result);
+                }
+            }
+        });
+
+        mListener = new OnDataPointListener() {
+            @Override
+            public void onDataPoint(DataPoint dataPoint) {
+                incrementStepsCount(dataPoint.getValue(Field.FIELD_STEPS).asInt());
+                mGoogleClientHelper.updateDataInHistory(dataPoint, mTotalStepsCount);
+            }
+        };
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        buildFitnessClient();
+        mGoogleClientHelper.unSubscribeStepCounter();
+        mGoogleClientHelper.registerListenerForStepCounter(mListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        unregisterListener();
-        subscribeForStepCounter();
+        mGoogleClientHelper.unregisterListener(mListener);
+        mGoogleClientHelper.subscribeForStepCounter();
     }
 
-    private void buildFitnessClient() {
-        if (mClient != null) {
-            return;
-        }
-
-        mClient = new GoogleApiClient.Builder(this)
-                .addApi(Fitness.SENSORS_API)
-                .addApi(Fitness.RECORDING_API)
-                .addApi(Fitness.HISTORY_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-                        Log.e(TAG, "Connected!!!");
-
-                        onClientConnected();
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int causeID) {
-                        String lostConnectionCause = "Connection Lost. Cause: ";
-
-                        switch (causeID) {
-                            case GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST:
-                                lostConnectionCause += "Network lost.";
-                                break;
-                            case GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED:
-                                lostConnectionCause += "Service Disconnected";
-                                break;
-                        }
-
-                        Log.e(TAG, lostConnectionCause);
-                    }
-                })
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.e(TAG, "error");
-                    }
-                })
-                .build();
-    }
-
-    private void onClientConnected() {
-        unSubscribeStepCounter();
-
-        if (mTotalStepsCount == 0) {
-            readAndChangeTotalStepsPerDay();
-        }
-
-        registerListenerForStepCounter();
-    }
-
-    private void readAndChangeTotalStepsPerDay() {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                DailyTotalResult totalResult = Fitness
-                        .HistoryApi.readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA).await();
-
-                DataSet dataSet = totalResult.getTotal();
-
-                if (dataSet != null && dataSet.isEmpty()) {
-                    return;
-                }
-
-                for (DataPoint dataPoint : dataSet.getDataPoints()) {
-                    changeStepsCount(dataPoint);
-                }
-            }
-        });
-    }
-
-    private void changeStepsCount(DataPoint dataPoint) {
-
-        for (Field field : dataPoint.getDataType().getFields()) {
-            mTotalStepsCount += dataPoint.getValue(field).asInt();
-        }
+    private void incrementStepsCount(int steps) {
+        mTotalStepsCount += steps;
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mStepsTextView.setText(String.format("Total steps: %d", mTotalStepsCount));
+                mStepsTextView.setText(String.format(STEPS_TEXT_VIEW_FORMAT, mTotalStepsCount));
                 mProgressBar.setProgress(mTotalStepsCount);
             }
         });
-    }
-
-    private void subscribeForStepCounter() {
-        Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_DELTA)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "Subscribed for step counter.");
-                        } else {
-                            Log.i(TAG, "Not Subscribed for step counter.");
-                        }
-                    }
-                });
-    }
-
-    private void unSubscribeStepCounter() {
-        Fitness.RecordingApi.unsubscribe(mClient, DataType.TYPE_STEP_COUNT_DELTA)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "unSubscribed for step counter.");
-                        } else {
-                            Log.i(TAG, "Not unSubscribed for step counter.");
-                        }
-                    }
-                });
-    }
-
-    private void registerListenerForStepCounter() {
-        Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
-                .setDataTypes(DataType.TYPE_STEP_COUNT_DELTA)
-                .setDataSourceTypes(DataSource.TYPE_DERIVED)
-                .build())
-                .setResultCallback(new ResultCallback<DataSourcesResult>() {
-                    @Override
-                    public void onResult(@NonNull DataSourcesResult dataSourcesResult) {
-                        for (DataSource dataSource : dataSourcesResult.getDataSources()) {
-                            registerListener(dataSource);
-                        }
-                    }
-                });
-    }
-
-    private void registerListener(DataSource dataSource) {
-        mListener = new OnDataPointListener() {
-            @Override
-            public void onDataPoint(DataPoint dataPoint) {
-                changeStepsCount(dataPoint);
-                updateDataInHistory(dataPoint);
-            }
-        };
-
-        Fitness.SensorsApi.add(mClient, new SensorRequest.Builder()
-                        .setDataSource(dataSource)
-                        .setDataType(dataSource.getDataType())
-                        .setSamplingRate(1, TimeUnit.SECONDS)
-                        .build(),
-                mListener)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "Listener registered");
-                        } else {
-                            Log.i(TAG, "Listener not registered");
-                        }
-                    }
-                });
-    }
-
-    private void unregisterListener() {
-        Fitness.SensorsApi.remove(mClient, mListener);
-    }
-
-    private void updateDataInHistory(final DataPoint dataPoint) {
-        final DataSet dataSet = DataSet.create(dataPoint.getDataSource());
-
-        dataPoint.getValue(Field.FIELD_STEPS).setInt(mTotalStepsCount);
-
-        dataSet.add(dataPoint);
-
-        Log.i(TAG, dataSet.toString());
-
-        Fitness.HistoryApi.updateData(mClient, new DataUpdateRequest.Builder()
-                .setDataSet(dataSet)
-                .setTimeInterval(dataPoint.getStartTime(TimeUnit.MILLISECONDS), dataPoint.getEndTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
-                .build())
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "Data updated. " + dataSet.getDataPoints().contains(dataPoint));
-                        } else {
-                            Log.i(TAG, "Some error when updating data : " + status.toString());
-                        }
-                    }
-                });
-    }
-
-    private final class GooglePlayListener implements GoogleApiClient.ConnectionCallbacks {
-
-        @Override
-        public void onConnected(@Nullable Bundle bundle) {
-
-        }
-
-        @Override
-        public void onConnectionSuspended(int i) {
-
-        }
     }
 }
