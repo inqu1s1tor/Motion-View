@@ -17,7 +17,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends GenericActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class SplashActivity extends Activity {
     private void checkConnectivity() {
 
         if (ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
-            Toast.makeText(getBaseContext(), "Play Services are missed", Toast.LENGTH_LONG).show();
+            showShortToast("Play Services are missed");
             return;
         }
 
