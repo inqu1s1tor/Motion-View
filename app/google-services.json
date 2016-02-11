@@ -1,20 +1,33 @@
 {
   "project_info": {
-    "project_id": "motion-view",
-    "project_number": "943269619006",
+    "project_id": "motion-view-5524e",
+    "project_number": "715597282450",
     "name": "Motion View"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:943269619006:android:644a4fa74ff3faf2",
+        "mobilesdk_app_id": "1:715597282450:android:644a4fa74ff3faf2",
         "client_id": "android:com.erminesoft.motionview.motionview",
         "client_type": 1,
         "android_client_info": {
           "package_name": "com.erminesoft.motionview.motionview"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "715597282450-85cfj2ceg0fjlknu3urlpin453vhejfg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.erminesoft.motionview.motionview",
+            "certificate_hash": "06A74058761CB18A60E666F245A00AA49E6B46B1"
+          }
+        },
+        {
+          "client_id": "715597282450-9usdtev1sejvvfia378ehar89858vmmd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [],
       "services": {
         "analytics_service": {
@@ -29,7 +42,7 @@
           "other_platform_oauth_client": []
         },
         "google_signin_service": {
-          "status": 1
+          "status": 2
         },
         "ads_service": {
           "status": 1

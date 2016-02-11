@@ -55,14 +55,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         buildFitnessClient();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         subscribeForStepCounter();
     }
 
