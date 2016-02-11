@@ -12,57 +12,45 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 
-public class SplashActivity extends Activity{
-
-    private BluetoothAdapter mBluetoothAdapter;
+public class SplashActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (isPlayServiceArePresents(getBaseContext())) {
-                    if(isNetworkAvailable()){
-                        if(bluetoothCheckConnection(mBluetoothAdapter)){
-                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(getBaseContext(), "Check bluetooth", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(getBaseContext(), "Check internet connection", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getBaseContext(),"Play Services are missed", Toast.LENGTH_LONG).show();
-                }
+                checkConnectivity();
             }
         }, 5000L);
 
     }
 
-    private boolean bluetoothCheckConnection(BluetoothAdapter mBluetoothAdapter){
-        return BluetoothAdapter.STATE_ON == mBluetoothAdapter.getState();
+    private void checkConnectivity() {
+
+        if (ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
+            Toast.makeText(getBaseContext(), "Play Services are missed", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (ConnectivityChecker.isNetworkAvailable(getApplicationContext())) {
+            Toast.makeText(getBaseContext(), "Check internet connection", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
+            Toast.makeText(getBaseContext(), "Check bluetooth", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        MainActivity.start(this);
+
     }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-
-    private boolean isPlayServiceArePresents(Context context) {
-        int statusCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
-        return statusCode == ConnectionResult.SUCCESS;
-    }
-
 }

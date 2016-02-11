@@ -1,5 +1,7 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.core.MVApplication;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -48,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
     private OnDataPointListener mListener;
 
 
+    private MVApplication mApplication;
+
+    public static void start(Activity activity) {
+        activity.startActivity(new Intent(activity, MainActivity.class));
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.daily_progress_bar);
 
         mProgressBar.setMax(DAILY_GOAL);
+
+        mApplication = (MVApplication) getApplication();
     }
 
     @Override
@@ -262,5 +273,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private final class GooglePlayListener implements GoogleApiClient.ConnectionCallbacks {
+
+        @Override
+        public void onConnected(@Nullable Bundle bundle) {
+
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+
+        }
     }
 }

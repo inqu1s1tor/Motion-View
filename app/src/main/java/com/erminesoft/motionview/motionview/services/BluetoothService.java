@@ -52,7 +52,6 @@ public class BluetoothService extends Service{
 
         // 4. Check the result (see other examples)
 
-
     }
 
     @Nullable
