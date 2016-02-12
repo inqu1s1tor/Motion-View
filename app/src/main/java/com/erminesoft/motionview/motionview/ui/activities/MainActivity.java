@@ -55,7 +55,7 @@ public class MainActivity extends GenericActivity {
             @Override
             public void onResult(@Nullable Integer result) {
                 if (result != null) {
-                    incrementStepsCount(result);
+                    setStepsCount(result);
                 }
             }
         });
@@ -64,9 +64,20 @@ public class MainActivity extends GenericActivity {
             @Override
             public void onDataPoint(DataPoint dataPoint) {
                 incrementStepsCount(dataPoint.getValue(Field.FIELD_STEPS).asInt());
-                mGoogleClientHelper.updateDataInHistory(dataPoint, mTotalStepsCount);
+                mGoogleClientHelper.updateStepsInHistory(dataPoint, mTotalStepsCount);
             }
         };
+    }
+
+    private void setStepsCount(Integer result) {
+        mTotalStepsCount = result;
+        mProgressBar.setProgress(mTotalStepsCount);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mStepsTextView.setText(String.format(STEPS_TEXT_VIEW_FORMAT, mTotalStepsCount));
+            }
+        });
     }
 
     @Override

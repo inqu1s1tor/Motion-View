@@ -38,7 +38,7 @@ public class GoogleClientHelper {
         mContext = context;
     }
 
-    public void buildGoogleApiClient(GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
+    public void buildGoogleApiClient(final GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
         mClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.RECORDING_API)
@@ -67,6 +67,8 @@ public class GoogleClientHelper {
 
                 DataPoint dataPoint = dataSet.getDataPoints().get(0);
 
+                Log.i(TAG, "HISTORY_API: read data - " + dataPoint.toString());
+
                 listener.onResult(dataPoint.getValue(Field.FIELD_STEPS).asInt());
             }
         });
@@ -78,9 +80,9 @@ public class GoogleClientHelper {
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
-                            Log.i(TAG, "Subscribed for step counter.");
+                            Log.i(TAG, "RECORDING_API: subscribed.");
                         } else {
-                            Log.i(TAG, "Not Subscribed for step counter.");
+                            Log.i(TAG, "RECORDING_API: error while subscribing.");
                         }
                     }
                 });
@@ -92,9 +94,9 @@ public class GoogleClientHelper {
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
-                            Log.i(TAG, "unSubscribed for step counter.");
+                            Log.i(TAG, "RECORDING_API: unSubscribed.");
                         } else {
-                            Log.i(TAG, "Not unSubscribed for step counter.");
+                            Log.i(TAG, "RECORDING_API: error while unSubscribing.");
                         }
                     }
                 });
@@ -141,22 +143,37 @@ public class GoogleClientHelper {
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
-                            Log.i(TAG, "Listener unregistered.");
+                            Log.i(TAG, "SENSORS_API: Listener unregistered.");
                         } else {
-                            Log.i(TAG, "Can't unregister listener " + listener.toString());
+                            Log.i(TAG, "SENSORS_API: Can't unregister listener " + listener.toString());
                         }
                     }
                 });
     }
 
-    public void updateDataInHistory(final DataPoint dataPoint, int steps) {
-        final DataSet dataSet = DataSet.create(dataPoint.getDataSource());
+    public void updateStepsInHistory(final DataPoint dataPoint, int steps) {
+        DataSource dataSource = new DataSource.Builder()
+                .setType(dataPoint.getDataSource().getType())
+                .setAppPackageName(mContext)
+                .setDataType(dataPoint.getDataType())
+                .setDevice(dataPoint.getDataSource().getDevice())
+                .build();
 
-        dataPoint.getValue(Field.FIELD_STEPS).setInt(steps);
+        final DataSet dataSet = DataSet.create(dataSource);
+        final DataPoint generatedDataPoint = dataSet.createDataPoint();
 
-        dataSet.add(dataPoint);
+        generatedDataPoint.setTimestamp(dataPoint.getTimestamp(
+                TimeUnit.MILLISECONDS),
+                TimeUnit.MILLISECONDS);
 
-        Log.i(TAG, dataSet.toString());
+        generatedDataPoint.setTimeInterval(
+                dataPoint.getStartTime(TimeUnit.MILLISECONDS),
+                dataPoint.getEndTime(TimeUnit.MILLISECONDS),
+                TimeUnit.MILLISECONDS);
+
+        generatedDataPoint.getValue(Field.FIELD_STEPS).setInt(steps);
+
+        dataSet.add(generatedDataPoint);
 
         Fitness.HistoryApi.updateData(mClient, new DataUpdateRequest.Builder()
                 .setDataSet(dataSet)
@@ -166,9 +183,9 @@ public class GoogleClientHelper {
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
-                            Log.i(TAG, "Data updated. " + dataSet.getDataPoints().contains(dataPoint));
+                            Log.i(TAG, "HISTORY_API: Data updated.");
                         } else {
-                            Log.i(TAG, "Some error when updating data : " + status.toString());
+                            Log.i(TAG, "HISTORY_API: Some error when updating data : " + status.toString());
                         }
                     }
                 });
