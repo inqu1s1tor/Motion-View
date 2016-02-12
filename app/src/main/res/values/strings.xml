@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Motion View</string>
+    <string name="today_date_text">TODAY</string>
+    <string name="total_steps_text_format">Total steps: %d</string>
 </resources>

@@ -16,8 +16,8 @@ import com.erminesoft.motionview.motionview.net.GoogleClientHelper;
 public class MainActivity extends GenericActivity {
     private static final int DAILY_GOAL = 100;
 
-    private static final String TODAY = "TODAY";
-    private static final String STEPS_TEXT_VIEW_FORMAT = "Total steps: %d";
+    private final String TODAY = getString(R.string.today_date_text);
+    private final String STEPS_TEXT_VIEW_FORMAT = getString(R.string.total_steps_text_format);
 
     private TextView mDateTextView;
     private TextView mStepsTextView;
