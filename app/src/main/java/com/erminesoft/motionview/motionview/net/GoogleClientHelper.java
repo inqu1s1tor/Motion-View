@@ -1,11 +1,15 @@
 package com.erminesoft.motionview.motionview.net;
 
+import android.app.Activity;
+import android.content.IntentSender;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 
 public class GoogleClientHelper {
     private final static String TAG = GoogleClientHelper.class.getSimpleName();
+    private boolean mResolvingError = false;
+
     private final Executor mExecutor;
 
     private GoogleApiClient mClient;
@@ -41,7 +47,9 @@ public class GoogleClientHelper {
         mExecutor = Executors.newSingleThreadExecutor();
     }
 
-    public void buildGoogleApiClient(FragmentActivity fragmentActivity, GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
+    public void buildGoogleApiClient(
+            final FragmentActivity fragmentActivity,
+            GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
         mClient = new GoogleApiClient.Builder(fragmentActivity)
                 .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.RECORDING_API)
@@ -49,15 +57,54 @@ public class GoogleClientHelper {
                 .addApi(Fitness.BLE_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addConnectionCallbacks(connectionCallbacks)
-                .enableAutoManage(fragmentActivity, new GoogleApiClient.OnConnectionFailedListener() {
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.i(TAG, "Connection failed: " + connectionResult.toString());
+                        if (mResolvingError) {
+                            return;
+                        }
+
+                        if (connectionResult.hasResolution()) {
+                            try {
+                                mResolvingError = true;
+                                connectionResult.startResolutionForResult(
+                                        fragmentActivity, ErrorDialogFragment.REQUEST_RESOLVE_ERROR);
+                            } catch (IntentSender.SendIntentException e) {
+                                mClient.connect();
+                            }
+                        } else {
+                            showErrorDialog(fragmentActivity, connectionResult.getErrorCode());
+                            mResolvingError = true;
+                        }
                     }
                 })
                 .build();
 
-        mClient.connect();
+        if (!mResolvingError) {
+            mClient.connect();
+        }
+    }
+
+    public void tryConnectClient(int resultCode) {
+        mResolvingError = false;
+        if (resultCode == Activity.RESULT_OK) {
+            if (!mClient.isConnecting() &&
+                    !mClient.isConnected()) {
+                mClient.connect();
+            }
+        }
+    }
+
+    public void onDialogDismissed() {
+        mResolvingError = false;
+    }
+
+    private void showErrorDialog(FragmentActivity fragmentActivity, int errorCode) {
+        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt(ErrorDialogFragment.DIALOG_ERROR, errorCode);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(fragmentActivity.getSupportFragmentManager(), ErrorDialogFragment.DIALOG_ERROR);
     }
 
     public void getStepsPerDayFromHistory(final ResultListener<Integer> listener) {
@@ -109,6 +156,7 @@ public class GoogleClientHelper {
                 });
     }
 
+
     public void registerListenerForStepCounter(final ResultListener<Integer> resultListener) {
         Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
                 .setDataTypes(DataType.TYPE_STEP_COUNT_DELTA)
@@ -130,10 +178,11 @@ public class GoogleClientHelper {
         mListener = new OnDataPointListener() {
             @Override
             public void onDataPoint(final DataPoint dataPoint) {
+                updateStepsInHistory(dataPoint);
+
                 getStepsPerDayFromHistory(new ResultListener<Integer>() {
                     @Override
                     public void onSuccess(@Nullable Integer result) {
-                        updateStepsInHistory(dataPoint, result == null ? 0 : result);
                         resultListener.onSuccess(result);
                     }
 
@@ -155,14 +204,13 @@ public class GoogleClientHelper {
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
-                            Log.i(TAG, "Listener registered");
+                            Log.i(TAG, "Listener registered " + mClient.isConnected());
                         } else {
                             Log.i(TAG, "Listener not registered");
                         }
                     }
                 });
     }
-
 
     public void unregisterListener() {
         Fitness.SensorsApi.remove(mClient, mListener)
@@ -178,7 +226,7 @@ public class GoogleClientHelper {
                 });
     }
 
-    public void updateStepsInHistory(final DataPoint dataPoint, int steps) {
+    public void updateStepsInHistory(final DataPoint dataPoint) {
         DataSource dataSource = new DataSource.Builder()
                 .setType(dataPoint.getDataSource().getType())
                 .setAppPackageName(mClient.getContext())
@@ -187,20 +235,11 @@ public class GoogleClientHelper {
                 .build();
 
         final DataSet dataSet = DataSet.create(dataSource);
-        final DataPoint generatedDataPoint = dataSet.createDataPoint();
 
-        generatedDataPoint.setTimestamp(dataPoint.getTimestamp(
-                TimeUnit.MILLISECONDS),
-                TimeUnit.MILLISECONDS);
-
-        generatedDataPoint.setTimeInterval(
-                dataPoint.getStartTime(TimeUnit.MILLISECONDS),
-                dataPoint.getEndTime(TimeUnit.MILLISECONDS),
-                TimeUnit.MILLISECONDS);
-
-        generatedDataPoint.getValue(Field.FIELD_STEPS).setInt(steps);
-
-        dataSet.add(generatedDataPoint);
+        DataPoint dataPoint1 = DataPoint.create(dataSource);
+        dataPoint1.getValue(Field.FIELD_STEPS).setInt(dataPoint.getValue(Field.FIELD_STEPS).asInt());
+        dataPoint1.setTimestamp(dataPoint.getTimestamp(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS);
+        dataSet.add(dataPoint1);
 
         Fitness.HistoryApi.updateData(mClient, new DataUpdateRequest.Builder()
                 .setDataSet(dataSet)
@@ -217,6 +256,11 @@ public class GoogleClientHelper {
                                 public void onSuccess(@Nullable Integer result) {
                                     Log.i(TAG, "HISTORY_API: read - " + result + " steps.");
                                 }
+
+                                @Override
+                                public void onError(String error) {
+
+                                }
                             });
 
                         } else {
@@ -225,9 +269,4 @@ public class GoogleClientHelper {
                     }
                 });
     }
-
-    public GoogleApiClient getClient(){
-        return mClient;
-    }
-
 }

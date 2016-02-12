@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,7 +22,6 @@ public class MainActivity extends GenericActivity {
     private TextView mDateTextView;
     private TextView mStepsTextView;
     private ProgressBar mProgressBar;
-    private int mTotalStepsCount = 0;
 
     private GoogleClientHelper mGoogleClientHelper;
 
@@ -48,17 +48,6 @@ public class MainActivity extends GenericActivity {
         mGoogleClientHelper.getStepsPerDayFromHistory(new StepsChangingListener());
     }
 
-    private void setStepsCount(Integer result) {
-        mTotalStepsCount = result;
-        mProgressBar.setProgress(mTotalStepsCount);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mStepsTextView.setText(String.format(STEPS_TEXT_VIEW_FORMAT, mTotalStepsCount));
-            }
-        });
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -75,13 +64,26 @@ public class MainActivity extends GenericActivity {
         mGoogleClientHelper.subscribeForStepCounter();
     }
 
+    private void setStepsCount(Integer result) {
+        mProgressBar.setProgress(result);
+        mStepsTextView.setText(String.format(STEPS_TEXT_VIEW_FORMAT, result));
+    }
+
     private final class StepsChangingListener implements ResultListener<Integer> {
 
         @Override
-        public void onSuccess(@Nullable Integer result) {
-            if (result != null) {
-                setStepsCount(result);
-            }
+        public void onSuccess(@Nullable final Integer result) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setStepsCount(result);
+                }
+            });
+        }
+
+        @Override
+        public void onError(String error) {
+            Log.i(TAG, error);
         }
     }
 }

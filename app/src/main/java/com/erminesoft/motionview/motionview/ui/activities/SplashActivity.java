@@ -2,58 +2,29 @@ package com.erminesoft.motionview.motionview.ui.activities;
 
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.MVApplication;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.BleDevice;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.request.BleScanCallback;
 import com.google.android.gms.fitness.request.StartBleScanRequest;
 
-import java.util.concurrent.TimeUnit;
-
 
 public class SplashActivity extends GenericActivity {
-    String TAG = "SplashActivity--";
-
-    private MVApplication mAplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-
-        mAplication = (MVApplication) getApplication();
-        mAplication.getGoogleClientHelper().buildGoogleApiClient(this, new GoogleApiClient.ConnectionCallbacks() {
-            @Override
-            public void onConnected(@Nullable Bundle bundle) {
-                Log.d(TAG, "Connection success");
-                checkConnectivity();
-               /* new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //checkConnectivity();
-                    }
-                }, 1000L);*/
-            }
-
-            @Override
-            public void onConnectionSuspended(int i) {
-                Log.d(TAG,"Connection fail");
-                Log.d("!!!!",""+i);
-            }
-        });
-
-        GoogleApiClient client = mAplication.getGoogleClientHelper().getClient();
+        getMVapplication()
+                .getGoogleClientHelper()
+                .buildGoogleApiClient(this, new GoogleConnectionCallback());
 
         BleScanCallback scanCallback = new BleScanCallback() {
             @Override
@@ -104,33 +75,45 @@ public class SplashActivity extends GenericActivity {
 
                 .build();
 
-
-
-        PendingResult<Status> pendingResult = Fitness.BleApi.startBleScan(client, request);
-        pendingResult.setResultCallback(resultCallback);
+        // Закомментил, так как убрал геттер клиента из хелпера
+        //PendingResult<Status> pendingResult = Fitness.BleApi.startBleScan(client, request);
+        //pendingResult.setResultCallback(resultCallback);
 
 
 
     }
 
-    private void checkConnectivity() {
+    private class GoogleConnectionCallback implements GoogleApiClient.ConnectionCallbacks {
+        @Override
+        public void onConnected(@Nullable Bundle bundle) {
+            if (checkConnectivity()) {
+                MainActivity.start(SplashActivity.this);
+            }
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+
+        }
+    }
+
+    private boolean checkConnectivity() {
 
         /*if (!ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
             showShortToast("Play Services are missed");
-            return;
+            return false;
         }
 
         if (!ConnectivityChecker.isNetworkAvailable(getApplicationContext())) {
             Toast.makeText(getBaseContext(), "Check internet connection", Toast.LENGTH_LONG).show();
-            return;
+            return false;
         }
 
         if (!ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
             Toast.makeText(getBaseContext(), "Check bluetooth", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }*/
 
-        MainActivity.start(this);
-
+        return true;
     }
 }
