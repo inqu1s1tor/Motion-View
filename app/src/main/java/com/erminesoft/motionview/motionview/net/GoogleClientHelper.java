@@ -2,7 +2,6 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
@@ -39,10 +38,7 @@ public class GoogleClientHelper {
         mContext = context;
     }
 
-    public GoogleApiClient buildGoogleApiClient(
-            FragmentActivity fragmentActivity,
-            GoogleApiClient.ConnectionCallbacks connectionCallbacks
-    ) {
+    public void buildGoogleApiClient(GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
         mClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.RECORDING_API)
@@ -53,8 +49,6 @@ public class GoogleClientHelper {
                 .build();
 
         mClient.connect();
-
-        return mClient;
     }
 
     public void getStepsPerDayFromHistory(final ResultListener<Integer> listener) {
