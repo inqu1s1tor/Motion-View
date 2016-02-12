@@ -78,7 +78,7 @@ public class MainActivity extends GenericActivity {
     private final class StepsChangingListener implements ResultListener<Integer> {
 
         @Override
-        public void onResult(@Nullable Integer result) {
+        public void onSuccess(@Nullable Integer result) {
             if (result != null) {
                 setStepsCount(result);
             }

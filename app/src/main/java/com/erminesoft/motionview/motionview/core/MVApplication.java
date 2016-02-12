@@ -14,7 +14,7 @@ public class MVApplication extends Application{
         super.onCreate();
 
         mManagerFacade = new BluetoothManagerFacade();
-        mGoogleClientHelper = new GoogleClientHelper(this);
+        mGoogleClientHelper = new GoogleClientHelper();
     }
 
     public BluetoothManagerFacade getManagerFacade() {

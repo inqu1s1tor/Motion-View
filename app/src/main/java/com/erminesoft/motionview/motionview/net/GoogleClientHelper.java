@@ -1,6 +1,5 @@
 package com.erminesoft.motionview.motionview.net;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -32,18 +31,18 @@ import java.util.concurrent.TimeUnit;
 
 public class GoogleClientHelper {
     private final static String TAG = GoogleClientHelper.class.getSimpleName();
+    private final Executor mExecutor;
 
     private GoogleApiClient mClient;
-    private Context mContext;
-    private Executor mExecutor = Executors.newSingleThreadExecutor();
+
     private OnDataPointListener mListener;
 
-    public GoogleClientHelper(Context context) {
-        mContext = context;
+    public GoogleClientHelper() {
+        mExecutor = Executors.newSingleThreadExecutor();
     }
 
     public void buildGoogleApiClient(FragmentActivity fragmentActivity, GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
-        mClient = new GoogleApiClient.Builder(mContext)
+        mClient = new GoogleApiClient.Builder(fragmentActivity)
                 .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.RECORDING_API)
                 .addApi(Fitness.HISTORY_API)
@@ -71,13 +70,13 @@ public class GoogleClientHelper {
                 DataSet dataSet = totalResult.getTotal();
 
                 if (dataSet == null || dataSet.isEmpty()) {
-                    listener.onResult(null);
+                    listener.onError("Empty dataset");
                     return;
                 }
 
                 DataPoint dataPoint = dataSet.getDataPoints().get(0);
 
-                listener.onResult(dataPoint.getValue(Field.FIELD_STEPS).asInt());
+                listener.onSuccess(dataPoint.getValue(Field.FIELD_STEPS).asInt());
             }
         });
     }
@@ -133,9 +132,14 @@ public class GoogleClientHelper {
             public void onDataPoint(final DataPoint dataPoint) {
                 getStepsPerDayFromHistory(new ResultListener<Integer>() {
                     @Override
-                    public void onResult(@Nullable Integer result) {
+                    public void onSuccess(@Nullable Integer result) {
                         updateStepsInHistory(dataPoint, result == null ? 0 : result);
-                        resultListener.onResult(result);
+                        resultListener.onSuccess(result);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
                     }
                 });
             }
@@ -177,7 +181,7 @@ public class GoogleClientHelper {
     public void updateStepsInHistory(final DataPoint dataPoint, int steps) {
         DataSource dataSource = new DataSource.Builder()
                 .setType(dataPoint.getDataSource().getType())
-                .setAppPackageName(mContext)
+                .setAppPackageName(mClient.getContext())
                 .setDataType(dataPoint.getDataType())
                 .setDevice(dataPoint.getDataSource().getDevice())
                 .build();
@@ -210,7 +214,7 @@ public class GoogleClientHelper {
 
                             getStepsPerDayFromHistory(new ResultListener<Integer>() {
                                 @Override
-                                public void onResult(@Nullable Integer result) {
+                                public void onSuccess(@Nullable Integer result) {
                                     Log.i(TAG, "HISTORY_API: read - " + result + " steps.");
                                 }
                             });
