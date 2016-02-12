@@ -9,21 +9,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.MVApplication;
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
-import com.erminesoft.motionview.motionview.net.GoogleClientHelper;
 
 public class MainActivity extends GenericActivity {
     private static final int DAILY_GOAL = 100;
 
-    private final String TODAY = getString(R.string.today_date_text);
-    private final String STEPS_TEXT_VIEW_FORMAT = getString(R.string.total_steps_text_format);
-
     private TextView mDateTextView;
     private TextView mStepsTextView;
     private ProgressBar mProgressBar;
-
-    private GoogleClientHelper mGoogleClientHelper;
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, MainActivity.class));
@@ -36,37 +29,34 @@ public class MainActivity extends GenericActivity {
 
         mStepsTextView = (TextView) findViewById(R.id.steps_text_view);
         mDateTextView = (TextView) findViewById(R.id.date_text_view);
-        mDateTextView.setText(TODAY);
+        mDateTextView.setText(getString(R.string.today_date_text));
 
         mProgressBar = (ProgressBar) findViewById(R.id.daily_progress_bar);
 
         mProgressBar.setMax(DAILY_GOAL);
 
-        MVApplication application = (MVApplication) getApplication();
-        mGoogleClientHelper = application.getGoogleClientHelper();
-
-        mGoogleClientHelper.getStepsPerDayFromHistory(new StepsChangingListener());
+        mGoogleClientFacade.getStepsPerDayFromHistory(new StepsChangingListener());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mGoogleClientHelper.unSubscribeStepCounter();
-        mGoogleClientHelper.registerListenerForStepCounter(new StepsChangingListener());
+        mGoogleClientFacade.unSubscribeStepCounter();
+        mGoogleClientFacade.registerListenerForStepCounter(new StepsChangingListener());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        mGoogleClientHelper.unregisterListener();
-        mGoogleClientHelper.subscribeForStepCounter();
+        mGoogleClientFacade.unregisterListener();
+        mGoogleClientFacade.subscribeForStepCounter();
     }
 
     private void setStepsCount(Integer result) {
         mProgressBar.setProgress(result);
-        mStepsTextView.setText(String.format(STEPS_TEXT_VIEW_FORMAT, result));
+        mStepsTextView.setText(String.format(getString(R.string.total_steps_text_format), result));
     }
 
     private final class StepsChangingListener implements ResultListener<Integer> {

@@ -1,22 +1,11 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
 
-import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.MVApplication;
-import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.data.BleDevice;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.request.BleScanCallback;
-import com.google.android.gms.fitness.request.StartBleScanRequest;
 
 
 public class SplashActivity extends GenericActivity {
@@ -25,6 +14,8 @@ public class SplashActivity extends GenericActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        mGoogleClientFacade.buildGoogleApiClient(this, new GoogleConnectionCallback());
     }
 
     private class GoogleConnectionCallback implements GoogleApiClient.ConnectionCallbacks {
@@ -34,6 +25,7 @@ public class SplashActivity extends GenericActivity {
                 MainActivity.start(SplashActivity.this);
             }
         }
+
         @Override
         public void onConnectionSuspended(int i) {
 
@@ -41,7 +33,8 @@ public class SplashActivity extends GenericActivity {
     }
 
     private boolean checkConnectivity() {
-        if (!ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
+
+        /*if (!ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
             showShortToast("Play Services are missed");
             return false;
         }
@@ -54,7 +47,7 @@ public class SplashActivity extends GenericActivity {
         if (!ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
             Toast.makeText(getBaseContext(), "Check bluetooth", Toast.LENGTH_SHORT).show();
             return false;
-        }
+        }*/
 
         return true;
     }

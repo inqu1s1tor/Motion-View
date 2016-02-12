@@ -7,18 +7,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.MVApplication;
-import com.erminesoft.motionview.motionview.net.GoogleClientHelper;
+import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
 public abstract class GenericActivity extends AppCompatActivity {
     protected final String TAG = this.getClass().getSimpleName();
-    protected GoogleClientHelper mGoogleClientHelper;
+    protected GoogleClientFacade mGoogleClientFacade;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mGoogleClientHelper = getMVapplication().getGoogleClientHelper();
+        mGoogleClientFacade = getMVapplication().getGoogleClientFacade();
     }
 
     public final MVApplication getMVapplication() {
@@ -28,7 +28,7 @@ public abstract class GenericActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ErrorDialogFragment.REQUEST_RESOLVE_ERROR) {
-            mGoogleClientHelper.tryConnectClient(resultCode);
+            mGoogleClientFacade.tryConnectClient(resultCode);
         }
     }
 
