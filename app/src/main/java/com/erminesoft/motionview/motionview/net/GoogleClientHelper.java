@@ -222,4 +222,8 @@ public class GoogleClientHelper {
                 });
     }
 
+    public GoogleApiClient getClient(){
+        return mClient;
+    }
+
 }
