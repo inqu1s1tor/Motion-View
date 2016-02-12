@@ -17,44 +17,36 @@ import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataUpdateRequest;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 class OfflineStorageManager {
     private static final String TAG = OfflineStorageManager.class.getSimpleName();
-
-    private final Executor mExecutor;
+    private static final String EMPTY_DATASET_ERROR = "empty dataset";
 
     private GoogleApiClient mClient;
-
-    public OfflineStorageManager() {
-        mExecutor = Executors.newSingleThreadExecutor();
-    }
 
     public void setClient(GoogleApiClient client) {
         mClient = client;
     }
 
     public void getStepsPerDayFromHistory(final ResultListener<Integer> listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                DailyTotalResult totalResult = Fitness
-                        .HistoryApi.readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA).await();
+        Fitness.HistoryApi.readDailyTotal(mClient, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                .setResultCallback(new ResultCallback<DailyTotalResult>() {
+                    @Override
+                    public void onResult(@NonNull DailyTotalResult result) {
 
-                DataSet dataSet = totalResult.getTotal();
+                        DataSet dataSet = result.getTotal();
 
-                if (dataSet == null || dataSet.isEmpty()) {
-                    listener.onError("Empty dataset");
-                    return;
-                }
+                        if (dataSet == null || dataSet.isEmpty()) {
+                            listener.onError(EMPTY_DATASET_ERROR);
+                            return;
+                        }
 
-                DataPoint dataPoint = dataSet.getDataPoints().get(0);
+                        DataPoint dataPoint = dataSet.getDataPoints().get(0);
 
-                listener.onSuccess(dataPoint.getValue(Field.FIELD_STEPS).asInt());
-            }
-        });
+                        listener.onSuccess(dataPoint.getValue(Field.FIELD_STEPS).asInt());
+                    }
+                });
     }
 
     public void updateStepsInHistory(final DataPoint dataPoint) {
@@ -67,21 +59,23 @@ class OfflineStorageManager {
 
         final DataSet dataSet = DataSet.create(dataSource);
 
-        DataPoint dataPoint1 = DataPoint.create(dataSource);
-        dataPoint1.getValue(Field.FIELD_STEPS).setInt(dataPoint.getValue(Field.FIELD_STEPS).asInt());
-        dataPoint1.setTimestamp(dataPoint.getTimestamp(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS);
-        dataSet.add(dataPoint1);
+        DataPoint generatedDataPoint = DataPoint.create(dataSource);
+        generatedDataPoint.getValue(Field.FIELD_STEPS).setInt(dataPoint.getValue(Field.FIELD_STEPS).asInt());
+
+        long startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
+        long endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
+        generatedDataPoint.setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
+
+        dataSet.add(generatedDataPoint);
 
         Fitness.HistoryApi.updateData(mClient, new DataUpdateRequest.Builder()
                 .setDataSet(dataSet)
-                .setTimeInterval(dataPoint.getStartTime(TimeUnit.MILLISECONDS), dataPoint.getEndTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
+                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
                 .build())
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
-                            Log.i(TAG, "HISTORY_API: Data updated.");
-
                             getStepsPerDayFromHistory(new ResultListener<Integer>() {
                                 @Override
                                 public void onSuccess(@Nullable Integer result) {
@@ -90,12 +84,31 @@ class OfflineStorageManager {
 
                                 @Override
                                 public void onError(String error) {
+                                    Log.i(TAG, "HISTORY_API: read error - " + error);
 
+                                    if (error.equals(EMPTY_DATASET_ERROR)) {
+                                        insertStepsInHistory(dataSet);
+                                    }
                                 }
                             });
 
                         } else {
                             Log.i(TAG, "HISTORY_API: Some error when updating data : " + status.toString());
+                        }
+                    }
+                });
+    }
+
+    private void insertStepsInHistory(final DataSet dataSet) {
+        Fitness.HistoryApi.insertData(mClient, dataSet)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        if (status.isSuccess()) {
+                            Log.i(TAG, "HISTORY_API: Data input success - " + dataSet.toString());
+                        } else {
+
+                            Log.i(TAG, "HISTORY_API: Data input error - " + dataSet.toString());
                         }
                     }
                 });

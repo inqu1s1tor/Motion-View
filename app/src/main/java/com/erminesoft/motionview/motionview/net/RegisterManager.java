@@ -89,9 +89,9 @@ class RegisterManager {
                         @Override
                         public void onResult(@NonNull Status status) {
                             if (status.isSuccess()) {
-                                Log.i(TAG, "Listener registered ");
+                                Log.i(TAG, "SENSORS_API: Listener registered ");
                             } else {
-                                Log.i(TAG, "Listener not registered");
+                                Log.i(TAG, "SENSORS_API: Listener not registered");
                             }
                         }
                     });
