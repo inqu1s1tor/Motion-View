@@ -22,7 +22,7 @@ public class SplashActivity extends GenericActivity {
 
 
         mAplication = (MVApplication) getApplication();
-        mAplication.getGoogleClientHelper().buildGoogleApiClient(new GoogleApiClient.ConnectionCallbacks() {
+        mAplication.getGoogleClientHelper().buildGoogleApiClient(this, new GoogleApiClient.ConnectionCallbacks() {
             @Override
             public void onConnected(@Nullable Bundle bundle) {
                 new Handler().postDelayed(new Runnable() {

@@ -2,9 +2,12 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -33,12 +36,13 @@ public class GoogleClientHelper {
     private GoogleApiClient mClient;
     private Context mContext;
     private Executor mExecutor = Executors.newSingleThreadExecutor();
+    private OnDataPointListener mListener;
 
     public GoogleClientHelper(Context context) {
         mContext = context;
     }
 
-    public void buildGoogleApiClient(final GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
+    public void buildGoogleApiClient(FragmentActivity fragmentActivity, GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
         mClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.RECORDING_API)
@@ -46,6 +50,12 @@ public class GoogleClientHelper {
                 .addApi(Fitness.BLE_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addConnectionCallbacks(connectionCallbacks)
+                .enableAutoManage(fragmentActivity, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Log.i(TAG, "Connection failed: " + connectionResult.toString());
+                    }
+                })
                 .build();
 
         mClient.connect();
@@ -60,14 +70,12 @@ public class GoogleClientHelper {
 
                 DataSet dataSet = totalResult.getTotal();
 
-                if (dataSet != null && dataSet.isEmpty()) {
+                if (dataSet == null || dataSet.isEmpty()) {
                     listener.onResult(null);
                     return;
                 }
 
                 DataPoint dataPoint = dataSet.getDataPoints().get(0);
-
-                Log.i(TAG, "HISTORY_API: read data - " + dataPoint.toString());
 
                 listener.onResult(dataPoint.getValue(Field.FIELD_STEPS).asInt());
             }
@@ -102,7 +110,7 @@ public class GoogleClientHelper {
                 });
     }
 
-    public void registerListenerForStepCounter(final OnDataPointListener listener) {
+    public void registerListenerForStepCounter(final ResultListener<Integer> resultListener) {
         Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
                 .setDataTypes(DataType.TYPE_STEP_COUNT_DELTA)
                 .setDataSourceTypes(DataSource.TYPE_DERIVED)
@@ -111,20 +119,34 @@ public class GoogleClientHelper {
                     @Override
                     public void onResult(@NonNull DataSourcesResult dataSourcesResult) {
                         for (DataSource dataSource : dataSourcesResult.getDataSources()) {
-                            registerListener(dataSource, listener);
+                            registerListener(dataSource, resultListener);
                         }
                     }
                 });
     }
 
 
-    private void registerListener(DataSource dataSource, OnDataPointListener listener) {
+    private void registerListener(DataSource dataSource, final ResultListener<Integer> resultListener) {
+
+        mListener = new OnDataPointListener() {
+            @Override
+            public void onDataPoint(final DataPoint dataPoint) {
+                getStepsPerDayFromHistory(new ResultListener<Integer>() {
+                    @Override
+                    public void onResult(@Nullable Integer result) {
+                        updateStepsInHistory(dataPoint, result == null ? 0 : result);
+                        resultListener.onResult(result);
+                    }
+                });
+            }
+        };
+
         Fitness.SensorsApi.add(mClient, new SensorRequest.Builder()
                         .setDataSource(dataSource)
                         .setDataType(dataSource.getDataType())
                         .setSamplingRate(1, TimeUnit.SECONDS)
                         .build(),
-                listener)
+                mListener)
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
@@ -137,15 +159,16 @@ public class GoogleClientHelper {
                 });
     }
 
-    public void unregisterListener(final OnDataPointListener listener) {
-        Fitness.SensorsApi.remove(mClient, listener)
+
+    public void unregisterListener() {
+        Fitness.SensorsApi.remove(mClient, mListener)
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
                             Log.i(TAG, "SENSORS_API: Listener unregistered.");
                         } else {
-                            Log.i(TAG, "SENSORS_API: Can't unregister listener " + listener.toString());
+                            Log.i(TAG, "SENSORS_API: Can't unregister listener " + mListener.toString());
                         }
                     }
                 });
@@ -184,6 +207,14 @@ public class GoogleClientHelper {
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
                             Log.i(TAG, "HISTORY_API: Data updated.");
+
+                            getStepsPerDayFromHistory(new ResultListener<Integer>() {
+                                @Override
+                                public void onResult(@Nullable Integer result) {
+                                    Log.i(TAG, "HISTORY_API: read - " + result + " steps.");
+                                }
+                            });
+
                         } else {
                             Log.i(TAG, "HISTORY_API: Some error when updating data : " + status.toString());
                         }

@@ -11,9 +11,6 @@ import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.MVApplication;
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 import com.erminesoft.motionview.motionview.net.GoogleClientHelper;
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.OnDataPointListener;
 
 public class MainActivity extends GenericActivity {
     private static final int DAILY_GOAL = 100;
@@ -24,12 +21,9 @@ public class MainActivity extends GenericActivity {
     private TextView mDateTextView;
     private TextView mStepsTextView;
     private ProgressBar mProgressBar;
-    private OnDataPointListener mListener;
     private int mTotalStepsCount = 0;
 
     private GoogleClientHelper mGoogleClientHelper;
-
-    private MVApplication mApplication;
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, MainActivity.class));
@@ -48,25 +42,10 @@ public class MainActivity extends GenericActivity {
 
         mProgressBar.setMax(DAILY_GOAL);
 
-        mApplication = (MVApplication) getApplication();
-        mGoogleClientHelper = mApplication.getGoogleClientHelper();
+        MVApplication application = (MVApplication) getApplication();
+        mGoogleClientHelper = application.getGoogleClientHelper();
 
-        mGoogleClientHelper.getStepsPerDayFromHistory(new ResultListener<Integer>() {
-            @Override
-            public void onResult(@Nullable Integer result) {
-                if (result != null) {
-                    setStepsCount(result);
-                }
-            }
-        });
-
-        mListener = new OnDataPointListener() {
-            @Override
-            public void onDataPoint(DataPoint dataPoint) {
-                incrementStepsCount(dataPoint.getValue(Field.FIELD_STEPS).asInt());
-                mGoogleClientHelper.updateStepsInHistory(dataPoint, mTotalStepsCount);
-            }
-        };
+        mGoogleClientHelper.getStepsPerDayFromHistory(new StepsChangingListener());
     }
 
     private void setStepsCount(Integer result) {
@@ -85,26 +64,24 @@ public class MainActivity extends GenericActivity {
         super.onStart();
 
         mGoogleClientHelper.unSubscribeStepCounter();
-        mGoogleClientHelper.registerListenerForStepCounter(mListener);
+        mGoogleClientHelper.registerListenerForStepCounter(new StepsChangingListener());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        mGoogleClientHelper.unregisterListener(mListener);
+        mGoogleClientHelper.unregisterListener();
         mGoogleClientHelper.subscribeForStepCounter();
     }
 
-    private void incrementStepsCount(int steps) {
-        mTotalStepsCount += steps;
+    private final class StepsChangingListener implements ResultListener<Integer> {
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mStepsTextView.setText(String.format(STEPS_TEXT_VIEW_FORMAT, mTotalStepsCount));
-                mProgressBar.setProgress(mTotalStepsCount);
+        @Override
+        public void onResult(@Nullable Integer result) {
+            if (result != null) {
+                setStepsCount(result);
             }
-        });
+        }
     }
 }
