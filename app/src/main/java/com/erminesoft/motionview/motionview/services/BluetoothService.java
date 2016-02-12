@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
@@ -19,15 +20,27 @@ public class BluetoothService extends Service{
 
     String TAG = "BluetoothService";
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        findNearbyDevices();
+    }
+
     public void findNearbyDevices(){
+
+        GoogleApiClient client = new GoogleApiClient.Builder(getBaseContext())
+                .addApi(Fitness.BLE_API)
+                .build();
+        client.connect();
+        Log.d(TAG,""+client.isConnected());
+
 
         // 1. Define a callback object
         BleScanCallback callback = new BleScanCallback() {
             @Override
             public void onDeviceFound(BleDevice device) {
                 // A device that provides the requested data types is available
-                // -> Claim this BLE device (See next example)
-                Log.d(TAG, ""+device.getName());
+                Log.d(TAG, "" + device.getName());
             }
             @Override
             public void onScanStopped() {
@@ -36,25 +49,21 @@ public class BluetoothService extends Service{
             }
         };
 
-        // 2. Create a scan request object:
-        // - Specify the data types you're interested in
-        // - Provide the callback object
-            StartBleScanRequest request = new StartBleScanRequest.Builder()
-                    .setDataTypes(DataType.TYPE_DISTANCE_DELTA,DataType.TYPE_STEP_COUNT_DELTA,DataType.TYPE_LOCATION_SAMPLE)
-                    .setBleScanCallback(callback)
-                    .build();
 
-        // 3. Invoke the Bluetooth Low Energy API with:
-        // - The Google API client
-        // - The scan request
-            //PendingResult<Status> pendingResult =
-                    //Fitness.BleApi.startBleScan(mClient, request);
+        StartBleScanRequest request = new StartBleScanRequest.Builder()
+                .setDataTypes(DataType.TYPE_DISTANCE_DELTA,DataType.TYPE_STEP_COUNT_DELTA,DataType.TYPE_LOCATION_SAMPLE)
+                .setBleScanCallback(callback)
+                .build();
 
         // 4. Check the result (see other examples)
 
+        PendingResult<Status> pendingResult = Fitness.BleApi.startBleScan(client, request);
+
     }
 
-    @Nullable
+
+
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
