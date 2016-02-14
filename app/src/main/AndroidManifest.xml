@@ -14,8 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".core.MVApplication">
+        <activity android:name=".ui.activities.HistoryActivity"/>
         <activity android:name=".ui.activities.MainActivity" />
-        <activity android:name=".ui.activities.SplashActivity">
+        <activity
+            android:name=".ui.activities.SplashActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

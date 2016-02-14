@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -12,7 +14,7 @@ import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 
 public class MainActivity extends GenericActivity {
-    private static final int DAILY_GOAL = 100;
+    private static final int DAILY_GOAL = 1200;
 
     private TextView mDateTextView;
     private TextView mStepsTextView;
@@ -26,6 +28,8 @@ public class MainActivity extends GenericActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setTitle(R.string.app_name);
 
         mStepsTextView = (TextView) findViewById(R.id.steps_text_view);
         mDateTextView = (TextView) findViewById(R.id.date_text_view);
@@ -52,6 +56,26 @@ public class MainActivity extends GenericActivity {
 
         mGoogleClientFacade.unregisterListener();
         mGoogleClientFacade.subscribeForStepCounter();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                break;
+            case R.id.history:
+                HistoryActivity.start(this);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setStepsCount(Integer result) {
