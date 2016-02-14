@@ -38,7 +38,8 @@ class RegisterManager {
         mClient = client;
     }
 
-    public void registerListener(final DataType dataType, final ResultListener<Integer> resultListener) {
+    public void registerListener(final DataType dataType,
+                                 final ResultListener<Integer> resultListener) {
         mFindedDataSourcesResultCallback = new ResultCallback<DataSourcesResult>() {
             @Override
             public void onResult(@NonNull DataSourcesResult dataSourcesResult) {
@@ -58,24 +59,28 @@ class RegisterManager {
     }
 
     public void registerListener(List<DataSource> dataSources,
-                                 final ResultListener<Integer> resultListener) {
+                                 final ResultListener<Integer> resultListenerFromActivity) {
         for (DataSource dataSource : dataSources) {
             mSensorResultListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(final DataPoint dataPoint) {
-                    mOfflineStorageManager.updateStepsInHistory(dataPoint);
+                    Status resultStatus = mOfflineStorageManager.updateStepsInHistory(dataPoint);
 
-                    mOfflineStorageManager.getStepsPerDayFromHistory(new ResultListener<Integer>() {
-                        @Override
-                        public void onSuccess(@Nullable Integer result) {
-                            resultListener.onSuccess(result);
-                        }
+                    if (resultStatus.isSuccess()) {
+                        mOfflineStorageManager.getStepsPerDayFromHistory(new ResultListener<Integer>() {
+                            @Override
+                            public void onSuccess(@Nullable Integer result) {
+                                resultListenerFromActivity.onSuccess(result);
+                            }
 
-                        @Override
-                        public void onError(String error) {
-
-                        }
-                    });
+                            @Override
+                            public void onError(String error) {
+                                Log.i(TAG, error);
+                            }
+                        });
+                    } else {
+                        resultListenerFromActivity.onError("Error reading data.");
+                    }
                 }
             };
 
@@ -83,33 +88,14 @@ class RegisterManager {
                             .setDataSource(dataSource)
                             .setDataType(dataSource.getDataType())
                             .setSamplingRate(1, TimeUnit.SECONDS)
+                            .setAccuracyMode(SensorRequest.ACCURACY_MODE_DEFAULT)
                             .build(),
-                    mSensorResultListener)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(@NonNull Status status) {
-                            if (status.isSuccess()) {
-                                Log.i(TAG, "SENSORS_API: Listener registered ");
-                            } else {
-                                Log.i(TAG, "SENSORS_API: Listener not registered");
-                            }
-                        }
-                    });
+                    mSensorResultListener);
         }
     }
 
     public void unregisterListener() {
-        Fitness.SensorsApi.remove(mClient, mSensorResultListener)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "SENSORS_API: Listener unregistered.");
-                        } else {
-                            Log.i(TAG, "SENSORS_API: Can't unregister listener " + mSensorResultListener.toString());
-                        }
-                    }
-                });
+        Fitness.SensorsApi.remove(mClient, mSensorResultListener);
     }
 
 }

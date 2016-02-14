@@ -4,7 +4,6 @@ import android.support.v4.app.FragmentActivity;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataType;
 
 public class GoogleClientFacade {
@@ -42,10 +41,6 @@ public class GoogleClientFacade {
 
     public void getStepsPerDayFromHistory(ResultListener<Integer> stepsChangingListener) {
         mOfflineStorageManager.getStepsPerDayFromHistory(stepsChangingListener);
-    }
-
-    public void updateStepsInHistory(DataPoint dataPoint) {
-        mOfflineStorageManager.updateStepsInHistory(dataPoint);
     }
 
     public void subscribeForStepCounter() {
