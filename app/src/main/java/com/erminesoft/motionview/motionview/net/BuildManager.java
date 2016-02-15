@@ -11,6 +11,7 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.location.LocationServices;
 
 class BuildManager {
 
@@ -25,6 +26,7 @@ class BuildManager {
                 .addApi(Fitness.RECORDING_API)
                 .addApi(Fitness.HISTORY_API)
                 .addApi(Fitness.BLE_API)
+                .addApi(LocationServices.API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addConnectionCallbacks(connectionCallbacks)
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {

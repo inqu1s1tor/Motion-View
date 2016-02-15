@@ -3,8 +3,13 @@
     package="com.erminesoft.motionview.motionview">
 
     <uses-permission android:name="ANDROID.PERMISSION.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.LOCATION_HARDWARE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
     <application
@@ -25,14 +30,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".services.MySensorService"
-            android:process=":sensor">
-            <intent-filter>
-                <action android:name="com.google.android.gms.fitness.service.FitnessSensorService" />
-                <!-- include at least one mimeType filter for the supported data types -->
-                <data android:mimeType="vnd.google.fitness.data_type/com.google.heart_rate.bpm" />
-            </intent-filter>
-        </service>
+
+        <activity android:name=".ui.activities.GoogleMapActivity">
+
+        </activity>
+
+        <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBFlxatgONWweSxx04i48w5KSZl9vAkZdU" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

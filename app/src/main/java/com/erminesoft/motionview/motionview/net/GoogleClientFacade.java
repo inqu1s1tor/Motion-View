@@ -65,4 +65,8 @@ public class GoogleClientFacade {
     public void unregisterListener() {
         mRegisterManager.unregisterListener();
     }
+
+    public GoogleApiClient getApiClient() {
+        return mClient;
+    }
 }

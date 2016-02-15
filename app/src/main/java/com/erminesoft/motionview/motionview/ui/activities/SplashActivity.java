@@ -1,6 +1,7 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -10,19 +11,21 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 public class SplashActivity extends GenericActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
         mGoogleClientFacade.buildGoogleApiClient(this, new GoogleConnectionCallback());
+
     }
 
     private class GoogleConnectionCallback implements GoogleApiClient.ConnectionCallbacks {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
             if (checkConnectivity()) {
-                MainActivity.start(SplashActivity.this);
+                startActivity(new Intent(SplashActivity.this, GoogleMapActivity.class));
+                //MainActivity.start(SplashActivity.this);
             }
         }
 

@@ -21,4 +21,7 @@
         <item>November</item>
         <item>December</item>
     </string-array>
+    <string name="activity_map_text_run">Runned Steps</string>
+    <string name="activity_map_text_steps">Walked Steps</string>
+    <string name="activity_map_text_biking">Biking</string>
 </resources>
