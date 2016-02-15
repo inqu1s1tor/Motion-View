@@ -64,7 +64,7 @@ class RegisterManager {
             mSensorResultListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(final DataPoint dataPoint) {
-                    Status resultStatus = mOfflineStorageManager.updateStepsInHistory(dataPoint);
+                    Status resultStatus = mOfflineStorageManager.insertSteps(dataPoint);
 
                     if (resultStatus.isSuccess()) {
                         mOfflineStorageManager.getStepsPerDayFromHistory(new ResultListener<Integer>() {

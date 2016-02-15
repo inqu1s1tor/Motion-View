@@ -16,11 +16,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "943269619006-j3p5ja2kl8e655vp1c0q7m1vb9iiot6l.apps.googleusercontent.com",
+          "client_id": "943269619006-b6o101rmioiccd1fg8d29pahub4q2gqv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.erminesoft.motionview.motionview",
-            "certificate_hash": "C44C959564B2E1CE98B8D2D45EDD73E765AAC05A"
+            "certificate_hash": "FF499E54F3B1117E09A7A45B652B5BBD175490F2"
           }
         },
         {

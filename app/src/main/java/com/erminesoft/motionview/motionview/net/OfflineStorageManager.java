@@ -39,13 +39,14 @@ class OfflineStorageManager {
 
                         DataPoint dataPoint = dataSet.getDataPoints().get(0);
 
+
                         listener.onSuccess(dataPoint.getValue(Field.FIELD_STEPS).asInt());
                     }
                 });
     }
 
-    public Status updateStepsInHistory(final DataPoint dataPoint) {
-        final DataSet dataSet = generateDataSet(dataPoint);
+    public Status insertSteps(final DataPoint dataPoint) {
+        DataSet dataSet = generateDataSet(dataPoint);
 
         return Fitness.HistoryApi.insertData(mClient, dataSet).await();
     }
