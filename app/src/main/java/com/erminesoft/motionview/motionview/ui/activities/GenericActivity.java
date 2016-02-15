@@ -3,7 +3,6 @@ package com.erminesoft.motionview.motionview.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -14,7 +13,6 @@ import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 public abstract class GenericActivity extends AppCompatActivity {
     protected final String TAG = this.getClass().getSimpleName();
     protected GoogleClientFacade mGoogleClientFacade;
-    protected ActionBar mActionBar;
 
     public final MVApplication getMVapplication() {
         return (MVApplication) getApplication();
@@ -33,8 +31,6 @@ public abstract class GenericActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mGoogleClientFacade = getMVapplication().getGoogleClientFacade();
-
-        mActionBar = getSupportActionBar();
     }
 
     @Override

@@ -7,13 +7,18 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DailyTotalResult;
+import com.google.android.gms.fitness.result.DataReadResult;
 
+import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 class OfflineStorageManager {
@@ -71,5 +76,44 @@ class OfflineStorageManager {
         dataSet.add(generatedDataPoint);
 
         return dataSet;
+    }
+
+    public void getDataPerMonthFromHistory(int month, final ResultListener<List<Bucket>> resultListener) {
+        DataReadRequest request = generateReadRequestForMonth(month);
+
+        Fitness.HistoryApi.readData(mClient, request)
+                .setResultCallback(new ResultCallback<DataReadResult>() {
+                    @Override
+                    public void onResult(@NonNull DataReadResult dataReadResult) {
+                        if (dataReadResult.getBuckets().size() == 0) {
+                            resultListener.onError("Empty datasets");
+                            return;
+                        }
+
+                        resultListener.onSuccess(dataReadResult.getBuckets());
+                    }
+                });
+    }
+
+    private DataReadRequest generateReadRequestForMonth(int month) {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(Calendar.MONTH, month + 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
+
+        int currentMonth = calendar.get(Calendar.MONTH);
+        long endTime = currentMonth == month ?
+                System.currentTimeMillis() :
+                calendar.getTimeInMillis();
+
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        long startTime = calendar.getTimeInMillis();
+        return new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                .bucketByTime(1, TimeUnit.DAYS)
+                .build();
     }
 }
