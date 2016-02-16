@@ -24,4 +24,5 @@
     <string name="activity_map_text_run">Runned Steps</string>
     <string name="activity_map_text_steps">Walked Steps</string>
     <string name="activity_map_text_biking">Biking</string>
+    <string name="map">Map</string>
 </resources>

@@ -60,70 +60,12 @@ public class HistoryActivity extends GenericActivity {
 
     }
 
-    private void updateChartData(int currentMonth) {
-        mGoogleClientFacade.getDataPerMonthFromHistory(
-                currentMonth,
-                new ResultListener<List<Bucket>>() {
-
-                    @Override
-                    public void onSuccess(List<Bucket> result) {
-                        List<String> xVals = new ArrayList<>();
-                        List<BarEntry> entries = new ArrayList<>();
-
-                        for (int i = 0; i < result.size(); i++) {
-                            Bucket bucket = result.get(i);
-                            DataSet dataSet = bucket.getDataSet(DataType.TYPE_STEP_COUNT_DELTA);
-
-                            xVals.add(String.valueOf(i + 1));
-
-                            float steps;
-                            if (dataSet.getDataPoints().size() > 0) {
-                                DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                                steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
-                            } else {
-                                steps = 0f;
-                            }
-
-                            entries.add(new BarEntry(steps, i, dataSet));
-                        }
-
-                        BarDataSet dataSet = new BarDataSet(
-                                entries, getString(R.string.chart_steps));
-                        BarData data = new BarData(xVals, dataSet);
-
-                        setChartData(data);
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                });
-    }
-
-    private void setChartData(BarData data) {
-        mBarChart.setData(data);
-
-        mBarChart.setVisibleXRangeMaximum(7f);
-        mBarChart.moveViewToX(data.getXValCount());
-    }
-
     private void initChart() {
         mBarChart = (BarChart) findViewById(R.id.bar_chart);
 
         mBarChart.setScaleEnabled(false);
         mBarChart.setHardwareAccelerationEnabled(true);
-        mBarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-                Log.i(TAG, e.toString());
-            }
-
-            @Override
-            public void onNothingSelected() {
-
-            }
-        });
+        mBarChart.setOnChartValueSelectedListener(new OnCharValueSelectedListenerImpl());
     }
 
     private final class SpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {
@@ -136,5 +78,74 @@ public class HistoryActivity extends GenericActivity {
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
         }
+
+    }
+
+    private void updateChartData(int currentMonth) {
+        mGoogleClientFacade.getDataPerMonthFromHistory(
+                currentMonth,
+                new OnGotDataResultListener());
+    }
+
+    private final class OnCharValueSelectedListenerImpl implements OnChartValueSelectedListener {
+
+        @Override
+        public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+            DataSet valueDataSet = (DataSet) e.getData();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("value", valueDataSet);
+
+            Log.i(TAG, valueDataSet.toString());
+        }
+
+        @Override
+        public void onNothingSelected() {
+            Log.i(TAG, "Chart selection listener: Nothing selected.");
+        }
+    }
+
+    private final class OnGotDataResultListener implements ResultListener<List<Bucket>> {
+
+        @Override
+        public void onSuccess(List<Bucket> result) {
+            List<String> xVals = new ArrayList<>();
+            List<BarEntry> entries = new ArrayList<>();
+
+            for (int i = 0; i < result.size(); i++) {
+                Bucket bucket = result.get(i);
+                DataSet dataSet = bucket.getDataSet(DataType.TYPE_STEP_COUNT_DELTA);
+
+                xVals.add(String.valueOf(i + 1));
+
+                float steps;
+                if (dataSet.getDataPoints().size() > 0) {
+                    DataPoint dataPoint = dataSet.getDataPoints().get(0);
+                    steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
+                } else {
+                    steps = 0f;
+                }
+
+                entries.add(new BarEntry(steps, i, dataSet));
+            }
+
+            BarDataSet dataSet = new BarDataSet(
+                    entries, getString(R.string.chart_steps));
+            BarData data = new BarData(xVals, dataSet);
+
+            setChartData(data);
+        }
+
+        @Override
+        public void onError(String error) {
+            Log.i(TAG, error);
+        }
+
+    }
+
+    private void setChartData(BarData data) {
+        mBarChart.setData(data);
+
+        mBarChart.setVisibleXRangeMaximum(7f);
+        mBarChart.moveViewToX(data.getXValCount());
     }
 }

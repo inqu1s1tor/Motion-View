@@ -1,7 +1,6 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -24,8 +23,7 @@ public class SplashActivity extends GenericActivity {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
             if (checkConnectivity()) {
-                startActivity(new Intent(SplashActivity.this, GoogleMapActivity.class));
-                //MainActivity.start(SplashActivity.this);
+                MainActivity.start(SplashActivity.this);
             }
         }
 

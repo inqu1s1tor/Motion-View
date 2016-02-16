@@ -2,6 +2,8 @@ package com.erminesoft.motionview.motionview.ui.activities;
 
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -24,6 +26,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class GoogleMapActivity extends GenericActivity implements OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+
+    public static void start(Activity activity) {
+        activity.startActivity(new Intent(activity, GoogleMapActivity.class));
+    }
 
     private GoogleMap mMap;
 

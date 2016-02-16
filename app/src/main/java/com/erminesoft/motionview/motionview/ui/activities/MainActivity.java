@@ -73,6 +73,9 @@ public class MainActivity extends GenericActivity {
             case R.id.history:
                 HistoryActivity.start(this);
                 break;
+            case R.id.google_map:
+                GoogleMapActivity.start(this);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
