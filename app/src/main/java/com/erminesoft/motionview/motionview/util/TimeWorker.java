@@ -17,4 +17,7 @@ public class TimeWorker {
         return Calendar.getInstance().get(Calendar.MONTH);
     }
 
+    public static int getCurrentYear() {
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
 }

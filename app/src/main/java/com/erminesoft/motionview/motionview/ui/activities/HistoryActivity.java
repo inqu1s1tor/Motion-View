@@ -27,14 +27,15 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class HistoryActivity extends GenericActivity {
 
-    private static final float MIN_VALUES = 3f;
-    private static final float MAX_VALUES = 5f;
-    private static final int ANIMATE_DURATION_MILLIS = 2000;
+    private static final float MIN_VALUES = 4f;
+    private static final float MAX_VALUES = 4f;
+    private static final int ANIMATE_DURATION_MILLIS = 3000;
     private static final String EMPTY_STRING = "";
 
     private BarChart mBarChart;
@@ -53,16 +54,36 @@ public class HistoryActivity extends GenericActivity {
 
         initChart();
 
-        Spinner monthSpinner = (Spinner) findViewById(R.id.month_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.month_array, android.R.layout.simple_spinner_item);
+        Spinner yearSpinner = (Spinner) findViewById(R.id.year_spinner);
+
+        yearSpinner.setAdapter(new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                new Integer[]{TimeWorker.getCurrentYear()}));
+
+        yearSpinner.setSelection(0);
+
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                getAvailableMonths());
 
         int currentMonth = TimeWorker.getCurrentMonth();
+        Spinner monthSpinner = (Spinner) findViewById(R.id.month_spinner);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         monthSpinner.setAdapter(adapter);
         monthSpinner.setOnItemSelectedListener(new SpinnerItemSelectedListener());
         monthSpinner.setSelection(currentMonth);
+    }
+
+    private CharSequence[] getAvailableMonths() {
+        CharSequence[] result;
+        result = getResources().getStringArray(R.array.month_array);
+
+        result = Arrays.copyOf(result, TimeWorker.getCurrentMonth() + 1);
+
+        return result;
     }
 
     private void initChart() {
