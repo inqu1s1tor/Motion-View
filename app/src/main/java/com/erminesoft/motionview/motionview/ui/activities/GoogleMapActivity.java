@@ -41,7 +41,7 @@ public class GoogleMapActivity extends GenericActivity implements OnMapReadyCall
     // Location updates intervals in sec
     private static int UPDATE_INTERVAL = 10000; // 10 sec
     private static int FATEST_INTERVAL = 5000; // 5 sec
-    private static int DISPLACEMENT = 1; // 10 meters
+    private static int DISPLACEMENT = 10; // 10 meters
 
 
     @Override
@@ -92,6 +92,7 @@ public class GoogleMapActivity extends GenericActivity implements OnMapReadyCall
 
     private Location displayLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Have no permissions");
             return null;
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -155,6 +156,7 @@ public class GoogleMapActivity extends GenericActivity implements OnMapReadyCall
         mMap = googleMap;
         LatLng startLocation;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Have no permissions");
             return;
         }
 
@@ -162,8 +164,9 @@ public class GoogleMapActivity extends GenericActivity implements OnMapReadyCall
         if (startLoc != null) {
             startLocation = new LatLng(startLoc.getLatitude(), startLoc.getLongitude());
         } else {
+
             startLocation = new LatLng(0, 0);
-            showShortToast("Can't find current location");
+            showShortToast("Can't find current location  " + LocationServices.FusedLocationApi.getLocationAvailability(mGoogleApiClient).toString());
         }
 
         mMap.addMarker(new MarkerOptions().position(startLocation).title("Current location"));
