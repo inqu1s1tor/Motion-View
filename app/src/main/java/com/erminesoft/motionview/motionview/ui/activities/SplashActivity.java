@@ -10,7 +10,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 public class SplashActivity extends GenericActivity {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
