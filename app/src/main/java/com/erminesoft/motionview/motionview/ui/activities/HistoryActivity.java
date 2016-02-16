@@ -31,6 +31,11 @@ import java.util.List;
 
 public class HistoryActivity extends GenericActivity {
 
+    private static final float MIN_VALUES = 3f;
+    private static final float MAX_VALUES = 5f;
+    private static final int ANIMATE_DURATION_MILLIS = 2000;
+    private static final String EMPTY_STRING = "";
+
     private BarChart mBarChart;
 
     public static void start(Activity activity) {
@@ -62,8 +67,16 @@ public class HistoryActivity extends GenericActivity {
     private void initChart() {
         mBarChart = (BarChart) findViewById(R.id.bar_chart);
 
+        mBarChart.setDescription(EMPTY_STRING);
+        mBarChart.getLegend().setEnabled(false);
+
+        mBarChart.setDrawGridBackground(false);
+        mBarChart.getXAxis().setDrawGridLines(false);
+
         mBarChart.setScaleEnabled(false);
         mBarChart.setHardwareAccelerationEnabled(true);
+        mBarChart.setDrawBarShadow(true);
+        mBarChart.setDragDecelerationEnabled(true);
         mBarChart.setOnChartValueSelectedListener(new OnCharValueSelectedListenerImpl());
     }
 
@@ -142,9 +155,9 @@ public class HistoryActivity extends GenericActivity {
     private void setChartData(BarData data) {
         mBarChart.clear();
         mBarChart.setData(data);
-        mBarChart.invalidate();
-        mBarChart.setVisibleXRange(5, 7);
+
+        mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
         mBarChart.moveViewToX(data.getXValCount());
-        mBarChart.animateX(2000);
+        mBarChart.animateX(ANIMATE_DURATION_MILLIS);
     }
 }
