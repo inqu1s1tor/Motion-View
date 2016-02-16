@@ -1,10 +1,7 @@
 package com.erminesoft.motionview.motionview.net;
 
-import android.support.annotation.NonNull;
-
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Bucket;
@@ -28,7 +25,7 @@ class OfflineStorageManager {
     private final Executor mExecutor;
     private GoogleApiClient mClient;
 
-    OfflineStorageManager() {
+    public OfflineStorageManager() {
         mExecutor = Executors.newSingleThreadExecutor();
     }
 
@@ -43,8 +40,7 @@ class OfflineStorageManager {
                 DataReadResult readResult = Fitness.HistoryApi.
                         readData(mClient, generateReadRequestForDay()).await();
 
-                if (readResult.getBuckets().size() == 0 &&
-                        readResult.getDataSets().size() == 0) {
+                if (isReadResultEmpty(readResult)) {
                     listener.onError(NO_DATA_ERROR);
                 }
 
@@ -103,21 +99,27 @@ class OfflineStorageManager {
         return dataSet;
     }
 
-    public void getDataPerMonthFromHistory(int month, final ResultListener<List<Bucket>> resultListener) {
-        DataReadRequest request = generateReadRequestForMonth(month);
+    public void getDataPerMonthFromHistory(final int month,
+                                           final ResultListener<List<Bucket>> resultListener) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                DataReadRequest request = generateReadRequestForMonth(month);
 
-        Fitness.HistoryApi.readData(mClient, request)
-                .setResultCallback(new ResultCallback<DataReadResult>() {
-                    @Override
-                    public void onResult(@NonNull DataReadResult dataReadResult) {
-                        if (dataReadResult.getBuckets().size() == 0) {
-                            resultListener.onError("Empty datasets");
-                            return;
-                        }
+                DataReadResult readResult = Fitness.HistoryApi.readData(mClient, request).await();
 
-                        resultListener.onSuccess(dataReadResult.getBuckets());
-                    }
-                });
+                if (isReadResultEmpty(readResult)) {
+                    resultListener.onError(NO_DATA_ERROR);
+                    return;
+                }
+
+                resultListener.onSuccess(readResult.getBuckets());
+            }
+        });
+    }
+
+    private boolean isReadResultEmpty(DataReadResult readResult) {
+        return readResult.getBuckets().size() == 0 && readResult.getDataSets().size() == 0;
     }
 
     private DataReadRequest generateReadRequestForMonth(int month) {
@@ -129,12 +131,12 @@ class OfflineStorageManager {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
 
+
         long endTime = currentMonth == month ?
                 System.currentTimeMillis() :
                 calendar.getTimeInMillis();
 
         calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
 
         long startTime = calendar.getTimeInMillis();
         return new DataReadRequest.Builder()
