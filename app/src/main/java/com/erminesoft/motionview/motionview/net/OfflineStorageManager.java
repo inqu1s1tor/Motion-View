@@ -1,6 +1,7 @@
 package com.erminesoft.motionview.motionview.net;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
@@ -26,7 +27,7 @@ class OfflineStorageManager {
     private GoogleApiClient mClient;
 
     public OfflineStorageManager() {
-        mExecutor = Executors.newSingleThreadExecutor();
+        mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
     }
 
     public void setClient(GoogleApiClient client) {
@@ -124,13 +125,12 @@ class OfflineStorageManager {
 
     private DataReadRequest generateReadRequestForMonth(int month) {
         Calendar calendar = Calendar.getInstance();
-        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentMonth = TimeWorker.getCurrentMonth();
 
         calendar.set(Calendar.MONTH, month + 1);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
-
 
         long endTime = currentMonth == month ?
                 System.currentTimeMillis() :

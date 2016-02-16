@@ -12,6 +12,7 @@ import android.widget.Spinner;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -26,8 +27,8 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class HistoryActivity extends GenericActivity {
 
@@ -56,7 +57,7 @@ public class HistoryActivity extends GenericActivity {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.month_array, android.R.layout.simple_spinner_item);
 
-        int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+        int currentMonth = TimeWorker.getCurrentMonth();
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         monthSpinner.setAdapter(adapter);
@@ -73,6 +74,7 @@ public class HistoryActivity extends GenericActivity {
         mBarChart.setDrawGridBackground(false);
         mBarChart.getXAxis().setDrawGridLines(false);
 
+        mBarChart.setDrawMarkerViews(true);
         mBarChart.setScaleEnabled(false);
         mBarChart.setHardwareAccelerationEnabled(true);
         mBarChart.setDrawBarShadow(true);
@@ -105,6 +107,13 @@ public class HistoryActivity extends GenericActivity {
         @Override
         public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
             DataSet valueDataSet = (DataSet) e.getData();
+
+            long timestamp = valueDataSet.getDataPoints().get(0).getTimestamp(TimeUnit.MILLISECONDS);
+
+            if (TimeWorker.isCurrentDay(timestamp)) {
+                finish();
+                return;
+            }
 
             DailyStatisticActivity.start(HistoryActivity.this, valueDataSet);
         }
@@ -153,12 +162,17 @@ public class HistoryActivity extends GenericActivity {
 
     }
 
-    private void setChartData(BarData data) {
-        mBarChart.clear();
-        mBarChart.setData(data);
+    private void setChartData(final BarData data) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBarChart.clear();
+                mBarChart.setData(data);
 
-        mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
-        mBarChart.moveViewToX(data.getXValCount());
-        mBarChart.animateX(ANIMATE_DURATION_MILLIS);
+                mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
+                mBarChart.moveViewToX(data.getXValCount());
+                mBarChart.animateY(ANIMATE_DURATION_MILLIS);
+            }
+        });
     }
 }

@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.erminesoft.motionview.motionview.R;
 
 public abstract class BasicDailyStatisticActivity extends GenericActivity {
-    protected static final int DAILY_GOAL = 1200;
+    protected static final int DAILY_GOAL = 10000;
 
     protected TextView mDateTextView;
     protected TextView mStepsTextView;

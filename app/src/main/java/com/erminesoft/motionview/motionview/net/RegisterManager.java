@@ -27,7 +27,7 @@ class RegisterManager {
 
     private OfflineStorageManager mOfflineStorageManager;
 
-    private ResultCallback<DataSourcesResult> mFindedDataSourcesResultCallback;
+    private ResultCallback<DataSourcesResult> mFoundDataSourcesResultCallback;
     private OnDataPointListener mSensorResultListener;
 
     public RegisterManager(OfflineStorageManager manager) {
@@ -40,7 +40,7 @@ class RegisterManager {
 
     public void registerListener(final DataType dataType,
                                  final ResultListener<Integer> resultListener) {
-        mFindedDataSourcesResultCallback = new ResultCallback<DataSourcesResult>() {
+        mFoundDataSourcesResultCallback = new ResultCallback<DataSourcesResult>() {
             @Override
             public void onResult(@NonNull DataSourcesResult dataSourcesResult) {
                 registerListener(dataSourcesResult.getDataSources(), resultListener);
@@ -55,7 +55,7 @@ class RegisterManager {
                 .setDataTypes(dataType)
                 .setDataSourceTypes(DataSource.TYPE_DERIVED)
                 .build())
-                .setResultCallback(mFindedDataSourcesResultCallback);
+                .setResultCallback(mFoundDataSourcesResultCallback);
     }
 
     public void registerListener(List<DataSource> dataSources,
@@ -75,11 +75,11 @@ class RegisterManager {
 
                             @Override
                             public void onError(String error) {
-                                Log.i(TAG, error);
+                                Log.e(TAG, error);
                             }
                         });
                     } else {
-                        resultListenerFromActivity.onError("Error reading data.");
+                        resultListenerFromActivity.onError("Error inserting data.");
                     }
                 }
             };
