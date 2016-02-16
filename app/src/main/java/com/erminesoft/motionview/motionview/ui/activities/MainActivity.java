@@ -28,7 +28,6 @@ public class MainActivity extends BasicDailyStatisticActivity {
     protected void onStart() {
         super.onStart();
 
-        mGoogleClientFacade.unSubscribeStepCounter();
         mGoogleClientFacade.registerListenerForStepCounter(new StepsChangingListener());
     }
 
@@ -37,7 +36,6 @@ public class MainActivity extends BasicDailyStatisticActivity {
         super.onStop();
 
         mGoogleClientFacade.unregisterListener();
-        mGoogleClientFacade.subscribeForStepCounter();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.erminesoft.motionview.motionview.net;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
@@ -67,17 +66,11 @@ class RegisterManager {
                     Status resultStatus = mOfflineStorageManager.insertSteps(dataPoint);
 
                     if (resultStatus.isSuccess()) {
-                        mOfflineStorageManager.getStepsPerDayFromHistory(new ResultListener<Integer>() {
-                            @Override
-                            public void onSuccess(@Nullable Integer result) {
-                                resultListenerFromActivity.onSuccess(result);
-                            }
+                        Log.i(TAG, dataPoint.toString());
 
-                            @Override
-                            public void onError(String error) {
-                                Log.e(TAG, error);
-                            }
-                        });
+                        mOfflineStorageManager.incrementStepsCount(dataPoint);
+
+                        resultListenerFromActivity.onSuccess(mOfflineStorageManager.getSteps());
                     } else {
                         resultListenerFromActivity.onError("Error inserting data.");
                     }

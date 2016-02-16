@@ -26,12 +26,22 @@ class OfflineStorageManager {
     private final Executor mExecutor;
     private GoogleApiClient mClient;
 
+    private int mSteps;
+
     public OfflineStorageManager() {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
     }
 
     public void setClient(GoogleApiClient client) {
         mClient = client;
+    }
+
+    public void incrementStepsCount(DataPoint stepsDeltaDataPoint) {
+        mSteps += stepsDeltaDataPoint.getValue(Field.FIELD_STEPS).asInt();
+    }
+
+    public int getSteps() {
+        return mSteps;
     }
 
     public void getStepsPerDayFromHistory(final ResultListener<Integer> listener) {
@@ -49,7 +59,11 @@ class OfflineStorageManager {
                 DataSet dataSet = bucket.getDataSets().get(0);
                 DataPoint dataPoint = dataSet.getDataPoints().get(0);
 
-                listener.onSuccess(dataPoint.getValue(Field.FIELD_STEPS).asInt());
+                int steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
+
+                listener.onSuccess(steps);
+
+                setSteps(steps);
             }
         });
     }
@@ -70,6 +84,12 @@ class OfflineStorageManager {
                 .bucketByTime(1, TimeUnit.DAYS)
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .build();
+    }
+
+    private void setSteps(int steps) {
+        if (mSteps < steps) {
+            mSteps = steps;
+        }
     }
 
     public Status insertSteps(final DataPoint dataPoint) {
