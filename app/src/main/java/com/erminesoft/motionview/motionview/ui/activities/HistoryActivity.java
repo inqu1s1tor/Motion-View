@@ -77,6 +77,7 @@ public class HistoryActivity extends GenericActivity {
         mBarChart.setHardwareAccelerationEnabled(true);
         mBarChart.setDrawBarShadow(true);
         mBarChart.setDragDecelerationEnabled(true);
+        mBarChart.setAutoScaleMinMaxEnabled(true);
         mBarChart.setOnChartValueSelectedListener(new OnCharValueSelectedListenerImpl());
     }
 
