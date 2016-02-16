@@ -43,6 +43,8 @@ public class HistoryActivity extends GenericActivity {
         setContentView(R.layout.activity_history);
         setTitle(R.string.history_activity_title);
 
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+
         initChart();
 
         Spinner monthSpinner = (Spinner) findViewById(R.id.month_spinner);
@@ -55,9 +57,6 @@ public class HistoryActivity extends GenericActivity {
         monthSpinner.setAdapter(adapter);
         monthSpinner.setOnItemSelectedListener(new SpinnerItemSelectedListener());
         monthSpinner.setSelection(currentMonth);
-
-        updateChartData(currentMonth);
-
     }
 
     private void initChart() {
@@ -92,10 +91,8 @@ public class HistoryActivity extends GenericActivity {
         @Override
         public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
             DataSet valueDataSet = (DataSet) e.getData();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("value", valueDataSet);
 
-            Log.i(TAG, valueDataSet.toString());
+            DailyStatisticActivity.start(HistoryActivity.this, valueDataSet);
         }
 
         @Override
@@ -143,9 +140,11 @@ public class HistoryActivity extends GenericActivity {
     }
 
     private void setChartData(BarData data) {
+        mBarChart.clear();
         mBarChart.setData(data);
-
-        mBarChart.setVisibleXRangeMaximum(7f);
+        mBarChart.invalidate();
+        mBarChart.setVisibleXRange(5, 7);
         mBarChart.moveViewToX(data.getXValCount());
+        mBarChart.animateX(2000);
     }
 }

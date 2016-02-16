@@ -3,7 +3,9 @@ package com.erminesoft.motionview.motionview.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.MVApplication;
@@ -13,6 +15,7 @@ import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 public abstract class GenericActivity extends AppCompatActivity {
     protected final String TAG = this.getClass().getSimpleName();
     protected GoogleClientFacade mGoogleClientFacade;
+    protected ActionBar mActionBar;
 
     public final MVApplication getMVapplication() {
         return (MVApplication) getApplication();
@@ -31,6 +34,7 @@ public abstract class GenericActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mGoogleClientFacade = getMVapplication().getGoogleClientFacade();
+        mActionBar = getSupportActionBar();
     }
 
     @Override
@@ -38,5 +42,17 @@ public abstract class GenericActivity extends AppCompatActivity {
         if (requestCode == ErrorDialogFragment.REQUEST_RESOLVE_ERROR) {
             mGoogleClientFacade.tryConnectClient(resultCode);
         }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

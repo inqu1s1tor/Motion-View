@@ -7,19 +7,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 
-public class MainActivity extends GenericActivity {
-    private static final int DAILY_GOAL = 1200;
-
-    private TextView mDateTextView;
-    private TextView mStepsTextView;
-    private ProgressBar mProgressBar;
-
+public class MainActivity extends BasicDailyStatisticActivity {
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, MainActivity.class));
     }
@@ -27,17 +19,7 @@ public class MainActivity extends GenericActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
         setTitle(R.string.app_name);
-
-        mStepsTextView = (TextView) findViewById(R.id.steps_text_view);
-        mDateTextView = (TextView) findViewById(R.id.date_text_view);
-        mDateTextView.setText(getString(R.string.today_date_text));
-
-        mProgressBar = (ProgressBar) findViewById(R.id.daily_progress_bar);
-
-        mProgressBar.setMax(DAILY_GOAL);
 
         mGoogleClientFacade.getStepsPerDayFromHistory(new StepsChangingListener());
     }

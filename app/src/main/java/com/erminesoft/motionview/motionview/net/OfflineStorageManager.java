@@ -1,6 +1,7 @@
 package com.erminesoft.motionview.motionview.net;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -18,6 +19,7 @@ import com.google.android.gms.fitness.result.DailyTotalResult;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -97,11 +99,13 @@ class OfflineStorageManager {
 
     private DataReadRequest generateReadRequestForMonth(int month) {
         Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH);
 
         calendar.set(Calendar.MONTH, month + 1);
-        calendar.set(Calendar.DAY_OF_MONTH, 0);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
 
-        int currentMonth = calendar.get(Calendar.MONTH);
         long endTime = currentMonth == month ?
                 System.currentTimeMillis() :
                 calendar.getTimeInMillis();
@@ -110,6 +114,7 @@ class OfflineStorageManager {
         calendar.set(Calendar.DAY_OF_MONTH, 1);
 
         long startTime = calendar.getTimeInMillis();
+        Log.i("HISTORY", new Date(startTime) + ":" + new Date(endTime));
         return new DataReadRequest.Builder()
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
