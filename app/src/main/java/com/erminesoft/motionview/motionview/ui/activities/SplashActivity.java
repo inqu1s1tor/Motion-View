@@ -15,14 +15,16 @@ public class SplashActivity extends GenericActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         mGoogleClientFacade.buildGoogleApiClient(this, new GoogleConnectionCallback());
-        mGoogleClientFacade.subscribeForStepCounter();
     }
 
     private class GoogleConnectionCallback implements GoogleApiClient.ConnectionCallbacks {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
             if (checkConnectivity()) {
+                mGoogleClientFacade.subscribeForStepCounter();
+
                 MainActivity.start(SplashActivity.this);
+                finish();
             }
         }
 
