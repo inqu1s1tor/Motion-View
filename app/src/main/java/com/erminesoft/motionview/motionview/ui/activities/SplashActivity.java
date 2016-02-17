@@ -1,10 +1,13 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
 
+import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 
@@ -24,9 +27,11 @@ public class SplashActivity extends GenericActivity {
                 mGoogleClientFacade.subscribeForStepCounter();
 
                 MainActivity.start(SplashActivity.this);
+            } else {
                 finish();
             }
-        }
+                finish();
+            }
 
         @Override
         public void onConnectionSuspended(int i) {
@@ -34,9 +39,10 @@ public class SplashActivity extends GenericActivity {
         }
     }
 
+
     private boolean checkConnectivity() {
 
-        /*if (!ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
+        if (!ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
             showShortToast("Play Services are missed");
             return false;
         }
@@ -49,7 +55,12 @@ public class SplashActivity extends GenericActivity {
         if (!ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
             Toast.makeText(getBaseContext(), "Check bluetooth", Toast.LENGTH_SHORT).show();
             return false;
-        }*/
+        }
+
+        if (!ConnectivityChecker.isLocationActive(getApplicationContext())) {
+            Toast.makeText(getBaseContext(), "Check location service", Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
         return true;
     }

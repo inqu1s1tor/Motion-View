@@ -2,6 +2,7 @@ package com.erminesoft.motionview.motionview.util;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -24,5 +25,10 @@ public class ConnectivityChecker {
     public static boolean isPlayServiceArePresents(Context context) {
         int statusCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         return statusCode == ConnectionResult.SUCCESS;
+    }
+
+    public static boolean isLocationActive(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 }

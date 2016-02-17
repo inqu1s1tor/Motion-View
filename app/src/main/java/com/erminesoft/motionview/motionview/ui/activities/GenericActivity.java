@@ -29,6 +29,9 @@ public abstract class GenericActivity extends AppCompatActivity {
         Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 
+    public void showLongToast(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_LONG).show();
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
