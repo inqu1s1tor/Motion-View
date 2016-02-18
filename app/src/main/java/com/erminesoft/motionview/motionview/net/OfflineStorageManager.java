@@ -1,8 +1,12 @@
 package com.erminesoft.motionview.motionview.net;
 
+import android.support.annotation.NonNull;
+import android.widget.Toast;
+
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Bucket;
@@ -11,7 +15,9 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.result.DailyTotalResult;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.util.Calendar;
@@ -26,8 +32,6 @@ class OfflineStorageManager {
     private final Executor mExecutor;
     private GoogleApiClient mClient;
 
-    private int mSteps;
-
     public OfflineStorageManager() {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
     }
@@ -36,66 +40,37 @@ class OfflineStorageManager {
         mClient = client;
     }
 
-    public void incrementStepsCount(DataPoint stepsDeltaDataPoint) {
-        mSteps += stepsDeltaDataPoint.getValue(Field.FIELD_STEPS).asInt();
-    }
-
-    public int getSteps() {
-        return mSteps;
-    }
-
     public void getStepsPerDayFromHistory(final ResultListener<Integer> listener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                DataReadResult readResult = Fitness.HistoryApi.
-                        readData(mClient, generateReadRequestForDay()).await();
+                DailyTotalResult readResult = Fitness.HistoryApi.
+                        readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA).await();
 
-                if (isReadResultEmpty(readResult)) {
+                if (!readResult.getStatus().isSuccess() ||
+                        readResult.getTotal() == null) {
                     listener.onError(NO_DATA_ERROR);
+                    return;
                 }
 
-                Bucket bucket = readResult.getBuckets().get(0);
-                DataSet dataSet = bucket.getDataSets().get(0);
+                DataSet dataSet = readResult.getTotal();
+
+                if (dataSet.getDataPoints().isEmpty()) {
+                    listener.onSuccess(0);
+                    return;
+                }
+
                 DataPoint dataPoint = dataSet.getDataPoints().get(0);
 
-                int steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
-
-                listener.onSuccess(steps);
-
-                setSteps(steps);
+                listener.onSuccess(dataPoint.getValue(Field.FIELD_STEPS).asInt());
             }
         });
     }
 
-    private DataReadRequest generateReadRequestForDay() {
-        Calendar calendar = Calendar.getInstance();
-
-        long endTime = calendar.getTimeInMillis();
-
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-
-        long startTime = calendar.getTimeInMillis();
-
-        return new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .bucketByTime(1, TimeUnit.DAYS)
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .build();
-    }
-
-    private void setSteps(int steps) {
-        if (mSteps < steps) {
-            mSteps = steps;
-        }
-    }
-
-    public Status insertSteps(final DataPoint dataPoint) {
+    public void insertSteps(final DataPoint dataPoint) {
         DataSet dataSet = generateDataSet(dataPoint);
 
-        return Fitness.HistoryApi.insertData(mClient, dataSet).await();
+        Fitness.HistoryApi.insertData(mClient, dataSet);
     }
 
     private DataSet generateDataSet(DataPoint dataPoint) {
@@ -103,13 +78,17 @@ class OfflineStorageManager {
                 .setType(DataSource.TYPE_RAW)
                 .setAppPackageName(mClient.getContext())
                 .setDataType(dataPoint.getDataType())
+                .setAppPackageName(mClient.getContext())
                 .setDevice(dataPoint.getDataSource().getDevice())
+                .setName(mClient.getContext().getPackageName() + " - steps")
+                .setType(DataSource.TYPE_DERIVED)
                 .build();
 
         final DataSet dataSet = DataSet.create(dataSource);
 
         DataPoint generatedDataPoint = DataPoint.create(dataSource);
-        generatedDataPoint.getValue(Field.FIELD_STEPS).setInt(dataPoint.getValue(Field.FIELD_STEPS).asInt());
+        generatedDataPoint.getValue(Field.FIELD_STEPS)
+                .setInt(dataPoint.getValue(Field.FIELD_STEPS).asInt());
 
         long startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
         long endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
@@ -164,5 +143,53 @@ class OfflineStorageManager {
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
                 .bucketByTime(1, TimeUnit.DAYS)
                 .build();
+    }
+
+    public void getDataForAllTime(final ResultListener<List<Bucket>> resultListener) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                DataReadRequest request = new DataReadRequest.Builder()
+                        .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                        .bucketByTime(1, TimeUnit.DAYS)
+                        .setTimeRange(1, System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                        .build();
+
+                DataReadResult result = Fitness.HistoryApi
+                        .readData(mClient, request).await(1, TimeUnit.MINUTES);
+
+                if (!result.getStatus().isSuccess()) {
+                    resultListener.onError(NO_DATA_ERROR);
+                }
+
+                resultListener.onSuccess(result.getBuckets());
+            }
+        });
+
+    }
+
+    public void clearHistory() {
+        Calendar calendar = Calendar.getInstance();
+
+        long endTime = calendar.getTimeInMillis();
+        calendar.add(Calendar.MONTH, -1);
+        long startTime = calendar.getTimeInMillis();
+
+        Fitness.HistoryApi.deleteData(mClient, new DataDeleteRequest.Builder()
+                .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                .deleteAllSessions()
+                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                .build())
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        if (status.isSuccess()) {
+                            Toast.makeText(mClient.getContext(), "Deleting success", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            Toast.makeText(mClient.getContext(), status.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

@@ -12,21 +12,16 @@ import android.widget.Spinner;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.gms.fitness.data.Bucket;
-import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +30,7 @@ public class HistoryActivity extends GenericActivity {
 
     private static final float MIN_VALUES = 4f;
     private static final float MAX_VALUES = 4f;
-    private static final int ANIMATE_DURATION_MILLIS = 3000;
+    private static final int ANIMATE_DURATION_MILLIS = 1000;
     private static final String EMPTY_STRING = "";
 
     private BarChart mBarChart;
@@ -53,6 +48,7 @@ public class HistoryActivity extends GenericActivity {
         mActionBar.setDisplayHomeAsUpEnabled(true);
 
         initChart();
+        initSpinners();
 
         Spinner yearSpinner = (Spinner) findViewById(R.id.year_spinner);
 
@@ -75,6 +71,10 @@ public class HistoryActivity extends GenericActivity {
         monthSpinner.setAdapter(adapter);
         monthSpinner.setOnItemSelectedListener(new SpinnerItemSelectedListener());
         monthSpinner.setSelection(currentMonth);
+    }
+
+    private void initSpinners() {
+        
     }
 
     private CharSequence[] getAvailableMonths() {
@@ -149,30 +149,8 @@ public class HistoryActivity extends GenericActivity {
 
         @Override
         public void onSuccess(List<Bucket> result) {
-            List<String> xVals = new ArrayList<>();
-            List<BarEntry> entries = new ArrayList<>();
 
-            for (int i = 0; i < result.size(); i++) {
-                Bucket bucket = result.get(i);
-                DataSet dataSet = bucket.getDataSet(DataType.TYPE_STEP_COUNT_DELTA);
-
-                xVals.add(String.valueOf(i + 1));
-
-                float steps;
-                if (dataSet.getDataPoints().size() > 0) {
-                    DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                    steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
-                } else {
-                    steps = 0f;
-                }
-
-                entries.add(new BarEntry(steps, i, dataSet));
-            }
-
-            BarDataSet dataSet = new BarDataSet(
-                    entries, getString(R.string.chart_steps));
-            BarData data = new BarData(xVals, dataSet);
-
+            BarData data = ChartDataWorker.processListOfBuckets(result, getApplicationContext());
             setChartData(data);
         }
 

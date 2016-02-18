@@ -20,14 +20,13 @@ public class MainActivity extends BasicDailyStatisticActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.app_name);
-
-        mGoogleClientFacade.getStepsPerDayFromHistory(new StepsChangingListener());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
+        mGoogleClientFacade.getStepsPerDayFromHistory(new StepsChangingListener());
         mGoogleClientFacade.registerListenerForStepCounter(new StepsChangingListener());
     }
 
@@ -56,6 +55,9 @@ public class MainActivity extends BasicDailyStatisticActivity {
             case R.id.google_map:
                 GoogleMapActivity.start(this);
                 break;
+            case R.id.clear_history:
+                mGoogleClientFacade.clearData();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -80,7 +82,7 @@ public class MainActivity extends BasicDailyStatisticActivity {
 
         @Override
         public void onError(String error) {
-            Log.i(TAG, error);
+            Log.e(TAG, error);
         }
     }
 }

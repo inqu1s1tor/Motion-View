@@ -1,12 +1,10 @@
 package com.erminesoft.motionview.motionview.net;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSource;
@@ -20,8 +18,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 class RegisterManager {
-    public static final String TAG = RegisterManager.class.getSimpleName();
-
     private GoogleApiClient mClient;
 
     private OfflineStorageManager mOfflineStorageManager;
@@ -63,25 +59,18 @@ class RegisterManager {
             mSensorResultListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(final DataPoint dataPoint) {
-                    Status resultStatus = mOfflineStorageManager.insertSteps(dataPoint);
+                    mOfflineStorageManager.insertSteps(dataPoint);
 
-                    if (resultStatus.isSuccess()) {
-                        Log.i(TAG, dataPoint.toString());
-
-                        mOfflineStorageManager.incrementStepsCount(dataPoint);
-
-                        resultListenerFromActivity.onSuccess(mOfflineStorageManager.getSteps());
-                    } else {
-                        resultListenerFromActivity.onError("Error inserting data.");
-                    }
+                    mOfflineStorageManager.getStepsPerDayFromHistory(resultListenerFromActivity);
                 }
             };
 
             Fitness.SensorsApi.add(mClient, new SensorRequest.Builder()
                             .setDataSource(dataSource)
                             .setDataType(dataSource.getDataType())
+                            .setMaxDeliveryLatency(100, TimeUnit.MILLISECONDS)
                             .setSamplingRate(1, TimeUnit.SECONDS)
-                            .setAccuracyMode(SensorRequest.ACCURACY_MODE_DEFAULT)
+                            .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                             .build(),
                     mSensorResultListener);
         }

@@ -48,12 +48,20 @@ public class GoogleClientFacade {
         mBuildManager.onDialogDismissed();
     }
 
+    public void clearData() {
+        mOfflineStorageManager.clearHistory();
+    }
+
     public void getStepsPerDayFromHistory(ResultListener<Integer> stepsChangingListener) {
         mOfflineStorageManager.getStepsPerDayFromHistory(stepsChangingListener);
     }
 
     public void getDataPerMonthFromHistory(int month, ResultListener<List<Bucket>> resultListener) {
         mOfflineStorageManager.getDataPerMonthFromHistory(month, resultListener);
+    }
+
+    public void getDataForAllTime(ResultListener<List<Bucket>> resultListener) {
+        mOfflineStorageManager.getDataForAllTime(resultListener);
     }
 
     public void subscribeForStepCounter() {
@@ -71,7 +79,6 @@ public class GoogleClientFacade {
     public void unregisterListener() {
         mRegisterManager.unregisterListener();
     }
-
 
     public void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
         mMapManager.createLocationRequest(updateInterval, fastestInterval, displacement);
