@@ -47,15 +47,6 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 ### Android template
-# Built application files
-*.apk
-*.ap_
-
-# Files for the Dalvik VM
-*.dex
-
-# Java class files
-*.class
 
 # Generated files
 bin/
@@ -63,7 +54,6 @@ gen/
 
 # Gradle files
 .gradle/
-build/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -75,5 +65,4 @@ proguard/
 *.log
 
 # Android Studio Navigation editor temp files
-/google-services.json
 .navigation/

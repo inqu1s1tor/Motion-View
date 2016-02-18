@@ -11,6 +11,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 
     <application
         android:name=".core.MVApplication"
@@ -37,20 +40,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activities.GoogleMapActivity">
-
-        </activity>
-
-        <uses-feature
-            android:glEsVersion="0x00020000"
-            android:required="true"/>
+        <activity android:name=".ui.activities.GoogleMapActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDIGNX6PgIYI16N8UykUKYvoaUIp9ZbAiM"/>
+            android:value="AIzaSyAe0r1vi0c-di9DzUg1OIkcdEpEJBztDE8"/>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
+
     </application>
 
 </manifest>
