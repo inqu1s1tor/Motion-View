@@ -47,6 +47,9 @@ public abstract class GenericActivity extends AppCompatActivity {
         }
     }
 
+    protected void setHomeAsUpEnabled() {
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

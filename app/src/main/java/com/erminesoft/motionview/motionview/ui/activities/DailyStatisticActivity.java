@@ -30,7 +30,7 @@ public class DailyStatisticActivity extends BasicDailyStatisticActivity {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.daily_statistic_activity_name));
 
-        mActionBar.setDisplayHomeAsUpEnabled(true);
+        setHomeAsUpEnabled();
 
         Intent intent = getIntent();
         DataSet dataSet = intent.getParcelableExtra(DATASET_EXTRA);

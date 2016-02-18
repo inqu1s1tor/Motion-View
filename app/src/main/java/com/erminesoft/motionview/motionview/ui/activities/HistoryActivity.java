@@ -22,8 +22,9 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataSet;
 
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class HistoryActivity extends GenericActivity {
@@ -33,7 +34,14 @@ public class HistoryActivity extends GenericActivity {
     private static final int ANIMATE_DURATION_MILLIS = 1000;
     private static final String EMPTY_STRING = "";
 
+    private Map<Integer, List<String>> mAvailableHistory;
+
+    private ArrayAdapter<Integer> mYearAdapter;
+    private ArrayAdapter<String> mMonthAdapter;
+
     private BarChart mBarChart;
+    private Spinner mMonthSpinner;
+    private Spinner mYearSpinner;
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, HistoryActivity.class));
@@ -45,45 +53,42 @@ public class HistoryActivity extends GenericActivity {
         setContentView(R.layout.activity_history);
         setTitle(R.string.history_activity_title);
 
-        mActionBar.setDisplayHomeAsUpEnabled(true);
+        setHomeAsUpEnabled();
+
+        initDataForSpinners();
 
         initChart();
-        initSpinners();
+    }
 
-        Spinner yearSpinner = (Spinner) findViewById(R.id.year_spinner);
-
-        yearSpinner.setAdapter(new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                new Integer[]{TimeWorker.getCurrentYear()}));
-
-        yearSpinner.setSelection(0);
-
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                getAvailableMonths());
-
-        int currentMonth = TimeWorker.getCurrentMonth();
-        Spinner monthSpinner = (Spinner) findViewById(R.id.month_spinner);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        monthSpinner.setAdapter(adapter);
-        monthSpinner.setOnItemSelectedListener(new SpinnerItemSelectedListener());
-        monthSpinner.setSelection(currentMonth);
+    private void initDataForSpinners() {
+        mGoogleClientFacade.getDataForAllTime(new OnGotAllDataListener());
     }
 
     private void initSpinners() {
-        
+        initAdapters();
+
+        mYearSpinner = (Spinner) findViewById(R.id.activity_history_year_spinner);
+        mMonthSpinner = (Spinner) findViewById(R.id.activity_history_month_spinner);
+
+        mYearSpinner.setAdapter(mYearAdapter);
+        mMonthSpinner.setAdapter(mMonthAdapter);
+
+        mYearSpinner.setOnItemSelectedListener(new OnYearSpinnerItemSelectedListener());
+        mMonthSpinner.setOnItemSelectedListener(new OnMonthSpinnerItemSelectedListener());
+
+        mYearSpinner.setSelection(mYearAdapter.getCount() - 1, true);
     }
 
-    private CharSequence[] getAvailableMonths() {
-        CharSequence[] result;
-        result = getResources().getStringArray(R.array.month_array);
+    private void initAdapters() {
+        mYearAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        mMonthAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
 
-        result = Arrays.copyOf(result, TimeWorker.getCurrentMonth() + 1);
+        for (Integer year : mAvailableHistory.keySet()) {
+            mYearAdapter.add(year);
+        }
 
-        return result;
+        mYearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mMonthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
     private void initChart() {
@@ -104,11 +109,48 @@ public class HistoryActivity extends GenericActivity {
         mBarChart.setOnChartValueSelectedListener(new OnCharValueSelectedListenerImpl());
     }
 
-    private final class SpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {
+    private void updateMonthAndChart(int position) {
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int yearsDelta = mAvailableHistory.size() - position;
+        int year = currentYear - yearsDelta;
+
+        mMonthAdapter.clear();
+        mMonthAdapter.addAll(mAvailableHistory.get(year));
+
+        int currentMonth = mMonthSpinner.getSelectedItemPosition();
+        mMonthSpinner.setSelection(currentMonth == Spinner.INVALID_POSITION ?
+                calendar.get(Calendar.MONTH) : currentMonth);
+
+        updateChartData(currentMonth, year);
+    }
+
+    //TODO add yearsDelta using
+    private void updateChartData(int currentMonth, int yearsDelta) {
+        mGoogleClientFacade.getDataPerMonthFromHistory(
+                currentMonth,
+                new OnGotDataResultListener());
+    }
+
+    private void setChartData(final BarData data) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBarChart.clear();
+                mBarChart.setData(data);
+
+                mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
+                mBarChart.moveViewToX(data.getXValCount());
+                mBarChart.animateY(ANIMATE_DURATION_MILLIS);
+            }
+        });
+    }
+
+    private final class OnYearSpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            updateChartData(position);
+            updateMonthAndChart(position);
         }
 
         @Override
@@ -117,10 +159,17 @@ public class HistoryActivity extends GenericActivity {
 
     }
 
-    private void updateChartData(int currentMonth) {
-        mGoogleClientFacade.getDataPerMonthFromHistory(
-                currentMonth,
-                new OnGotDataResultListener());
+    private final class OnMonthSpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            updateChartData(position, 0);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+
     }
 
     private final class OnCharValueSelectedListenerImpl implements OnChartValueSelectedListener {
@@ -161,17 +210,29 @@ public class HistoryActivity extends GenericActivity {
 
     }
 
-    private void setChartData(final BarData data) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mBarChart.clear();
-                mBarChart.setData(data);
 
-                mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
-                mBarChart.moveViewToX(data.getXValCount());
-                mBarChart.animateY(ANIMATE_DURATION_MILLIS);
+    private final class OnGotAllDataListener implements ResultListener<List<Bucket>> {
+
+        @Override
+        public void onSuccess(List<Bucket> result) {
+            mAvailableHistory = ChartDataWorker.getAvailableMonthsForSpinner(result, getApplicationContext());
+
+            if (mAvailableHistory == null) {
+                showLongToast("We can't get your activities data.");
+                return;
             }
-        });
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    initSpinners();
+                }
+            });
+        }
+
+        @Override
+        public void onError(String error) {
+            Log.e(TAG, error);
+        }
     }
 }

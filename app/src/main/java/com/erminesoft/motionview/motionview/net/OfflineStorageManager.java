@@ -149,14 +149,20 @@ class OfflineStorageManager {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
+                Calendar calendar = Calendar.getInstance();
+                long endTime = calendar.getTimeInMillis();
+
+                calendar.add(Calendar.YEAR, -2);
+                long startTime = calendar.getTimeInMillis();
+
                 DataReadRequest request = new DataReadRequest.Builder()
                         .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
                         .bucketByTime(1, TimeUnit.DAYS)
-                        .setTimeRange(1, System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                         .build();
 
                 DataReadResult result = Fitness.HistoryApi
-                        .readData(mClient, request).await(1, TimeUnit.MINUTES);
+                        .readData(mClient, request).await(30, TimeUnit.SECONDS);
 
                 if (!result.getStatus().isSuccess()) {
                     resultListener.onError(NO_DATA_ERROR);

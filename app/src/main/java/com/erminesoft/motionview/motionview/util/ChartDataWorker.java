@@ -13,6 +13,8 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,15 +48,44 @@ public class ChartDataWorker {
         return new BarData(xVals, dataSet);
     }
 
-    public static List<String> getAvailableMonthForSpinner(List<Bucket> buckets, Context context) {
-        Map<String, List<String>> yearMonthMap = new HashMap<>();
+    public static Map<Integer, List<String>> getAvailableMonthsForSpinner(List<Bucket> buckets, Context context) {
+        if (buckets.isEmpty()) {
+            return null;
+        }
+
+        Map<Integer, List<String>> yearsMonthsMap = new HashMap<>();
+        List<String> months = Arrays
+                .asList(context.getResources().getStringArray(R.array.month_array));
+
         long startTime = System.currentTimeMillis();
         long endTime = startTime;
 
         for (Bucket bucket : buckets) {
-            startTime = Math.min(startTime, bucket.getStartTime(TimeUnit.MILLISECONDS));
+            if (!bucket.getDataSets().isEmpty()) {
+                startTime = bucket.getStartTime(TimeUnit.MILLISECONDS);
+                break;
+            }
         }
 
-        return null;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(startTime);
+
+        int startYear = calendar.get(Calendar.YEAR);
+        int startMonth = calendar.get(Calendar.MONTH);
+
+        yearsMonthsMap.put(startYear++, months.subList(startMonth, months.size() - 1));
+
+        calendar.setTimeInMillis(endTime);
+
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+
+        for (int i = startYear; i < currentYear; i++) {
+            yearsMonthsMap.put(i, months);
+        }
+
+        yearsMonthsMap.put(currentYear, months.subList(0, currentMonth));
+
+        return yearsMonthsMap;
     }
 }
