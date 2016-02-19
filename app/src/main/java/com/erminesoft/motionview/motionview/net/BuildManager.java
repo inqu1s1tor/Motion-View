@@ -27,7 +27,14 @@ class BuildManager {
                 .addApi(Fitness.HISTORY_API)
                 .addApi(Fitness.BLE_API)
                 .addApi(LocationServices.API)
+                .addScope(Fitness.SCOPE_ACTIVITY_READ_WRITE)
+                .addScope(Fitness.SCOPE_BODY_READ_WRITE)
+                .addScope(Fitness.SCOPE_LOCATION_READ_WRITE)
+                .addScope(Fitness.SCOPE_NUTRITION_READ_WRITE)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
+                .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
+                .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
+                .addScope(new Scope(Scopes.FITNESS_NUTRITION_READ_WRITE))
                 .addConnectionCallbacks(connectionCallbacks)
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override

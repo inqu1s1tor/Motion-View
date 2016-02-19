@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -86,22 +84,5 @@ public class GoogleMapActivity extends GenericActivity implements OnMapReadyCall
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings:
-                break;
-            case R.id.history:
-                HistoryActivity.start(this);
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

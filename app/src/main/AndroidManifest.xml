@@ -43,6 +43,8 @@
 
         <activity android:name=".ui.activities.GoogleMapActivity"/>
 
+        <activity android:name=".ui.activities.SettingsActivity" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAe0r1vi0c-di9DzUg1OIkcdEpEJBztDE8"/>

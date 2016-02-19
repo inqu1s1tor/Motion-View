@@ -40,7 +40,6 @@ public class MainActivity extends BasicDailyStatisticActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-
         return true;
     }
 
@@ -48,6 +47,7 @@ public class MainActivity extends BasicDailyStatisticActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings:
+                SettingsActivity.start(this);
                 break;
             case R.id.history:
                 HistoryActivity.start(this);

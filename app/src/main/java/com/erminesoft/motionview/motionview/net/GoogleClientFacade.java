@@ -6,8 +6,11 @@ import android.support.v4.app.FragmentActivity;
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.request.BleScanCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -22,6 +25,7 @@ public class GoogleClientFacade {
     private OfflineStorageManager mOfflineStorageManager;
     private SubscribingManager mSubscribingManager;
     private GoogleMapManager mMapManager;
+    private BluetoothManager mBluetoothManager;
 
     public GoogleClientFacade() {
         mBuildManager = new BuildManager();
@@ -29,6 +33,7 @@ public class GoogleClientFacade {
         mSubscribingManager = new SubscribingManager();
         mRegisterManager = new RegisterManager(mOfflineStorageManager);
         mMapManager = new GoogleMapManager();
+        mBluetoothManager = new BluetoothManager();
     }
 
     public void buildGoogleApiClient(
@@ -40,6 +45,7 @@ public class GoogleClientFacade {
         mSubscribingManager.setClient(mClient);
         mRegisterManager.setClient(mClient);
         mMapManager.setClient(mClient);
+        mBluetoothManager.setClient(mClient);
     }
 
     public void tryConnectClient(int resultCode) {
@@ -142,6 +148,30 @@ public class GoogleClientFacade {
     public void stopRouteOnMap() {
         mMapManager.stopRouteOnMap();
     }
+
+
+    public void startBleScan() {
+        mBluetoothManager.startBleScan();
+    }
+
+    public void setRequest(int timeout) {
+        mBluetoothManager.setRequest(timeout);
+    }
+
+    public void setResultCallback(ResultCallback<Status> callback) {
+        mBluetoothManager.setResultCallback(callback);
+    }
+
+    public void setBleScanCallback(BleScanCallback callback) {
+        mBluetoothManager.setBleScanCallback(callback);
+    }
+
+
+
+
+
+
+
 
     public GoogleApiClient getApiClient() {
         return mClient;
