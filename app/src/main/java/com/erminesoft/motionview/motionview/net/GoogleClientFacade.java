@@ -10,6 +10,7 @@ import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
@@ -81,6 +82,7 @@ public class GoogleClientFacade {
         mRegisterManager.unregisterListener();
     }
 
+
     public void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
         mMapManager.createLocationRequest(updateInterval, fastestInterval, displacement);
     }
@@ -97,6 +99,10 @@ public class GoogleClientFacade {
         return mMapManager.getLocation();
     }
 
+    public Location getPreLastLocation() {
+        return mMapManager.getPreLastLocation();
+    }
+
     public void setOnLocationChangeListener(LocationListener listener) {
         mMapManager.setOnChangeLocationListener(listener);
     }
@@ -109,8 +115,32 @@ public class GoogleClientFacade {
         mMapManager.setGoogleMap(gm);
     }
 
+    public void addPointsToLineForRoute(LatLng mPoint) {
+        mMapManager.addPointsToLineForRoute(mPoint);
+    }
+
+    public void clearPoints() {
+        mMapManager.clearPoints();
+    }
+
+    public void clearMap() {
+        mMapManager.clearMap();
+    }
+
+    public void clearRouteLine() {
+        mMapManager.clearRouteLine();
+    }
+
     public void setMarkerAtFirstShow() {
         mMapManager.setMarkerAtFirstShow();
+    }
+
+    public void startRouteOnMap() {
+        mMapManager.startRouteOnMap();
+    }
+
+    public void stopRouteOnMap() {
+        mMapManager.stopRouteOnMap();
     }
 
     public GoogleApiClient getApiClient() {

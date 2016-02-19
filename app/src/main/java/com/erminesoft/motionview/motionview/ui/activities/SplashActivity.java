@@ -1,7 +1,6 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
 
-import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
@@ -23,15 +22,16 @@ public class SplashActivity extends GenericActivity {
     private class GoogleConnectionCallback implements GoogleApiClient.ConnectionCallbacks {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
+
             if (checkConnectivity()) {
                 mGoogleClientFacade.subscribeForStepCounter();
-
                 MainActivity.start(SplashActivity.this);
             } else {
                 finish();
             }
-                finish();
-            }
+
+            finish();
+        }
 
         @Override
         public void onConnectionSuspended(int i) {
@@ -52,11 +52,13 @@ public class SplashActivity extends GenericActivity {
             return false;
         }
 
-        if (!ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
+        /*if (!ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
             Toast.makeText(getBaseContext(), "Check bluetooth", Toast.LENGTH_SHORT).show();
             return false;
-        }
+        }*/
 
+
+        // checkout GPS connection & satellites quantity
         if (!ConnectivityChecker.isLocationActive(getApplicationContext())) {
             Toast.makeText(getBaseContext(), "Check location service", Toast.LENGTH_SHORT).show();
             return false;

@@ -219,6 +219,7 @@ public class HistoryActivity extends GenericActivity {
 
         @Override
         public void onSuccess(List<Bucket> result) {
+
             BarData data = ChartDataWorker.processListOfBuckets(result, getApplicationContext());
             setChartData(data);
         }
