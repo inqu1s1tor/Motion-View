@@ -138,7 +138,6 @@ public class HistoryActivity extends GenericActivity {
         updateChartData(item, year);
     }
 
-    //TODO add yearsDelta using
     private void updateChartData(ChartDataWorker.Month currentMonth, int year) {
         mGoogleClientFacade.getDataPerMonthFromHistory(
                 currentMonth,
@@ -235,7 +234,7 @@ public class HistoryActivity extends GenericActivity {
 
         @Override
         public void onSuccess(List<Bucket> result) {
-            mAvailableHistory = ChartDataWorker.getAvailableMonthsForSpinner(result, getApplicationContext());
+            mAvailableHistory = ChartDataWorker.getAvailableYearsMonthsForSpinner(result, getApplicationContext());
 
             if (mAvailableHistory == null) {
                 showLongToast("We can't get your activities data.");

@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 public class ChartDataWorker {
@@ -64,12 +65,12 @@ public class ChartDataWorker {
         return new BarData(xVals, dataSet);
     }
 
-    public static Map<Integer, List<Month>> getAvailableMonthsForSpinner(List<Bucket> buckets, Context context) {
+    public static Map<Integer, List<Month>> getAvailableYearsMonthsForSpinner(List<Bucket> buckets, Context context) {
         if (buckets.isEmpty()) {
             return null;
         }
 
-        Map<Integer, List<Month>> yearsMonthsMap = new HashMap<>();
+        Map<Integer, List<Month>> yearsMonthsMap = new TreeMap<>();
 
         long startTime = System.currentTimeMillis();
         long endTime = startTime;
@@ -108,7 +109,7 @@ public class ChartDataWorker {
             yearsMonthsMap.put(i, MONTHS_LIST);
         }
 
-        yearsMonthsMap.put(currentYear, MONTHS_LIST.subList(0, currentMonth));
+        yearsMonthsMap.put(currentYear, MONTHS_LIST.subList(0, currentMonth + 1));
 
         return yearsMonthsMap;
     }
