@@ -34,10 +34,10 @@ public class HistoryActivity extends GenericActivity {
     private static final int ANIMATE_DURATION_MILLIS = 1000;
     private static final String EMPTY_STRING = "";
 
-    private Map<Integer, List<String>> mAvailableHistory;
+    private Map<Integer, List<ChartDataWorker.Month>> mAvailableHistory;
 
     private ArrayAdapter<Integer> mYearAdapter;
-    private ArrayAdapter<String> mMonthAdapter;
+    private ArrayAdapter<ChartDataWorker.Month> mMonthAdapter;
 
     private BarChart mBarChart;
     private Spinner mMonthSpinner;
@@ -61,6 +61,8 @@ public class HistoryActivity extends GenericActivity {
     }
 
     private void initDataForSpinners() {
+        ChartDataWorker.init(this);
+
         mGoogleClientFacade.getDataForAllTime(new OnGotAllDataListener());
     }
 
@@ -111,25 +113,44 @@ public class HistoryActivity extends GenericActivity {
 
     private void updateMonthAndChart(int position) {
         Calendar calendar = Calendar.getInstance();
-        int currentYear = calendar.get(Calendar.YEAR);
-        int yearsDelta = mAvailableHistory.size() - position;
-        int year = currentYear - yearsDelta;
+        int year = getYearBySpinnerPosition(position);
 
         mMonthAdapter.clear();
         mMonthAdapter.addAll(mAvailableHistory.get(year));
 
-        int currentMonth = mMonthSpinner.getSelectedItemPosition();
-        mMonthSpinner.setSelection(currentMonth == Spinner.INVALID_POSITION ?
-                calendar.get(Calendar.MONTH) : currentMonth);
+        int selectedPosition = mMonthSpinner.getSelectedItemPosition();
+        ChartDataWorker.Month month;
 
-        updateChartData(currentMonth, year);
+        if (selectedPosition == AdapterView.INVALID_POSITION) {
+            month = new ChartDataWorker.Month(calendar.get(Calendar.MONTH));
+        } else {
+            month = mMonthAdapter.getItem(selectedPosition);
+        }
+
+        mMonthSpinner.setSelection(mMonthAdapter.getPosition(month));
+
+        updateChartData(month, year);
+    }
+
+    private void updateChartData(ChartDataWorker.Month item) {
+        int year = getYearBySpinnerPosition(mYearSpinner.getSelectedItemPosition());
+
+        updateChartData(item, year);
     }
 
     //TODO add yearsDelta using
-    private void updateChartData(int currentMonth, int yearsDelta) {
+    private void updateChartData(ChartDataWorker.Month currentMonth, int year) {
         mGoogleClientFacade.getDataPerMonthFromHistory(
                 currentMonth,
+                year,
                 new OnGotDataResultListener());
+    }
+
+    private int getYearBySpinnerPosition(int position) {
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int yearsDelta = mAvailableHistory.size() - 1 - position;
+        return currentYear - yearsDelta;
     }
 
     private void setChartData(final BarData data) {
@@ -163,7 +184,7 @@ public class HistoryActivity extends GenericActivity {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            updateChartData(position, 0);
+            updateChartData(mMonthAdapter.getItem(position));
         }
 
         @Override
@@ -198,7 +219,6 @@ public class HistoryActivity extends GenericActivity {
 
         @Override
         public void onSuccess(List<Bucket> result) {
-
             BarData data = ChartDataWorker.processListOfBuckets(result, getApplicationContext());
             setChartData(data);
         }

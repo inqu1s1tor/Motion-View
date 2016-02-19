@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -99,12 +100,12 @@ class OfflineStorageManager {
         return dataSet;
     }
 
-    public void getDataPerMonthFromHistory(final int month,
+    public void getDataPerMonthFromHistory(final ChartDataWorker.Month month, final int year,
                                            final ResultListener<List<Bucket>> resultListener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                DataReadRequest request = generateReadRequestForMonth(month);
+                DataReadRequest request = generateReadRequestForMonth(month, year);
 
                 DataReadResult readResult = Fitness.HistoryApi.readData(mClient, request).await();
 
@@ -122,20 +123,21 @@ class OfflineStorageManager {
         return readResult.getBuckets().size() == 0 && readResult.getDataSets().size() == 0;
     }
 
-    private DataReadRequest generateReadRequestForMonth(int month) {
+    private DataReadRequest generateReadRequestForMonth(ChartDataWorker.Month month, int year) {
         Calendar calendar = Calendar.getInstance();
         int currentMonth = TimeWorker.getCurrentMonth();
 
-        calendar.set(Calendar.MONTH, month + 1);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month.getIndex() + 1);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
 
-        long endTime = currentMonth == month ?
+        long endTime = currentMonth == month.getIndex() ?
                 System.currentTimeMillis() :
                 calendar.getTimeInMillis();
 
-        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.MONTH, month.getIndex());
 
         long startTime = calendar.getTimeInMillis();
         return new DataReadRequest.Builder()
