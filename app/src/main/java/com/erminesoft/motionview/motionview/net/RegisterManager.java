@@ -61,11 +61,7 @@ class RegisterManager {
                 public void onDataPoint(final DataPoint dataPoint) {
                     mOfflineStorageManager.insertSteps(dataPoint);
 
-                    mOfflineStorageManager.getStepsPerDayFromHistory(resultListenerFromActivity);
-                    mOfflineStorageManager.getActiveTimePerDay(resultListenerFromActivity);
-                    mOfflineStorageManager.getAverageSpeedPerDay(resultListenerFromActivity);
-                    mOfflineStorageManager.getCaloriesPerDay(resultListenerFromActivity);
-                    mOfflineStorageManager.getDistancePerDay(resultListenerFromActivity);
+                    mOfflineStorageManager.getDataPerDay(resultListenerFromActivity);
                 }
             };
 

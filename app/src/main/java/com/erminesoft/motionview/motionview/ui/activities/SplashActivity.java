@@ -1,10 +1,12 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.services.ReceiverService;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -21,6 +23,9 @@ public class SplashActivity extends GenericActivity {
     private class GoogleConnectionCallback implements GoogleApiClient.ConnectionCallbacks {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
+
+            Intent intent = new Intent(getApplicationContext(), ReceiverService.class);
+            startService(intent);
 
             if (checkConnectivity()) {
                 mGoogleClientFacade.subscribe();
