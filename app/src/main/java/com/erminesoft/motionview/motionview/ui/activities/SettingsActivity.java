@@ -9,10 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.core.callback.SettingsInit;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.BleDevice;
@@ -21,13 +24,20 @@ import com.google.android.gms.fitness.request.BleScanCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsActivity extends GenericActivity {
+public class SettingsActivity extends GenericActivity implements SettingsInit {
 
     private List<String> devicesArray = new ArrayList<>();
-    private ArrayAdapter adapter = null;
-    private ListView deviceList;
+    private ArrayAdapter adapter;
+    private ListView btDeviceList;
     private ProgressBar pBar;
     private Button scanBtDevices;
+
+    private TextView userWeightHeader;
+    private TextView userHeightHeader;
+    private EditText userWeightText;
+    private EditText userHeightText;
+
+
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, SettingsActivity.class));
@@ -38,12 +48,8 @@ public class SettingsActivity extends GenericActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         setHomeAsUpEnabled();
+        initSettings();
 
-        deviceList = (ListView) findViewById(R.id.bt_available_devices);
-        pBar = (ProgressBar) findViewById(R.id.bt_scan_progress);
-        scanBtDevices = (Button) findViewById(R.id.bt_scan_button);
-        adapter = new ArrayAdapter<String>(mGoogleClientFacade.getApiClient().getContext(), R.layout.support_simple_spinner_dropdown_item, devicesArray);
-        deviceList.setAdapter(adapter);
 
         mGoogleClientFacade.setBleScanCallback(new BleScanCallback() {
             @Override
@@ -56,7 +62,7 @@ public class SettingsActivity extends GenericActivity {
             public void onScanStopped() {
                 Log.d("!!!!!!", "Scan stopped");
                 if (devicesArray.isEmpty()) {
-                    noRelusts();
+                    noResults();
                 }
 
             }
@@ -70,25 +76,37 @@ public class SettingsActivity extends GenericActivity {
         });
 
         mGoogleClientFacade.setRequest(10);
-
         scanBtDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 devicesArray.clear();
-                deviceList.setVisibility(View.GONE);
+                btDeviceList.setVisibility(View.GONE);
                 pBar.setVisibility(View.VISIBLE);
                 mGoogleClientFacade.startBleScan();
             }
         });
-
     }
 
-    private void noRelusts() {
+
+    public void initSettings() {
+        initSex();
+        initWeight();
+        initHeight();
+        initDayGoalType();
+        initDayGoalData();
+        initCleanHistory();
+        initLoginToSocial();
+        initBtooth();
+        initDisconnectOfSocialNetworks();
+        initConnectedSocialNetworks();
+    }
+
+    private void noResults() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 pBar.setVisibility(View.GONE);
-                deviceList.setVisibility(View.VISIBLE);
+                btDeviceList.setVisibility(View.VISIBLE);
                 devicesArray.add("Not found any BLE device");
                 adapter.notifyDataSetChanged();
             }
@@ -100,12 +118,72 @@ public class SettingsActivity extends GenericActivity {
             @Override
             public void run() {
                 pBar.setVisibility(View.GONE);
-                deviceList.setVisibility(View.VISIBLE);
+                btDeviceList.setVisibility(View.VISIBLE);
                 devicesArray.add(device.getName() + "  " + device.getAddress());
                 adapter.notifyDataSetChanged();
 
             }
         });
+
+    }
+
+    @Override
+    public void initSex() {
+
+    }
+
+    @Override
+    public void initWeight() {
+        userWeightHeader = (TextView) findViewById(R.id.settings_user_weight_header);
+        userWeightHeader.setText(getString(R.string.settings_user_weight_header));
+        userWeightText = (EditText) findViewById(R.id.settings_user_weight);
+        userWeightText.setText("70" + " " + getString(R.string.weight_unit));
+    }
+
+    @Override
+    public void initHeight() {
+        userHeightHeader = (TextView) findViewById(R.id.settings_user_height_header);
+        userHeightHeader.setText(getString(R.string.settings_user_height_header));
+        userHeightText = (EditText) findViewById(R.id.settings_user_height);
+        userHeightText.setText("170" + " " + getString(R.string.weight_unit));
+    }
+
+    @Override
+    public void initDayGoalType() {
+
+    }
+
+    @Override
+    public void initDayGoalData() {
+
+    }
+
+    @Override
+    public void initCleanHistory() {
+
+    }
+
+    @Override
+    public void initLoginToSocial() {
+
+    }
+
+    @Override
+    public void initBtooth() {
+        btDeviceList = (ListView) findViewById(R.id.bt_available_devices);
+        pBar = (ProgressBar) findViewById(R.id.bt_scan_progress);
+        scanBtDevices = (Button) findViewById(R.id.bt_scan_button);
+        adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, devicesArray);
+        btDeviceList.setAdapter(adapter);
+    }
+
+    @Override
+    public void initDisconnectOfSocialNetworks() {
+
+    }
+
+    @Override
+    public void initConnectedSocialNetworks() {
 
     }
 }

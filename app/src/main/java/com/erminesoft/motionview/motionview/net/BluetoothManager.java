@@ -17,8 +17,6 @@ class BluetoothManager {
     private StartBleScanRequest request;
     private GoogleApiClient mGoogleApiClient;
 
-    public static final String TAG = RegisterManager.class.getSimpleName();
-
     public void setClient(GoogleApiClient client) {
         mGoogleApiClient = client;
     }
