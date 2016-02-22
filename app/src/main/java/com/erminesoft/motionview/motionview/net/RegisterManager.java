@@ -2,7 +2,7 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.support.annotation.NonNull;
 
-import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.fitness.Fitness;
@@ -34,7 +34,7 @@ class RegisterManager {
     }
 
     public void registerListener(final DataType dataType,
-                                 final ResultListener<Integer> resultListener) {
+                                 final DataChangedListener resultListener) {
         mFoundDataSourcesResultCallback = new ResultCallback<DataSourcesResult>() {
             @Override
             public void onResult(@NonNull DataSourcesResult dataSourcesResult) {
@@ -54,7 +54,7 @@ class RegisterManager {
     }
 
     public void registerListener(List<DataSource> dataSources,
-                                 final ResultListener<Integer> resultListenerFromActivity) {
+                                 final DataChangedListener resultListenerFromActivity) {
         for (DataSource dataSource : dataSources) {
             mSensorResultListener = new OnDataPointListener() {
                 @Override
@@ -62,6 +62,10 @@ class RegisterManager {
                     mOfflineStorageManager.insertSteps(dataPoint);
 
                     mOfflineStorageManager.getStepsPerDayFromHistory(resultListenerFromActivity);
+                    mOfflineStorageManager.getActiveTimePerDay(resultListenerFromActivity);
+                    mOfflineStorageManager.getAverageSpeedPerDay(resultListenerFromActivity);
+                    mOfflineStorageManager.getCaloriesPerDay(resultListenerFromActivity);
+                    mOfflineStorageManager.getDistancePerDay(resultListenerFromActivity);
                 }
             };
 

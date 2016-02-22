@@ -29,4 +29,8 @@
     <string name="daily_statistic_activity_name">Daily Statistic</string>
     <string name="delete">DELETE</string>
     <string name="empty_string"/>
+    <string name="total_calories_format">Total calories: %f</string>
+    <string name="total_distance_format">Distance: %f</string>
+    <string name="total_time_format">Total time: %d</string>
+    <string name="avg_speed_format">Average speed: %f</string>
 </resources>

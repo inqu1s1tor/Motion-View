@@ -31,5 +31,37 @@
             android:layout_margin="@dimen/text_view_default_margin"
             android:textSize="@dimen/steps_text_size"/>
 
+        <TextView
+            android:id="@+id/calories_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/text_view_default_margin"
+            android:textSize="@dimen/steps_text_size"/>
+
+        <TextView
+            android:id="@+id/distance_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/text_view_default_margin"
+            android:textSize="@dimen/steps_text_size"/>
+
+        <TextView
+            android:id="@+id/avg_speed_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/text_view_default_margin"
+            android:textSize="@dimen/steps_text_size"/>
+
+        <TextView
+            android:id="@+id/total_time_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/text_view_default_margin"
+            android:textSize="@dimen/steps_text_size"/>
+
     </LinearLayout>
 </ScrollView>

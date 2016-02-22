@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.BarChart;
@@ -214,7 +214,7 @@ public class HistoryActivity extends GenericActivity {
         }
     }
 
-    private final class OnGotDataResultListener implements ResultListener<List<Bucket>> {
+    private final class OnGotDataResultListener implements BucketsResultListener {
 
         @Override
         public void onSuccess(List<Bucket> result) {
@@ -231,7 +231,7 @@ public class HistoryActivity extends GenericActivity {
     }
 
 
-    private final class OnGotAllDataListener implements ResultListener<List<Bucket>> {
+    private final class OnGotAllDataListener implements BucketsResultListener {
 
         @Override
         public void onSuccess(List<Bucket> result) {

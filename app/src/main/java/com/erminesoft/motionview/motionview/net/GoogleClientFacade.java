@@ -3,19 +3,17 @@ package com.erminesoft.motionview.motionview.net;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 
-import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
+import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.request.BleScanCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.List;
 
 public class GoogleClientFacade {
 
@@ -60,27 +58,27 @@ public class GoogleClientFacade {
         mOfflineStorageManager.clearHistory();
     }
 
-    public void getStepsPerDayFromHistory(ResultListener<Integer> stepsChangingListener) {
-        mOfflineStorageManager.getStepsPerDayFromHistory(stepsChangingListener);
+    public void getDataPerDay(DataChangedListener stepsChangingListener) {
+        mOfflineStorageManager.getDataPerDay(stepsChangingListener);
     }
 
-    public void getDataPerMonthFromHistory(ChartDataWorker.Month month, int year, ResultListener<List<Bucket>> resultListener) {
+    public void getDataPerMonthFromHistory(ChartDataWorker.Month month, int year, BucketsResultListener resultListener) {
         mOfflineStorageManager.getDataPerMonthFromHistory(month, year, resultListener);
     }
 
-    public void getDataForAllTime(ResultListener<List<Bucket>> resultListener) {
+    public void getDataForAllTime(BucketsResultListener resultListener) {
         mOfflineStorageManager.getDataForAllTime(resultListener);
     }
 
-    public void subscribeForStepCounter() {
-        mSubscribingManager.subscribeForStepCounter();
+    public void subscribe() {
+        mSubscribingManager.subscribe();
     }
 
-    public void unSubscribeStepCounter() {
-        mSubscribingManager.unSubscribeStepCounter();
+    public void unsubscribe() {
+        mSubscribingManager.unsubscribe();
     }
 
-    public void registerListenerForStepCounter(ResultListener<Integer> stepsChangingListener) {
+    public void registerListenerForStepCounter(DataChangedListener stepsChangingListener) {
         mRegisterManager.registerListener(DataType.TYPE_STEP_COUNT_DELTA, stepsChangingListener);
     }
 
@@ -166,14 +164,11 @@ public class GoogleClientFacade {
         mBluetoothManager.setBleScanCallback(callback);
     }
 
+    public void saveUserHeight(int heightCentimeters) {
+        mOfflineStorageManager.saveUserHeight(heightCentimeters);
+    }
 
-
-
-
-
-
-
-    public GoogleApiClient getApiClient() {
-        return mClient;
+    public void saveUserWeight(float weight) {
+        mOfflineStorageManager.saveUserWeight(weight);
     }
 }

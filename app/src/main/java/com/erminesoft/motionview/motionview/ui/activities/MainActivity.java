@@ -9,7 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.callback.ResultListener;
+import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 
 public class MainActivity extends BasicDailyStatisticActivity {
     public static void start(Activity activity) {
@@ -26,8 +26,8 @@ public class MainActivity extends BasicDailyStatisticActivity {
     protected void onStart() {
         super.onStart();
 
-        mGoogleClientFacade.getStepsPerDayFromHistory(new StepsChangingListener());
-        mGoogleClientFacade.registerListenerForStepCounter(new StepsChangingListener());
+        mGoogleClientFacade.getDataPerDay(new DataChangedListenerImpl());
+        mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
     }
 
     @Override
@@ -68,16 +68,31 @@ public class MainActivity extends BasicDailyStatisticActivity {
         mStepsTextView.setText(String.format(getString(R.string.total_steps_text_format), result));
     }
 
-    private final class StepsChangingListener implements ResultListener<Integer> {
+    private final class DataChangedListenerImpl implements DataChangedListener {
 
         @Override
-        public void onSuccess(@Nullable final Integer result) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setStepsCount(result);
-                }
-            });
+        public void onStepsChanged(int steps) {
+            setStepsCount(steps);
+        }
+
+        @Override
+        public void onCaloriesChanged(float calories) {
+            mCaloriesTextView.setText(String.format(getString(R.string.total_calories_format), calories));
+        }
+
+        @Override
+        public void onDistanceChanged(float distance) {
+            mDistanceTextView.setText(String.format(getString(R.string.total_distance_format), distance));
+        }
+
+        @Override
+        public void onTimeChanged(int time) {
+            mTimeTextView.setText(String.format(getString(R.string.total_time_format), time));
+        }
+
+        @Override
+        public void onSpeedChanged(float speed) {
+            mSpeedTextView.setText(String.format(getString(R.string.avg_speed_format), speed));
         }
 
         @Override
