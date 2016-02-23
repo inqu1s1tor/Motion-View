@@ -12,6 +12,7 @@ import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 
 public class MainActivity extends BasicDailyStatisticActivity {
+    private static final String FITNESS_HISTORY_INTENT = "com.google.android.gms.fitness.settings.GOOGLE_FITNESS_SETTINGS";
     private TextView mDateTextView;
 
     public static void start(Activity activity) {
@@ -66,7 +67,8 @@ public class MainActivity extends BasicDailyStatisticActivity {
                 GoogleMapActivity.start(this);
                 break;
             case R.id.clear_history:
-                mGoogleClientFacade.clearData();
+                Intent settings = new Intent(FITNESS_HISTORY_INTENT);
+                startActivity(settings);
                 break;
         }
 

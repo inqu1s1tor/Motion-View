@@ -2,16 +2,12 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -19,7 +15,6 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
@@ -164,32 +159,6 @@ class OfflineStorageManager {
                 resultListener.onSuccess(result.getBuckets());
             }
         });
-
-    }
-
-    public void clearHistory() {
-        Calendar calendar = Calendar.getInstance();
-
-        long endTime = calendar.getTimeInMillis();
-        calendar.add(Calendar.MONTH, -1);
-        long startTime = calendar.getTimeInMillis();
-
-        Fitness.HistoryApi.deleteData(mClient, new DataDeleteRequest.Builder()
-                .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                .deleteAllSessions()
-                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                .build())
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Toast.makeText(mClient.getContext(), "Deleting success", Toast.LENGTH_SHORT).show();
-                        } else {
-
-                            Toast.makeText(mClient.getContext(), status.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 
     public void saveUserHeight(int heightCentimeters) {

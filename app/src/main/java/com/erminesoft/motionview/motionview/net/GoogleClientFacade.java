@@ -54,10 +54,6 @@ public class GoogleClientFacade {
         mBuildManager.onDialogDismissed();
     }
 
-    public void clearData() {
-        mOfflineStorageManager.clearHistory();
-    }
-
     public void getDataPerDay(int day, int month, int year, DataChangedListener stepsChangingListener) {
         mOfflineStorageManager.getDataPerDay(day, month, year, stepsChangingListener);
     }
