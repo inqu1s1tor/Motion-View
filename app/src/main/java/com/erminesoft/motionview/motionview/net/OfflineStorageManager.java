@@ -30,7 +30,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class OfflineStorageManager {
+class OfflineStorageManager {
     private static final String NO_DATA_ERROR = "No data per day";
 
     private final Executor mExecutor;
@@ -417,9 +417,9 @@ public class OfflineStorageManager {
 
     public void getDataPerDay(DataChangedListener listener) {
         getStepsPerDayFromHistory(listener);
-        getCaloriesPerDay(listener);
         getDistancePerDay(listener);
-        getAverageSpeedPerDay(listener);
+        getCaloriesPerDay(listener);
         getActiveTimePerDay(listener);
+        getAverageSpeedPerDay(listener);
     }
 }

@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class GoogleClientFacade {
 
-    public GoogleApiClient mClient;
+    private GoogleApiClient mClient;
     private BuildManager mBuildManager;
     private RegisterManager mRegisterManager;
     private OfflineStorageManager mOfflineStorageManager;
