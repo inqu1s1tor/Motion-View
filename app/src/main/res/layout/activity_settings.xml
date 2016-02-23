@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_user_weight_header"
+            android:text="@string/settings_user_weight_hint"
             android:id="@+id/settings_user_weight_header" />
 
         <android.support.design.widget.TextInputLayout
@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_user_height_header"
+            android:text="@string/settings_user_height_hint"
             android:id="@+id/settings_user_height_header" />
 
         <android.support.design.widget.TextInputLayout

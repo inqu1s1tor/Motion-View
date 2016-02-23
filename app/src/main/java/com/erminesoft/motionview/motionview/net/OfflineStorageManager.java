@@ -167,7 +167,7 @@ class OfflineStorageManager {
                 float avgSpeed = 0;
                 if (!dataSet.getDataPoints().isEmpty()) {
                     final DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                    avgSpeed = dataPoint.getValue(Field.FIELD_AVERAGE).asInt();
+                    avgSpeed = dataPoint.getValue(Field.FIELD_AVERAGE).asFloat();
                 }
 
                 final float finalSpeed = avgSpeed;
