@@ -57,7 +57,7 @@ public class ChartDataWorker {
                 steps = 0f;
             }
 
-            entries.add(new BarEntry(steps, i, dataSet));
+            entries.add(new BarEntry(steps, i, bucket.getDataSets()));
         }
 
         BarDataSet dataSet = new BarDataSet(

@@ -21,6 +21,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataType;
 
 import java.util.Calendar;
 import java.util.List;
@@ -108,7 +109,7 @@ public class HistoryActivity extends GenericActivity {
         mBarChart.setDrawBarShadow(true);
         mBarChart.setDragDecelerationEnabled(true);
         mBarChart.setAutoScaleMinMaxEnabled(true);
-        mBarChart.setOnChartValueSelectedListener(new OnCharValueSelectedListenerImpl());
+        mBarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListenerImpl());
     }
 
     private void updateMonthAndChart(int position) {
@@ -128,8 +129,6 @@ public class HistoryActivity extends GenericActivity {
         }
 
         mMonthSpinner.setSelection(mMonthAdapter.getPosition(month));
-
-        updateChartData(month, year);
     }
 
     private void updateChartData(ChartDataWorker.Month item) {
@@ -153,17 +152,12 @@ public class HistoryActivity extends GenericActivity {
     }
 
     private void setChartData(final BarData data) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mBarChart.clear();
-                mBarChart.setData(data);
+        mBarChart.clear();
+        mBarChart.setData(data);
 
-                mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
-                mBarChart.moveViewToX(data.getXValCount());
-                mBarChart.animateY(ANIMATE_DURATION_MILLIS);
-            }
-        });
+        mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
+        mBarChart.moveViewToX(data.getXValCount());
+        mBarChart.animateY(ANIMATE_DURATION_MILLIS);
     }
 
     private final class OnYearSpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {
@@ -192,20 +186,38 @@ public class HistoryActivity extends GenericActivity {
 
     }
 
-    private final class OnCharValueSelectedListenerImpl implements OnChartValueSelectedListener {
+    private final class OnChartValueSelectedListenerImpl implements OnChartValueSelectedListener {
 
         @Override
         public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-            DataSet valueDataSet = (DataSet) e.getData();
+            List<DataSet> dataSets = (List<DataSet>) e.getData();
+            DataSet stepDataSet = null;
+            for (DataSet dataSet : dataSets) {
+                if (dataSet.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
+                    stepDataSet = dataSet;
 
-            long timestamp = valueDataSet.getDataPoints().get(0).getTimestamp(TimeUnit.MILLISECONDS);
+                    if (dataSet.getDataPoints().isEmpty()) {
+                        showShortToast(getString(R.string.no_data_for_this_day));
+                        return;
+                    }
+
+                    break;
+                }
+            }
+
+            if (stepDataSet == null) {
+                showShortToast(getString(R.string.no_data_for_this_day));
+                return;
+            }
+
+            long timestamp = stepDataSet.getDataPoints().get(0).getTimestamp(TimeUnit.MILLISECONDS);
 
             if (TimeWorker.isCurrentDay(timestamp)) {
                 finish();
                 return;
             }
 
-            DailyStatisticActivity.start(HistoryActivity.this, valueDataSet);
+            DailyStatisticActivity.start(HistoryActivity.this, dataSets, timestamp);
         }
 
         @Override
@@ -218,7 +230,6 @@ public class HistoryActivity extends GenericActivity {
 
         @Override
         public void onSuccess(List<Bucket> result) {
-
             BarData data = ChartDataWorker.processListOfBuckets(result, getApplicationContext());
             setChartData(data);
         }

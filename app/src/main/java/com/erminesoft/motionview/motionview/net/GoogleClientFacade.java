@@ -58,8 +58,8 @@ public class GoogleClientFacade {
         mOfflineStorageManager.clearHistory();
     }
 
-    public void getDataPerDay(DataChangedListener stepsChangingListener) {
-        mOfflineStorageManager.getDataPerDay(stepsChangingListener);
+    public void getDataPerDay(int day, int month, int year, DataChangedListener stepsChangingListener) {
+        mOfflineStorageManager.getDataPerDay(day, month, year, stepsChangingListener);
     }
 
     public void getDataPerMonthFromHistory(ChartDataWorker.Month month, int year, BucketsResultListener resultListener) {

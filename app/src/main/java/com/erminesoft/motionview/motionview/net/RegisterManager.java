@@ -3,6 +3,7 @@ package com.erminesoft.motionview.motionview.net;
 import android.support.annotation.NonNull;
 
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
+import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.fitness.Fitness;
@@ -61,11 +62,11 @@ class RegisterManager {
                 public void onDataPoint(final DataPoint dataPoint) {
                     mOfflineStorageManager.insertSteps(dataPoint);
 
-                    mOfflineStorageManager.getStepsPerDayFromHistory(resultListenerFromActivity);
-                    mOfflineStorageManager.getActiveTimePerDay(resultListenerFromActivity);
-                    mOfflineStorageManager.getAverageSpeedPerDay(resultListenerFromActivity);
-                    mOfflineStorageManager.getCaloriesPerDay(resultListenerFromActivity);
-                    mOfflineStorageManager.getDistancePerDay(resultListenerFromActivity);
+                    mOfflineStorageManager.getDataPerDay(
+                            TimeWorker.getCurrentDay(),
+                            TimeWorker.getCurrentMonth(),
+                            TimeWorker.getCurrentYear(),
+                            resultListenerFromActivity);
                 }
             };
 

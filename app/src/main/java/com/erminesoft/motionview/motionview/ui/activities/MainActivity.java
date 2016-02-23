@@ -4,14 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
+import com.erminesoft.motionview.motionview.util.TimeWorker;
 
 public class MainActivity extends BasicDailyStatisticActivity {
+    private TextView mDateTextView;
+
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, MainActivity.class));
     }
@@ -20,13 +22,21 @@ public class MainActivity extends BasicDailyStatisticActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.app_name);
+
+        mDateTextView = (TextView) findViewById(R.id.date_text_view);
+        mDateTextView.setText(getString(R.string.today_date_text));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mGoogleClientFacade.getDataPerDay(new DataChangedListenerImpl());
+        mGoogleClientFacade.getDataPerDay(
+                TimeWorker.getCurrentDay(),
+                TimeWorker.getCurrentMonth(),
+                TimeWorker.getCurrentYear(),
+                new DataChangedListenerImpl());
+
         mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
     }
 
@@ -61,43 +71,5 @@ public class MainActivity extends BasicDailyStatisticActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void setStepsCount(Integer result) {
-        mProgressBar.setProgress(result);
-        mStepsTextView.setText(String.format(getString(R.string.total_steps_text_format), result));
-    }
-
-    private final class DataChangedListenerImpl implements DataChangedListener {
-
-        @Override
-        public void onStepsChanged(int steps) {
-            setStepsCount(steps);
-        }
-
-        @Override
-        public void onCaloriesChanged(float calories) {
-            mCaloriesTextView.setText(String.format(getString(R.string.total_calories_format), calories));
-        }
-
-        @Override
-        public void onDistanceChanged(float distance) {
-            mDistanceTextView.setText(String.format(getString(R.string.total_distance_format), distance));
-        }
-
-        @Override
-        public void onTimeChanged(int time) {
-            mTimeTextView.setText(String.format(getString(R.string.total_time_format), time));
-        }
-
-        @Override
-        public void onSpeedChanged(float speed) {
-            mSpeedTextView.setText(String.format(getString(R.string.avg_speed_format), speed));
-        }
-
-        @Override
-        public void onError(String error) {
-            Log.e(TAG, error);
-        }
     }
 }

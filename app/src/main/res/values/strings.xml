@@ -30,10 +30,10 @@
     <string name="delete">DELETE</string>
     <string name="empty_string" />
 
-    <string name="total_calories_format">Total calories: %f</string>
-    <string name="total_distance_format">Distance: %f</string>
-    <string name="total_time_format">Total time: %d</string>
+    <string name="total_calories_format">Total calories: %d</string>
+    <string name="total_distance_format">Distance: %d</string>
     <string name="avg_speed_format">Average speed: %f</string>
+    <string name="total_activity_time_format">%1$dh %2$dm</string>
 
     <string name="settings_user_weight_header">Type Your Weight:</string>
     <string name="settings_user_weight_hint">Your Weight:</string>
@@ -49,5 +49,6 @@
     <string name="user_male_radiobutton">Male</string>
     <string name="user_female_radiobutton">Female</string>
     <string name="user_male_female_header">Choose your gender</string>
+    <string name="no_data_for_this_day">No data for this day.</string>
 
 </resources>

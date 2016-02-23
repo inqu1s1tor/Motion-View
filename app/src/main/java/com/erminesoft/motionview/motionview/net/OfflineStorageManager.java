@@ -13,7 +13,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.FitnessActivities;
+import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
@@ -21,11 +21,11 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.result.DailyTotalResult;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -44,175 +44,6 @@ class OfflineStorageManager {
 
     public void setClient(GoogleApiClient client) {
         mClient = client;
-    }
-
-    public void getStepsPerDayFromHistory(final DataChangedListener listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                DailyTotalResult readResult = Fitness.HistoryApi.
-                        readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA).await();
-
-                if (!readResult.getStatus().isSuccess() ||
-                        readResult.getTotal() == null) {
-                    listener.onError(NO_DATA_ERROR);
-                    return;
-                }
-
-                DataSet dataSet = readResult.getTotal();
-
-                int steps = 0;
-                if (!dataSet.getDataPoints().isEmpty()) {
-                    final DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                    steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
-                }
-
-                final int finalSteps = steps;
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onStepsChanged(finalSteps);
-                    }
-                });
-            }
-        });
-    }
-
-    public void getCaloriesPerDay(final DataChangedListener listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                DailyTotalResult result = Fitness.HistoryApi
-                        .readDailyTotal(mClient, DataType.TYPE_CALORIES_EXPENDED).await();
-
-                if (!result.getStatus().isSuccess() ||
-                        result.getTotal() == null) {
-                    listener.onError(NO_DATA_ERROR);
-                    return;
-                }
-
-                DataSet dataSet = result.getTotal();
-
-                float calories = 0;
-                if (!dataSet.getDataPoints().isEmpty()) {
-                    final DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                    calories = dataPoint.getValue(Field.FIELD_CALORIES).asFloat();
-                }
-
-                final float finalCalories = calories;
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onCaloriesChanged(finalCalories);
-                    }
-                });
-
-            }
-        });
-    }
-
-    public void getActiveTimePerDay(final DataChangedListener listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                DailyTotalResult result = Fitness.HistoryApi
-                        .readDailyTotal(mClient, DataType.TYPE_ACTIVITY_SEGMENT).await();
-
-                if (!result.getStatus().isSuccess() ||
-                        result.getTotal() == null) {
-                    listener.onError(NO_DATA_ERROR);
-                    return;
-                }
-
-                DataSet dataSet = result.getTotal();
-
-                int totalTime = 0;
-
-                for (DataPoint dataPoint : dataSet.getDataPoints()) {
-                    if (dataPoint.getValue(Field.FIELD_ACTIVITY).asInt() ==
-                            FitnessActivities.zzdm(FitnessActivities.STILL)) {
-                        continue;
-                    }
-
-                    totalTime += dataPoint.getValue(Field.FIELD_DURATION).asInt();
-                }
-
-                final int finalTime = totalTime;
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onTimeChanged(finalTime);
-                    }
-                });
-
-            }
-        });
-    }
-
-    public void getAverageSpeedPerDay(final DataChangedListener listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                DailyTotalResult result = Fitness.HistoryApi
-                        .readDailyTotal(mClient, DataType.TYPE_SPEED).await();
-
-                if (!result.getStatus().isSuccess() ||
-                        result.getTotal() == null) {
-                    listener.onError(NO_DATA_ERROR);
-                    return;
-                }
-
-                DataSet dataSet = result.getTotal();
-
-                float avgSpeed = 0;
-                if (!dataSet.getDataPoints().isEmpty()) {
-                    final DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                    avgSpeed = dataPoint.getValue(Field.FIELD_AVERAGE).asFloat();
-                }
-
-                final float finalSpeed = avgSpeed;
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onSpeedChanged(finalSpeed);
-                    }
-                });
-
-            }
-        });
-    }
-
-    public void getDistancePerDay(final DataChangedListener listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                DailyTotalResult result = Fitness.HistoryApi
-                        .readDailyTotal(mClient, DataType.TYPE_DISTANCE_DELTA).await();
-
-                if (!result.getStatus().isSuccess() ||
-                        result.getTotal() == null) {
-                    listener.onError(NO_DATA_ERROR);
-                    return;
-                }
-
-                DataSet dataSet = result.getTotal();
-
-                float distance = 0;
-                if (!dataSet.getDataPoints().isEmpty()) {
-                    final DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                    distance = dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
-                }
-
-                final float finalDistance = distance;
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onDistanceChanged(finalDistance);
-                    }
-                });
-
-            }
-        });
     }
 
     public void insertSteps(final DataPoint dataPoint) {
@@ -254,14 +85,19 @@ class OfflineStorageManager {
             public void run() {
                 DataReadRequest request = generateReadRequestForMonth(month, year);
 
-                DataReadResult readResult = Fitness.HistoryApi.readData(mClient, request).await();
+                final DataReadResult readResult = Fitness.HistoryApi.readData(mClient, request).await();
 
                 if (isReadResultEmpty(readResult)) {
                     resultListener.onError(NO_DATA_ERROR);
                     return;
                 }
 
-                resultListener.onSuccess(readResult.getBuckets());
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        resultListener.onSuccess(readResult.getBuckets());
+                    }
+                });
             }
         });
     }
@@ -287,9 +123,17 @@ class OfflineStorageManager {
         calendar.set(Calendar.MONTH, month.getIndex());
 
         long startTime = calendar.getTimeInMillis();
+        return buildReadRequest(startTime, endTime);
+    }
+
+    private DataReadRequest buildReadRequest(long startTime, long endTime) {
         return new DataReadRequest.Builder()
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                .aggregate(DataType.TYPE_ACTIVITY_SEGMENT, DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .aggregate(DataType.TYPE_DISTANCE_DELTA, DataType.AGGREGATE_DISTANCE_DELTA)
+                .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
+                .aggregate(DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY)
                 .bucketByTime(1, TimeUnit.DAYS)
                 .build();
     }
@@ -415,11 +259,46 @@ class OfflineStorageManager {
         return dataSet;
     }
 
-    public void getDataPerDay(DataChangedListener listener) {
-        getStepsPerDayFromHistory(listener);
-        getDistancePerDay(listener);
-        getCaloriesPerDay(listener);
-        getActiveTimePerDay(listener);
-        getAverageSpeedPerDay(listener);
+    public void getDataPerDay(final int day, final int month, final int year, final DataChangedListener listener) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+
+                if (TimeWorker.getCurrentDay() != day ||
+                        TimeWorker.getCurrentMonth() != month ||
+                        TimeWorker.getCurrentYear() != year) {
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                    TimeWorker.setMidnight(calendar);
+                }
+
+                long endTime = calendar.getTimeInMillis();
+
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+                TimeWorker.setMidnight(calendar);
+
+                long startTime = calendar.getTimeInMillis();
+
+                DataReadRequest request = buildReadRequest(startTime, endTime);
+
+                DataReadResult result = Fitness.HistoryApi.readData(mClient, request).await();
+
+                final List<Bucket> buckets = result.getBuckets();
+                if (buckets == null || buckets.size() == 0) {
+                    listener.onError(NO_DATA_ERROR);
+                    return;
+                }
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onSuccess(buckets.get(0).getDataSets());
+                    }
+                });
+            }
+        });
     }
 }
