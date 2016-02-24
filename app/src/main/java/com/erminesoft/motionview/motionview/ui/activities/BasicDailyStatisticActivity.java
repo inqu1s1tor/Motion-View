@@ -2,19 +2,15 @@ package com.erminesoft.motionview.motionview.ui.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.bridge.EventBridge;
-import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 
 import java.util.List;
@@ -40,15 +36,6 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mStepsTextView = (TextView) findViewById(R.id.steps_text_view);
-        mCaloriesTextView = (TextView) findViewById(R.id.calories_text_view);
-        mTimeTextView = (TextView) findViewById(R.id.total_time_text_view);
-        mSpeedTextView = (TextView) findViewById(R.id.avg_speed_text_view);
-        mDistanceTextView = (TextView) findViewById(R.id.distance_text_view);
-
-        mProgressBar = (ProgressBar) findViewById(R.id.daily_progress_bar);
-
-        mProgressBar.setMax(DAILY_GOAL);
     }
 
     protected void initCharts(long timestamp) {
@@ -130,48 +117,4 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
         mSpeedTextView.setText(getString(R.string.avg_speed_format, speed));
     }
 
-    protected void processDataSets(List<DataSet> dataSets) {
-        for (DataSet dataSet : dataSets) {
-            DataType dataType = dataSet.getDataType();
-            List<DataPoint> dataPoints = dataSet.getDataPoints();
-
-            if (dataType.equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
-                onTotalTimeChanged(dataPoints);
-                continue;
-            }
-
-            if (dataType.equals(DataType.AGGREGATE_CALORIES_EXPENDED)) {
-                onCaloriesChanged(dataPoints);
-                continue;
-            }
-
-            if (dataType.equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
-                onDistanceChanged(dataPoints);
-                continue;
-            }
-
-            if (dataType.equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
-                onSpeedChanged(dataPoints);
-                continue;
-            }
-
-            if (dataType.equals(DataType.AGGREGATE_STEP_COUNT_DELTA)) {
-                onStepsChanged(dataPoints);
-            }
-        }
-    }
-
-    protected final class DataChangedListenerImpl implements DataChangedListener {
-
-        @Override
-        public void onSuccess(List<DataSet> dataSets) {
-            processDataSets(dataSets);
-        }
-
-        @Override
-        public void onError(String error) {
-            Log.e(TAG, error);
-        }
-
-    }
 }

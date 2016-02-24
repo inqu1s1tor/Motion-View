@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.erminesoft.motionview.motionview.util.DataSetsWorker;
 import com.google.android.gms.fitness.data.DataSet;
 
 import java.text.DateFormat;
@@ -29,7 +30,6 @@ public class DailyStatisticActivity extends BasicDailyStatisticActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHomeAsUpEnabled();
 
         Intent intent = getIntent();
         List<DataSet> dataSets = intent.getParcelableArrayListExtra(DATASET_EXTRA);
@@ -43,7 +43,7 @@ public class DailyStatisticActivity extends BasicDailyStatisticActivity {
         DateFormat dateFormat = DateFormat.getDateInstance();
         setTitle(dateFormat.format(date));
 
-        processDataSets(dataSets);
+        DataSetsWorker.proccessDataSets(dataSets, this);
         initCharts(timestamp);
     }
 }

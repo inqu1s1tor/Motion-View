@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.design.widget.TabLayout;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.util.TimeWorker;
 
 public class MainActivity extends BasicDailyStatisticActivity {
-    private static final String FITNESS_HISTORY_INTENT = "com.google.android.gms.fitness.settings.GOOGLE_FITNESS_SETTINGS";
     private TextView mDateTextView;
 
     public static void start(Activity activity) {
@@ -26,52 +23,13 @@ public class MainActivity extends BasicDailyStatisticActivity {
 
         mDateTextView = (TextView) findViewById(R.id.date_text_view);
         mDateTextView.setText(getString(R.string.today_date_text));
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.main_fragment_container_tab_container);
+
+        TabLayout.Tab tab = tabLayout.newTab();
+        tab.setText("ASDASD");
+        tabLayout.addTab(tab, true);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-        mGoogleClientFacade.getDataPerDay(
-                TimeWorker.getCurrentDay(),
-                TimeWorker.getCurrentMonth(),
-                TimeWorker.getCurrentYear(),
-                new DataChangedListenerImpl());
-
-        mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        mGoogleClientFacade.unregisterListener();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings:
-                SettingsActivity.start(this);
-                break;
-            case R.id.history:
-                HistoryActivity.start(this);
-                break;
-            case R.id.google_map:
-                GoogleMapActivity.start(this);
-                break;
-            case R.id.clear_history:
-                Intent settings = new Intent(FITNESS_HISTORY_INTENT);
-                startActivity(settings);
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

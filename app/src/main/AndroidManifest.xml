@@ -37,6 +37,7 @@
         </activity>
         <activity android:name=".ui.activities.GoogleMapActivity" />
 
+        <activity android:name=".ui.activities.MainFragmentActivity"/>
 
         <activity android:name=".ui.activities.SettingsActivity"/>
 

@@ -24,7 +24,7 @@ public class SplashActivity extends GenericActivity {
 
             if (checkConnectivity()) {
                 mGoogleClientFacade.subscribe();
-                MainActivity.start(SplashActivity.this);
+                MainFragmentActivity.start(SplashActivity.this);
             } else {
                 finish();
             }
