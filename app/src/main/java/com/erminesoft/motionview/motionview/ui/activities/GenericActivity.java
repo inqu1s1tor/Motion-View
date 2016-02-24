@@ -10,12 +10,14 @@ import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.MVApplication;
 import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
+import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
 public abstract class GenericActivity extends AppCompatActivity {
     protected final String TAG = this.getClass().getSimpleName();
     protected GoogleClientFacade mGoogleClientFacade;
     protected ActionBar mActionBar;
+    protected SharedDataManager mSharedDataManager;
 
     public final MVApplication getMVapplication() {
         return (MVApplication) getApplication();
@@ -35,9 +37,9 @@ public abstract class GenericActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mGoogleClientFacade = getMVapplication().getGoogleClientFacade();
         mActionBar = getSupportActionBar();
+        mSharedDataManager = new SharedDataManager(getBaseContext());
     }
 
     @Override

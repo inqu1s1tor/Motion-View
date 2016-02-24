@@ -35,10 +35,10 @@
     <string name="avg_speed_format">Average speed: %f</string>
     <string name="total_activity_time_format">%1$dh %2$dm</string>
 
-    <string name="settings_user_weight_header">Type Your Weight:</string>
-    <string name="settings_user_weight_hint">Your Weight:</string>
-    <string name="settings_user_height_header">Type Your Height:</string>
-    <string name="settings_user_height_hint">Your Height:</string>
+    <string name="settings_user_weight_height_header">Your Weight And Height</string>
+    <string name="settings_user_weight_hint">Type Your Weight:</string>
+    <string name="settings_user_height_hint">Type Your Height:</string>
+
     <string name="settings_delete_history_header">Clean Activity History</string>
     <string name="settings_delete_history_button_text">Clean</string>
     <string name="bluetooth_list_header_text">Bluetooth devices:</string>

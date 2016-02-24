@@ -15,7 +15,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.callback.SettingsInit;
+import com.erminesoft.motionview.motionview.bridge.SettingsBridge;
+import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.BleDevice;
@@ -24,7 +25,7 @@ import com.google.android.gms.fitness.request.BleScanCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsActivity extends GenericActivity implements SettingsInit {
+public class SettingsActivity extends GenericActivity implements SettingsBridge {
 
     private List<String> devicesArray = new ArrayList<>();
     private ArrayAdapter adapter;
@@ -33,7 +34,6 @@ public class SettingsActivity extends GenericActivity implements SettingsInit {
     private Button scanBtDevices;
 
     private TextView userWeightHeader;
-    private TextView userHeightHeader;
     private EditText userWeightText;
     private EditText userHeightText;
 
@@ -49,7 +49,7 @@ public class SettingsActivity extends GenericActivity implements SettingsInit {
         setHomeAsUpEnabled();
         initSettings();
 
-
+        Log.d("!!!!", "" + mSharedDataManager.readLong(SharedDataManager.FIRST_INSTALL_TIME));
         mGoogleClientFacade.setBleScanCallback(new BleScanCallback() {
             @Override
             public void onDeviceFound(BleDevice device) {
@@ -88,7 +88,7 @@ public class SettingsActivity extends GenericActivity implements SettingsInit {
 
 
     public void initSettings() {
-        initSex();
+        initGender();
         initWeight();
         initHeight();
         initCleanHistory();
@@ -125,24 +125,26 @@ public class SettingsActivity extends GenericActivity implements SettingsInit {
     }
 
     @Override
-    public void initSex() {
+    public void initGender() {
 
     }
 
     @Override
     public void initWeight() {
-        userWeightHeader = (TextView) findViewById(R.id.settings_user_weight_header);
-        userWeightHeader.setText(getString(R.string.settings_user_weight_header));
+        userWeightHeader = (TextView) findViewById(R.id.settings_user_weight_height_header);
+        userWeightHeader.setText(getString(R.string.settings_user_weight_height_header));
+
         userWeightText = (EditText) findViewById(R.id.settings_user_weight);
-        userWeightText.setText("70" + " " + getString(R.string.weight_unit));
+        userWeightText.setText("70");
+        userWeightText.requestFocus();
     }
 
     @Override
     public void initHeight() {
-        userHeightHeader = (TextView) findViewById(R.id.settings_user_height_header);
-        userHeightHeader.setText(getString(R.string.settings_user_height_header));
         userHeightText = (EditText) findViewById(R.id.settings_user_height);
-        userHeightText.setText("170" + " " + getString(R.string.weight_unit));
+        userHeightText.setText("170");
+        userHeightText.requestFocus();
+        userHeightText.clearFocus();
     }
 
 

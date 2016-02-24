@@ -1,7 +1,7 @@
-package com.erminesoft.motionview.motionview.core.callback;
+package com.erminesoft.motionview.motionview.bridge;
 
-public interface SettingsInit {
-    void initSex();
+public interface SettingsBridge {
+    void initGender();
 
     void initWeight();
 
