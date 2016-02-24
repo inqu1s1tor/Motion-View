@@ -38,7 +38,6 @@ public class SettingsActivity extends GenericActivity implements SettingsInit {
     private EditText userHeightText;
 
 
-
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, SettingsActivity.class));
     }
@@ -92,8 +91,6 @@ public class SettingsActivity extends GenericActivity implements SettingsInit {
         initSex();
         initWeight();
         initHeight();
-        initDayGoalType();
-        initDayGoalData();
         initCleanHistory();
         initLoginToSocial();
         initBtooth();
@@ -148,15 +145,6 @@ public class SettingsActivity extends GenericActivity implements SettingsInit {
         userHeightText.setText("170" + " " + getString(R.string.weight_unit));
     }
 
-    @Override
-    public void initDayGoalType() {
-
-    }
-
-    @Override
-    public void initDayGoalData() {
-
-    }
 
     @Override
     public void initCleanHistory() {

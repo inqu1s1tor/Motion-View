@@ -13,11 +13,16 @@
         android:padding="10dp">
 
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_user_weight_hint"
-            android:id="@+id/settings_user_weight_header" />
+            android:id="@+id/settings_user_weight_header"
+            android:text="@string/settings_user_weight_hint" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_height="wrap_content"
@@ -35,8 +40,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_user_height_hint"
-            android:id="@+id/settings_user_height_header" />
+            android:id="@+id/settings_user_height_header"
+            android:text="@string/settings_user_height_hint" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_height="wrap_content"
@@ -83,6 +88,29 @@
                 android:layout_weight="1" />
         </RadioGroup>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_delete_history_header"
+                android:id="@+id/settings_delete_history_header"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_delete_history_button_text"
+                android:id="@+id/settings_clean_history_button"
+                android:layout_weight="1"
+                style="?android:attr/buttonStyleSmall" />
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -101,8 +129,9 @@
                 android:text="@string/bt_scan_button"
                 android:id="@+id/bt_scan_button"
                 android:layout_marginRight="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp" />
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                style="?android:attr/buttonStyleSmall" />
 
             <ListView
                 android:layout_width="wrap_content"

@@ -38,7 +38,9 @@
     <string name="settings_user_weight_header">Type Your Weight:</string>
     <string name="settings_user_weight_hint">Your Weight:</string>
     <string name="settings_user_height_header">Type Your Height:</string>
-    <string name="settings_user_height_hint">Your Weight:</string>
+    <string name="settings_user_height_hint">Your Height:</string>
+    <string name="settings_delete_history_header">Clean Activity History</string>
+    <string name="settings_delete_history_button_text">Clean</string>
     <string name="bluetooth_list_header_text">Bluetooth devices:</string>
     <string name="bt_scan_button">Start Scan</string>
     <string name="bt_available_devices">Scan Results</string>

@@ -106,7 +106,7 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
         if (dataPoints.size() > 0) {
             DataPoint datapoint = dataPoints.get(0);
 
-            speed = datapoint.getValue(Field.FIELD_SPEED).asFloat();
+            speed = datapoint.getValue(Field.FIELD_AVERAGE).asFloat();
         }
 
         mSpeedTextView.setText(getString(R.string.avg_speed_format, speed));

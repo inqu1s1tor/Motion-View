@@ -7,10 +7,6 @@ public interface SettingsInit {
 
     void initHeight();
 
-    void initDayGoalType();
-
-    void initDayGoalData();
-
     void initCleanHistory();
 
     void initLoginToSocial();
