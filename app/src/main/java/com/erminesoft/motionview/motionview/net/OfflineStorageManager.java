@@ -140,7 +140,7 @@ class OfflineStorageManager {
                 Calendar calendar = Calendar.getInstance();
                 long endTime = calendar.getTimeInMillis();
 
-                calendar.add(Calendar.YEAR, -2);
+                calendar.add(Calendar.YEAR, -1);
                 long startTime = calendar.getTimeInMillis();
 
                 DataReadRequest request = new DataReadRequest.Builder()

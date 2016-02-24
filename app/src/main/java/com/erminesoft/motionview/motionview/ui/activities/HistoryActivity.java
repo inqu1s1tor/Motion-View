@@ -230,7 +230,7 @@ public class HistoryActivity extends GenericActivity {
 
         @Override
         public void onSuccess(List<Bucket> result) {
-            BarData data = ChartDataWorker.processListOfBuckets(result, getApplicationContext());
+            BarData data = ChartDataWorker.processStepsBuckets(result, getApplicationContext());
             setChartData(data);
         }
 
@@ -246,7 +246,7 @@ public class HistoryActivity extends GenericActivity {
 
         @Override
         public void onSuccess(List<Bucket> result) {
-            mAvailableHistory = ChartDataWorker.getAvailableYearsMonthsForSpinner(result, getApplicationContext());
+            mAvailableHistory = ChartDataWorker.getAvailableYearsMonthsForSpinner(result);
 
             if (mAvailableHistory == null) {
                 showLongToast("We can't get your activities data.");

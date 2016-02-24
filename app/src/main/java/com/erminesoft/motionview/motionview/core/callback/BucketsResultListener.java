@@ -7,6 +7,5 @@ import java.util.List;
 public interface BucketsResultListener {
 
     void onSuccess(List<Bucket> buckets);
-
     void onError(String error);
 }
