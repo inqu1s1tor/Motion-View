@@ -43,7 +43,7 @@ public class DailyStatisticActivity extends BasicDailyStatisticActivity {
         DateFormat dateFormat = DateFormat.getDateInstance();
         setTitle(dateFormat.format(date));
 
-        DataSetsWorker.proccessDataSets(dataSets, this);
+        DataSetsWorker.processDataSets(dataSets, this);
         initCharts(timestamp);
     }
 }

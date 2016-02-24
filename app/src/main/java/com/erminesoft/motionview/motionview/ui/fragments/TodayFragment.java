@@ -57,8 +57,20 @@ public class TodayFragment extends GenericFragment implements EventBridge {
                 TimeWorker.getCurrentMonth(),
                 TimeWorker.getCurrentYear(),
                 new DataChangedListenerImpl());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mGoogleClientFacade.unregisterListener();
     }
 
     @Override
@@ -139,12 +151,8 @@ public class TodayFragment extends GenericFragment implements EventBridge {
     protected final class DataChangedListenerImpl implements DataChangedListener {
 
         @Override
-        public void onSuccess(List<DataSet> dataSets) {
-            if (isDetached()) {
-                return;
-            }
-
-            DataSetsWorker.proccessDataSets(dataSets, TodayFragment.this);
+        public void onSuccess(final List<DataSet> dataSets) {
+            DataSetsWorker.processDataSets(dataSets, TodayFragment.this);
         }
 
         @Override

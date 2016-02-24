@@ -9,7 +9,7 @@ import java.util.List;
 
 public class DataSetsWorker {
 
-    public static void proccessDataSets(List<DataSet> dataSets, EventBridge eventObject) {
+    public static void processDataSets(List<DataSet> dataSets, EventBridge eventObject) {
         for (DataSet dataSet : dataSets) {
             DataType dataType = dataSet.getDataType();
             List<DataPoint> dataPoints = dataSet.getDataPoints();
