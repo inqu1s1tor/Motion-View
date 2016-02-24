@@ -10,6 +10,8 @@ import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.bridge.EventBridge;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
@@ -28,6 +30,11 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
     protected TextView mDistanceTextView;
     protected ProgressBar mProgressBar;
 
+    protected BarChart mHourStepsChart;
+    protected PieChart mCaloriesChart;
+
+    protected long mTimestamp;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +49,17 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
         mProgressBar = (ProgressBar) findViewById(R.id.daily_progress_bar);
 
         mProgressBar.setMax(DAILY_GOAL);
+    }
+
+    protected void initCharts(long timestamp) {
+        mTimestamp = timestamp;
+
+        mHourStepsChart = (BarChart) findViewById(R.id.activity_main_hours_chart);
+        mCaloriesChart = (PieChart) findViewById(R.id.activity_main_calories_chart);
+
+        if (TimeWorker.isCurrentDay(timestamp)) {
+
+        }
     }
 
     @Override

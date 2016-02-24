@@ -44,5 +44,6 @@ public class DailyStatisticActivity extends BasicDailyStatisticActivity {
         setTitle(dateFormat.format(date));
 
         processDataSets(dataSets);
+        initCharts(timestamp);
     }
 }

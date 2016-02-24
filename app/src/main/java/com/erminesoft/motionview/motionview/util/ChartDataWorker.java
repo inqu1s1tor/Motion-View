@@ -6,6 +6,7 @@ import com.erminesoft.motionview.motionview.R;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -39,7 +40,7 @@ public class ChartDataWorker {
         }
     }
 
-    public static BarData processListOfBuckets(List<Bucket> buckets, Context context) {
+    public static BarData processStepsBuckets(List<Bucket> buckets, Context context) {
         List<String> xVals = new ArrayList<>();
         List<BarEntry> entries = new ArrayList<>();
 
@@ -65,7 +66,11 @@ public class ChartDataWorker {
         return new BarData(xVals, dataSet);
     }
 
-    public static Map<Integer, List<Month>> getAvailableYearsMonthsForSpinner(List<Bucket> buckets, Context context) {
+    public static PieData processCaloriesBuckets() {
+        return null;
+    }
+
+    public static Map<Integer, List<Month>> getAvailableYearsMonthsForSpinner(List<Bucket> buckets) {
         if (buckets.isEmpty()) {
             return null;
         }
