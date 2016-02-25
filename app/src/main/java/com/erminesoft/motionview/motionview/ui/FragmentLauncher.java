@@ -6,8 +6,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.ui.factory.FragmentsFactory;
 import com.erminesoft.motionview.motionview.ui.fragments.DailyStatisticFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.GenericFragment;
+import com.erminesoft.motionview.motionview.ui.fragments.HistoryFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.TodayFragment;
 import com.google.android.gms.fitness.data.DataSet;
 
@@ -52,4 +54,13 @@ public class FragmentLauncher {
         launchWithoutAnimation(fragment, null);
     }
 
+    public void launchHistoryFragment() {
+        GenericFragment fragment = new HistoryFragment();
+        launchWithoutAnimation(fragment, null);
+    }
+
+    public void launch(String s) {
+        GenericFragment fragment = FragmentsFactory.getFragment(s);
+        launchWithoutAnimation(fragment, null);
+    }
 }

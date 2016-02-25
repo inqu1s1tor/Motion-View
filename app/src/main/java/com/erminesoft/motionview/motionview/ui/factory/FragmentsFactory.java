@@ -1,7 +1,7 @@
 package com.erminesoft.motionview.motionview.ui.factory;
 
-import android.support.v4.app.Fragment;
-
+import com.erminesoft.motionview.motionview.ui.fragments.GenericFragment;
+import com.erminesoft.motionview.motionview.ui.fragments.GoogleMapsFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.HistoryFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.TodayFragment;
 
@@ -11,8 +11,8 @@ import static com.erminesoft.motionview.motionview.util.FragmentsType.TODAY;
 
 public class FragmentsFactory {
 
-    public static Fragment getFragment(String name) {
-        Fragment fragment = null;
+    public static GenericFragment getFragment(String name) {
+        GenericFragment fragment = null;
 
         switch (name.toLowerCase()) {
             case HISTORY:
@@ -22,7 +22,7 @@ public class FragmentsFactory {
                 fragment = new TodayFragment();
                 break;
             case MAP:
-                fragment = new Fragment();
+                fragment = new GoogleMapsFragment();
                 break;
         }
 

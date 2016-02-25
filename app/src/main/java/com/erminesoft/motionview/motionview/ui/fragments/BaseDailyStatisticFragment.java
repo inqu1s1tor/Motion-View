@@ -1,23 +1,23 @@
-package com.erminesoft.motionview.motionview.ui.activities;
+package com.erminesoft.motionview.motionview.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.bridge.EventBridge;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 
 import java.util.List;
 
-public abstract class BasicDailyStatisticActivity extends GenericActivity
-        implements EventBridge {
-    protected static final int DAILY_GOAL = 10000;
+public abstract class BaseDailyStatisticFragment extends GenericFragment implements EventBridge {
+    private static final int DAILY_GOAL = 10000;
 
     protected TextView mStepsTextView;
     protected TextView mCaloriesTextView;
@@ -26,27 +26,22 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
     protected TextView mDistanceTextView;
     protected ProgressBar mProgressBar;
 
-    protected BarChart mHourStepsChart;
-    protected PieChart mCaloriesChart;
-
-    protected long mTimestamp;
-
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_today, container, false);
 
-    }
+        mStepsTextView = (TextView) view.findViewById(R.id.steps_text_view);
+        mCaloriesTextView = (TextView) view.findViewById(R.id.calories_text_view);
+        mTimeTextView = (TextView) view.findViewById(R.id.total_time_text_view);
+        mSpeedTextView = (TextView) view.findViewById(R.id.avg_speed_text_view);
+        mDistanceTextView = (TextView) view.findViewById(R.id.distance_text_view);
 
-    protected void initCharts(long timestamp) {
-        mTimestamp = timestamp;
+        mProgressBar = (ProgressBar) view.findViewById(R.id.daily_progress_bar);
 
-        mHourStepsChart = (BarChart) findViewById(R.id.activity_main_hours_chart);
-        mCaloriesChart = (PieChart) findViewById(R.id.activity_main_calories_chart);
+        mProgressBar.setMax(DAILY_GOAL);
 
-        if (TimeWorker.isCurrentDay(timestamp)) {
-
-        }
+        return view;
     }
 
     @Override
@@ -62,7 +57,7 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
             }
         }
 
-        mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, this));
+        mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
     }
 
     @Override
@@ -101,6 +96,7 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
             steps = datapoint.getValue(Field.FIELD_STEPS).asInt();
         }
 
+        mProgressBar.setProgress(steps);
         mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
     }
 
@@ -116,5 +112,4 @@ public abstract class BasicDailyStatisticActivity extends GenericActivity
 
         mSpeedTextView.setText(getString(R.string.avg_speed_format, speed));
     }
-
 }

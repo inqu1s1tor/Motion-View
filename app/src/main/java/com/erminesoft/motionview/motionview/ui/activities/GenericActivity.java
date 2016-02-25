@@ -9,18 +9,15 @@ import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.MVApplication;
 import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
-import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
 public abstract class GenericActivity extends AppCompatActivity {
     protected GoogleClientFacade mGoogleClientFacade;
-    protected SharedDataManager mSharedDataManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mGoogleClientFacade = getMVApplication().getGoogleClientFacade();
-        mSharedDataManager = new SharedDataManager(getBaseContext());
     }
 
     public final MVApplication getMVApplication() {
@@ -39,10 +36,6 @@ public abstract class GenericActivity extends AppCompatActivity {
 
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(enabled);
-    }
-
-    public void setTitle(String title) {
-        super.setTitle(title);
     }
 
     public void showShortToast(String content) {

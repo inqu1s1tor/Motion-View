@@ -48,7 +48,8 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         setContentView(R.layout.activity_settings);
         initSettings();
 
-        Log.d("!!!!", "" + mSharedDataManager.readLong(SharedDataManager.FIRST_INSTALL_TIME));
+        Log.d("!!!!", "" + getMVApplication().getSharedDataManager()
+                .readLong(SharedDataManager.FIRST_INSTALL_TIME));
         mGoogleClientFacade.setBleScanCallback(new BleScanCallback() {
             @Override
             public void onDeviceFound(BleDevice device) {

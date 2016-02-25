@@ -1,6 +1,5 @@
 package com.erminesoft.motionview.motionview.ui.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -43,11 +42,6 @@ public class HistoryFragment extends GenericFragment {
     private BarChart mBarChart;
     private Spinner mMonthSpinner;
     private Spinner mYearSpinner;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
 
     @Nullable
     @Override
@@ -211,7 +205,8 @@ public class HistoryFragment extends GenericFragment {
 
             long timestamp = stepDataSet.getDataPoints().get(0).getTimestamp(TimeUnit.MILLISECONDS);
 
-            mActivity.showDailyStatisticFragment(dataSets, timestamp);
+            mActivity.getFragmentLauncher().launchDailyStatisticFragment(dataSets, timestamp);
+            mActivity.onDailyStatisticLaunched();
         }
 
         @Override
