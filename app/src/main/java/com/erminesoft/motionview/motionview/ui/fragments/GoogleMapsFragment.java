@@ -21,7 +21,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private GoogleMap mMap;
     private static int UPDATE_INTERVAL = 10000;
     private static int FATEST_INTERVAL = 5000;
-    private static int DISPLACEMENT = 5;
+    private static int DISPLACEMENT = 20;
     private boolean routerStarted = false;
     private ImageButton mStartWalkRouter;
 
@@ -46,6 +46,18 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mGoogleClientFacade.createLocationRequest(UPDATE_INTERVAL, FATEST_INTERVAL, DISPLACEMENT);
         mGoogleClientFacade.setMarkerAtFirstShow();
 
+
+        /*
+        if(event == GpsStatus.GPS_EVENT_STARTED){
+            Log.d("!!!!!", "" + event);
+        } else if(event == GpsStatus.GPS_EVENT_STOPPED) {
+            Log.d("!!!!!", ""+event);
+        } else if(event == GpsStatus.GPS_EVENT_SATELLITE_STATUS){
+            Log.d("!!!!!", ""+event);
+        } else if(event == GpsStatus.GPS_EVENT_FIRST_FIX) {
+            Log.d("!!!!!", ""+event);
+        }*/
+
         mStartWalkRouter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,16 +71,18 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     mGoogleClientFacade.clearRouteLine();
                     mGoogleClientFacade.clearMap();
                     mGoogleClientFacade.setMarkerAtFirstShow();
+
                     mGoogleClientFacade.addPointsToLineForRoute(new LatLng(mGoogleClientFacade.getCurrentLocation().getLatitude(), mGoogleClientFacade.getCurrentLocation().getLongitude()));
                     mGoogleClientFacade.setOnLocationChangeListener(new LocationListener() {
                         @Override
                         public void onLocationChanged(Location location) {
-                            if (location.distanceTo(mGoogleClientFacade.getPreLastLocation()) > 4) {
+                            if (location.distanceTo(mGoogleClientFacade.getPreLastLocation()) > 20 && location.distanceTo(mGoogleClientFacade.getPreLastLocation()) < 30) {
                                 mGoogleClientFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
                                 mGoogleClientFacade.startRouteOnMap();
                             }
                         }
                     });
+
                     mGoogleClientFacade.startLocation();
                 } else {
 
@@ -83,5 +97,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
             }
         });
     }
+
 
 }

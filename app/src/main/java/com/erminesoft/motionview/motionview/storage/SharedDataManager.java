@@ -11,10 +11,11 @@ public class SharedDataManager {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private static final String APP_PREFERENCES = "motion_view_settings";
+    public static final String FIRST_INSTALL_TIME = "FIRST_INSTALL_TIME";
     public static final String USER_WEIGHT = "USER_WEIGHT";
     public static final String USER_HEIGHT = "USER_HEIGHT";
-    public static final String FIRST_INSTALL_TIME = "FIRST_INSTALL_TIME";
     public static final String USER_GENDER = "USER_GENDER";
+    public static final String USER_DAY_GOAL = "USER_DAY_GOAL";
 
     public SharedDataManager(Context context) {
         sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);

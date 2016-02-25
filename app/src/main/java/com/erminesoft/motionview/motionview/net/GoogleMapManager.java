@@ -89,11 +89,8 @@ class GoogleMapManager {
         if (mLastLocation != null) {
             return mLastLocation;
         } else {
-
             mLastLocation = new Location(LocationManager.GPS_PROVIDER);
-
             Log.d("!!!!!", "" + mLastLocation);
-
             mLastLocation.setLatitude(0);
             mLastLocation.setLongitude(0);
             return null;
@@ -129,6 +126,8 @@ class GoogleMapManager {
             Log.d(TAG, "Have no permission for getting location!");
             return;
         }
+
+
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, listener);
     }
 
@@ -170,7 +169,7 @@ class GoogleMapManager {
         mMap.addPolyline(line);
         int size = mGoogleApiClient.getContext().getResources().getDisplayMetrics().widthPixels;
         LatLngBounds latLngBounds = latLngBuilder.build();
-        CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 9);
+        CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 15);
         mMap.moveCamera(track);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
     }

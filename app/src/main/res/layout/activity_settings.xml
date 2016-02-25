@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/settings_user_weight_height_header"
             android:text="@string/settings_user_weight_hint"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <android.support.design.widget.TextInputLayout
@@ -32,6 +32,7 @@
                 android:layout_marginBottom="10dp"
                 android:inputType="none"
                 android:hint="@string/settings_user_weight_hint"
+                android:numeric="integer"
                 android:textSize="12sp"></EditText>
         </android.support.design.widget.TextInputLayout>
 
@@ -46,7 +47,7 @@
                 android:layout_marginBottom="10dp"
                 android:inputType="none"
                 android:hint="@string/settings_user_height_hint"
-
+                android:numeric="integer"
                 android:textSize="12sp"></EditText>
         </android.support.design.widget.TextInputLayout>
 
@@ -56,7 +57,7 @@
             android:layout_height="wrap_content"
             android:text="@string/user_male_female_header"
             android:id="@+id/settings_user_male_female_header"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <RadioGroup
@@ -64,7 +65,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:transitionGroup="false"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:id="@+id/settings_user_radio_group">
 
             <RadioButton
                 android:layout_width="wrap_content"
@@ -72,7 +74,7 @@
                 android:text="@string/user_male_radiobutton"
                 android:id="@+id/settings_user_male_radio_button"
                 android:layout_marginRight="15dp"
-                android:checked="true"
+                android:checked="false"
                 android:layout_weight="1"
                 android:enabled="true" />
 
@@ -81,7 +83,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/user_female_radiobutton"
                 android:id="@+id/settings_user_female_radio_button"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:enabled="true" />
         </RadioGroup>
 
         <LinearLayout
@@ -96,7 +99,7 @@
                 android:text="@string/settings_delete_history_header"
                 android:id="@+id/settings_delete_history_header"
                 android:layout_weight="1"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <Button
@@ -105,7 +108,8 @@
                 android:text="@string/settings_delete_history_button_text"
                 android:id="@+id/settings_clean_history_button"
                 android:layout_weight="1"
-                style="?android:attr/buttonStyleSmall" />
+                style="?android:attr/buttonStyleSmall"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -115,7 +119,7 @@
             android:text="@string/bluetooth_list_header_text"
             android:id="@+id/bluetooth_list_header_text"
             android:textStyle="bold"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -131,7 +135,8 @@
                 android:layout_marginRight="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                style="?android:attr/buttonStyleSmall" />
+                style="?android:attr/buttonStyleSmall"
+                android:textSize="12dp" />
 
             <ListView
                 android:layout_width="wrap_content"
