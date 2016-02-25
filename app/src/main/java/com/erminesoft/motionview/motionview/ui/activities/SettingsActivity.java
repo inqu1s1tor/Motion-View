@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsActivity extends GenericActivity implements SettingsBridge {
+    private static final String FITNESS_HISTORY_INTENT = "com.google.android.gms.fitness.settings.GOOGLE_FITNESS_SETTINGS";
 
     private List<String> devicesArray = new ArrayList<>();
     private SharedDataManager mSharedDataManager;
@@ -51,7 +52,6 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         mSharedDataManager = getMVApplication().getSharedDataManager();
         setContentView(R.layout.activity_settings);
@@ -103,6 +103,10 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         super.onPause();
         mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(String.valueOf(userHeightText.getText())));
         mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, Integer.parseInt(String.valueOf(userWeightText.getText())));
+
+        mGoogleClientFacade.saveUserHeight(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT));
+        mGoogleClientFacade.saveUserWeight((float) mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT));
+
         radioGroup = (RadioGroup) findViewById(R.id.settings_user_radio_group);
         RadioButton r = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
         if (r.getText().equals("Male")) {
@@ -180,21 +184,27 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         userWeightHeader = (TextView) findViewById(R.id.settings_user_weight_height_header);
         userWeightHeader.setText(getString(R.string.settings_user_weight_height_header));
         userWeightText = (EditText) findViewById(R.id.settings_user_weight);
-        userWeightText.setText(mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT) + "");
+        userWeightText.setText(String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT)));
         userWeightText.requestFocus();
     }
 
     @Override
     public void initHeight() {
         userHeightText = (EditText) findViewById(R.id.settings_user_height);
-        userHeightText.setText(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT) + "");
+        userHeightText.setText(String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT)));
         userHeightText.requestFocus();
         userHeightText.clearFocus();
     }
 
     @Override
     public void initCleanHistory() {
-
+        findViewById(R.id.settings_clean_history_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent fitnessSettings = new Intent(FITNESS_HISTORY_INTENT);
+                startActivity(fitnessSettings);
+            }
+        });
     }
 
     @Override
@@ -207,7 +217,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         btDeviceList = (ListView) findViewById(R.id.bt_available_devices);
         pBar = (ProgressBar) findViewById(R.id.bt_scan_progress);
         scanBtDevices = (Button) findViewById(R.id.bt_scan_button);
-        adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, devicesArray);
+        adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, devicesArray);
         btDeviceList.setAdapter(adapter);
     }
 

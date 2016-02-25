@@ -16,8 +16,6 @@ import com.erminesoft.motionview.motionview.ui.FragmentLauncher;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
 public class MainFragmentActivity extends GenericActivity implements ActivityBridge {
-    private static final String FITNESS_HISTORY_INTENT = "com.google.android.gms.fitness.settings.GOOGLE_FITNESS_SETTINGS";
-
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
     private FragmentLauncher mFragmentLauncher;
@@ -76,10 +74,6 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
         switch (item.getItemId()) {
             case R.id.settings:
                 SettingsActivity.start(this);
-                break;
-            case R.id.clear_history:
-                Intent fitnessSettings = new Intent(FITNESS_HISTORY_INTENT);
-                startActivity(fitnessSettings);
                 break;
             case android.R.id.home:
                 onHomeButtonPressed();
