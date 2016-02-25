@@ -62,8 +62,8 @@ public class GoogleClientFacade {
         mOfflineStorageManager.getDataPerMonthFromHistory(month, year, resultListener);
     }
 
-    public void getDataForAllTime(BucketsResultListener resultListener) {
-        mOfflineStorageManager.getDataForAllTime(resultListener);
+    public void getDataForInitHistory(long installTime, BucketsResultListener resultListener) {
+        mOfflineStorageManager.getDataForInitHistory(installTime, resultListener);
     }
 
     public void subscribe() {

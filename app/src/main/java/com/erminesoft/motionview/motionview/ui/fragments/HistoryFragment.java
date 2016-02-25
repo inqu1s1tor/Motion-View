@@ -12,6 +12,7 @@ import android.widget.Spinner;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
+import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
@@ -62,7 +63,8 @@ public class HistoryFragment extends GenericFragment {
     private void initDataForSpinners() {
         ChartDataWorker.init(getContext());
 
-        mGoogleClientFacade.getDataForAllTime(new OnGotAllDataListener());
+        long firstInstallTime = mSharedDataManager.readLong(SharedDataManager.FIRST_INSTALL_TIME);
+        mGoogleClientFacade.getDataForInitHistory(firstInstallTime, new OnGotAllDataListener());
     }
 
     private void initSpinners() {

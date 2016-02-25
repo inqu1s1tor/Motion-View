@@ -6,10 +6,12 @@ import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.bridge.ActivityBridge;
 import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
+import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 
 public abstract class GenericFragment extends Fragment {
     protected final String TAG = this.getClass().getSimpleName();
     protected GoogleClientFacade mGoogleClientFacade;
+    protected SharedDataManager mSharedDataManager;
     protected ActivityBridge mActivity;
 
     @Override
@@ -18,6 +20,7 @@ public abstract class GenericFragment extends Fragment {
 
         mActivity = (ActivityBridge) getActivity();
         mGoogleClientFacade = mActivity.getMVApplication().getGoogleClientFacade();
+        mSharedDataManager = mActivity.getMVApplication().getSharedDataManager();
     }
 
     public void showShortToast(int resId) {

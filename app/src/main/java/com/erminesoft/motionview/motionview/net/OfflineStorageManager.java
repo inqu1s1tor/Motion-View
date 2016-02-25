@@ -133,14 +133,14 @@ class OfflineStorageManager {
                 .build();
     }
 
-    public void getDataForAllTime(final BucketsResultListener resultListener) {
+    public void getDataForInitHistory(final long installTime, final BucketsResultListener resultListener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 Calendar calendar = Calendar.getInstance();
                 long endTime = calendar.getTimeInMillis();
 
-                calendar.add(Calendar.YEAR, -1);
+                calendar.setTimeInMillis(installTime);
                 long startTime = calendar.getTimeInMillis();
 
                 DataReadRequest request = new DataReadRequest.Builder()
