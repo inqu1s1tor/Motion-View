@@ -11,12 +11,21 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.bridge.ActivityBridge;
 import com.erminesoft.motionview.motionview.ui.factory.FragmentsFactory;
+import com.erminesoft.motionview.motionview.ui.fragments.DailyStatisticFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
+import com.erminesoft.motionview.motionview.util.FragmentsType;
+import com.google.android.gms.fitness.data.DataSet;
 
-public class MainFragmentActivity extends GenericActivity {
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+
+public class MainFragmentActivity extends GenericActivity implements ActivityBridge {
     private static final String FITNESS_HISTORY_INTENT = "com.google.android.gms.fitness.settings.GOOGLE_FITNESS_SETTINGS";
 
     private TabLayout mTabLayout;
@@ -41,10 +50,8 @@ public class MainFragmentActivity extends GenericActivity {
 
         mTabLayout = (TabLayout) findViewById(R.id.main_fragment_container_tab_container);
 
-
         initTabs();
         mTabLayout.setOnTabSelectedListener(new OnTabSelectedListenerImpl());
-        mTabLayout.setSelected(true);
     }
 
     private void initTabs() {
@@ -55,7 +62,15 @@ public class MainFragmentActivity extends GenericActivity {
             tab = mTabLayout.newTab();
 
             tab.setText(name);
-            mTabLayout.addTab(tab, name.equals(getString(R.string.today_date_text)));
+            boolean setSelected = false;
+
+            if (name.equals(getString(R.string.today_date_text))) {
+                setSelected = true;
+
+                changeFragment(name);
+            }
+
+            mTabLayout.addTab(tab, setSelected);
         }
     }
 
@@ -72,8 +87,11 @@ public class MainFragmentActivity extends GenericActivity {
                 SettingsActivity.start(this);
                 break;
             case R.id.clear_history:
-                Intent settings = new Intent(FITNESS_HISTORY_INTENT);
-                startActivity(settings);
+                Intent fitnessSettings = new Intent(FITNESS_HISTORY_INTENT);
+                startActivity(fitnessSettings);
+                break;
+            case android.R.id.home:
+                closeDailyStatisticFragment();
                 break;
         }
 
@@ -87,16 +105,55 @@ public class MainFragmentActivity extends GenericActivity {
         }
     }
 
+    @Override
+    public void showDailyStatisticFragment(List<DataSet> dataSets, long timestamp) {
+        DateFormat format = DateFormat.getDateInstance();
+
+        setTitle(format.format(new Date(timestamp)));
+        setHomeAsUpEnabled(true);
+        hideTabs();
+
+        Fragment dailyStatistic = DailyStatisticFragment.create(dataSets, timestamp);
+        replaceFragment(dailyStatistic);
+    }
+
+    private void closeDailyStatisticFragment() {
+        changeFragment(FragmentsType.HISTORY);
+
+        setHomeAsUpEnabled(false);
+        showTabs();
+
+        setTitle(getString(R.string.app_name));
+    }
+
+    private void changeFragment(String name) {
+        Fragment fragment = FragmentsFactory.getFragment(name);
+        replaceFragment(fragment, name);
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        replaceFragment(fragment, fragment.getClass().getSimpleName());
+    }
+
+    private void replaceFragment(Fragment fragment, @Nullable String tag) {
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+
+        transaction.replace(R.id.fragment_container, fragment, tag);
+        transaction.commit();
+    }
+
+    private void showTabs() {
+        mTabLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void hideTabs() {
+        mTabLayout.setVisibility(View.GONE);
+    }
+
     private final class OnTabSelectedListenerImpl implements TabLayout.OnTabSelectedListener {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-            FragmentTransaction transaction = mFragmentManager.beginTransaction();
-
-            String tabName = String.valueOf(tab.getText());
-            Fragment fragment = FragmentsFactory.getFragment(tabName);
-            transaction.replace(R.id.fragment_container, fragment, tabName);
-
-            transaction.commit();
+            changeFragment(String.valueOf(tab.getText()));
         }
 
         @Override

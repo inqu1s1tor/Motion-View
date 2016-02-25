@@ -13,7 +13,6 @@ import android.widget.Spinner;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
-import com.erminesoft.motionview.motionview.ui.activities.DailyStatisticActivity;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
@@ -48,8 +47,6 @@ public class HistoryFragment extends GenericFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        getActivity().setTitle(R.string.history_activity_title);
     }
 
     @Nullable
@@ -214,7 +211,7 @@ public class HistoryFragment extends GenericFragment {
 
             long timestamp = stepDataSet.getDataPoints().get(0).getTimestamp(TimeUnit.MILLISECONDS);
 
-            DailyStatisticActivity.start(getActivity(), dataSets, timestamp);
+            mActivity.showDailyStatisticFragment(dataSets, timestamp);
         }
 
         @Override

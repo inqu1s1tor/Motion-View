@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.MVApplication;
@@ -14,32 +13,18 @@ import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
 public abstract class GenericActivity extends AppCompatActivity {
-    protected final String TAG = this.getClass().getSimpleName();
     protected GoogleClientFacade mGoogleClientFacade;
-    protected ActionBar mActionBar;
     protected SharedDataManager mSharedDataManager;
 
-    public final MVApplication getMVapplication() {
-        return (MVApplication) getApplication();
-    }
-
-    public void showShortToast(int resId) {
-        showShortToast(getString(resId));
-    }
-
-    public void showShortToast(String content) {
-        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
-    }
-
-    public void showLongToast(String content) {
-        Toast.makeText(this, content, Toast.LENGTH_LONG).show();
-    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGoogleClientFacade = getMVapplication().getGoogleClientFacade();
-        mActionBar = getSupportActionBar();
+        mGoogleClientFacade = getMVApplication().getGoogleClientFacade();
         mSharedDataManager = new SharedDataManager(getBaseContext());
+    }
+
+    public final MVApplication getMVApplication() {
+        return (MVApplication) getApplication();
     }
 
     @Override
@@ -49,18 +34,18 @@ public abstract class GenericActivity extends AppCompatActivity {
         }
     }
 
-    protected void setHomeAsUpEnabled() {
-        mActionBar.setDisplayHomeAsUpEnabled(true);
+    public final void setHomeAsUpEnabled(boolean enabled) {
+        ActionBar actionBar = getSupportActionBar();
+
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(enabled);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
+    public void setTitle(String title) {
+        super.setTitle(title);
+    }
 
-        return super.onOptionsItemSelected(item);
+    public void showShortToast(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 }

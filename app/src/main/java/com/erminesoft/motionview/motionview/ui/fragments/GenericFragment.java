@@ -4,21 +4,21 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
+import com.erminesoft.motionview.motionview.bridge.ActivityBridge;
 import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
-import com.erminesoft.motionview.motionview.ui.activities.GenericActivity;
 
-public class GenericFragment extends Fragment {
+public abstract class GenericFragment extends Fragment {
     protected final String TAG = this.getClass().getSimpleName();
     protected GoogleClientFacade mGoogleClientFacade;
+    protected ActivityBridge mActivity;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        GenericActivity activity = (GenericActivity) getActivity();
-        mGoogleClientFacade = activity.getMVapplication().getGoogleClientFacade();
+        mActivity = (ActivityBridge) getActivity();
+        mGoogleClientFacade = mActivity.getMVApplication().getGoogleClientFacade();
     }
-
 
     public void showShortToast(int resId) {
         showShortToast(getString(resId));

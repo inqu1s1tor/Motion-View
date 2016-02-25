@@ -23,12 +23,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".ui.activities.HistoryActivity"
-            android:screenOrientation="landscape" />
-        <activity android:name=".ui.activities.MainActivity" />
         <activity android:name=".ui.activities.DailyStatisticActivity" />
-        <activity android:name=".ui.activities.SplashActivity">
+        <activity
+            android:name=".ui.activities.SplashActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,7 +35,9 @@
         </activity>
         <activity android:name=".ui.activities.GoogleMapActivity" />
 
-        <activity android:name=".ui.activities.MainFragmentActivity"/>
+        <activity
+            android:name=".ui.activities.MainFragmentActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <activity android:name=".ui.activities.SettingsActivity"/>
 

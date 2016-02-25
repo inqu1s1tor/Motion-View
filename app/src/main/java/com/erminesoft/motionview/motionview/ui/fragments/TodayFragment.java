@@ -132,6 +132,7 @@ public class TodayFragment extends GenericFragment implements EventBridge {
             steps = datapoint.getValue(Field.FIELD_STEPS).asInt();
         }
 
+        mProgressBar.setProgress(steps);
         mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
     }
 
