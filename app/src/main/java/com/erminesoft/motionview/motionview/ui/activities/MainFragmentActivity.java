@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.bridge.ActivityBridge;
+import com.erminesoft.motionview.motionview.ui.FragmentLauncher;
 import com.erminesoft.motionview.motionview.ui.factory.FragmentsFactory;
 import com.erminesoft.motionview.motionview.ui.fragments.DailyStatisticFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
@@ -31,6 +32,7 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
     private FragmentManager mFragmentManager;
+    private FragmentLauncher fragmentLauncher;
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, MainFragmentActivity.class));
@@ -46,7 +48,9 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
 
         setTitle(getString(R.string.app_name));
 
-        mFragmentManager = getSupportFragmentManager();
+        fragmentLauncher = new FragmentLauncher(getSupportFragmentManager());
+        fragmentLauncher.launchTodayFragment();
+
 
         mTabLayout = (TabLayout) findViewById(R.id.main_fragment_container_tab_container);
 
@@ -103,6 +107,16 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
         if (requestCode == ErrorDialogFragment.REQUEST_RESOLVE_ERROR) {
             mGoogleClientFacade.tryConnectClient(resultCode);
         }
+    }
+
+    @Override
+    public FragmentLauncher getFragmentLauncher() {
+        return fragmentLauncher;
+    }
+
+    @Override
+    public void setTabState(int visibility) {
+        mTabLayout.setVisibility(visibility);
     }
 
     @Override

@@ -12,14 +12,13 @@ public class DailyStatisticFragment extends GenericFragment {
     private static final String DATASETS_EXTRA = "datasets_Extra";
     private static final String TIMESTAMP_EXTRA = "timestamp_Extra";
 
-    public static DailyStatisticFragment create(List<DataSet> datasets, long timestamp) {
-        DailyStatisticFragment fragment = new DailyStatisticFragment();
-
+    public static Bundle buildArgs(List<DataSet> datasets, long timestamp) {
         Bundle args = new Bundle();
         args.putParcelableArrayList(DATASETS_EXTRA, (ArrayList<DataSet>) datasets);
         args.putLong(TIMESTAMP_EXTRA, timestamp);
-
-        fragment.setArguments(args);
-        return fragment;
+        return args;
     }
+
+
+
 }
