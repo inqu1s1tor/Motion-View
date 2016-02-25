@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.erminesoft.motionview.motionview.R;
@@ -43,6 +44,7 @@ public class HistoryFragment extends GenericFragment {
     private BarChart mBarChart;
     private Spinner mMonthSpinner;
     private Spinner mYearSpinner;
+    private ProgressBar mProgressBar;
 
     @Nullable
     @Override
@@ -51,8 +53,9 @@ public class HistoryFragment extends GenericFragment {
 
         mBarChart = (BarChart) view.findViewById(R.id.bar_chart);
 
-        mYearSpinner = (Spinner) view.findViewById(R.id.activity_history_year_spinner);
-        mMonthSpinner = (Spinner) view.findViewById(R.id.activity_history_month_spinner);
+        mYearSpinner = (Spinner) view.findViewById(R.id.fragment_history_year_spinner);
+        mMonthSpinner = (Spinner) view.findViewById(R.id.fragment_history_month_spinner);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_history_progress_bar);
 
         initDataForSpinners();
         initChart();
@@ -147,6 +150,10 @@ public class HistoryFragment extends GenericFragment {
     }
 
     private void setChartData(final BarData data) {
+        if (mProgressBar.getVisibility() != View.GONE) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+
         mBarChart.clear();
         mBarChart.setData(data);
 

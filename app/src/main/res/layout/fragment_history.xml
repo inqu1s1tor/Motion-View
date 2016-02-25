@@ -10,14 +10,14 @@
         android:orientation="horizontal">
 
         <Spinner
-            android:id="@+id/activity_history_month_spinner"
+            android:id="@+id/fragment_history_month_spinner"
             android:layout_width="match_parent"
             android:layout_height="@dimen/spinner_height"
             android:layout_margin="@dimen/spinner_margin"
             android:layout_weight="1"/>
 
         <Spinner
-            android:id="@+id/activity_history_year_spinner"
+            android:id="@+id/fragment_history_year_spinner"
             android:layout_width="match_parent"
             android:layout_height="@dimen/spinner_height"
             android:layout_margin="@dimen/spinner_margin"
@@ -25,9 +25,23 @@
 
     </LinearLayout>
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/bar_chart"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/fragment_history_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="true"/>
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/bar_chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
 
 </LinearLayout>
