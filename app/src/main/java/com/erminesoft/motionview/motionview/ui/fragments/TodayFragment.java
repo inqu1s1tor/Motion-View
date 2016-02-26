@@ -11,27 +11,22 @@ import java.util.List;
 
 public class TodayFragment extends BaseDailyStatisticFragment {
 
-    private DataChangedListener mListener;
-
     @Override
     public void onStart() {
         super.onStart();
 
-        mListener = new DataChangedListenerImpl();
-
-        mGoogleClientFacade.registerListenerForStepCounter(mListener);
+        mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
         mGoogleClientFacade.getDataPerDay(
                 TimeWorker.getCurrentDay(),
                 TimeWorker.getCurrentMonth(),
                 TimeWorker.getCurrentYear(),
-                mListener);
+                new DataChangedListenerImpl());
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        mListener = null;
         mGoogleClientFacade.unregisterListener();
     }
 
