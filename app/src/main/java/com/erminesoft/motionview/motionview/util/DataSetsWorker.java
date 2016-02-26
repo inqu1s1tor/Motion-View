@@ -29,11 +29,6 @@ public class DataSetsWorker {
                 continue;
             }
 
-            if (dataType.equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
-                eventObject.onSpeedChanged(dataPoints);
-                continue;
-            }
-
             if (dataType.equals(DataType.AGGREGATE_STEP_COUNT_DELTA)) {
                 eventObject.onStepsChanged(dataPoints);
             }

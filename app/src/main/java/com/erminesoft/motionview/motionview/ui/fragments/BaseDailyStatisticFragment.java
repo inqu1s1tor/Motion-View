@@ -22,7 +22,6 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
     protected TextView mStepsTextView;
     protected TextView mCaloriesTextView;
     protected TextView mTimeTextView;
-    protected TextView mSpeedTextView;
     protected TextView mDistanceTextView;
     protected ProgressBar mProgressBar;
 
@@ -34,7 +33,6 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
         mStepsTextView = (TextView) view.findViewById(R.id.steps_text_view);
         mCaloriesTextView = (TextView) view.findViewById(R.id.calories_text_view);
         mTimeTextView = (TextView) view.findViewById(R.id.total_time_text_view);
-        mSpeedTextView = (TextView) view.findViewById(R.id.avg_speed_text_view);
         mDistanceTextView = (TextView) view.findViewById(R.id.distance_text_view);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.daily_progress_bar);
@@ -51,8 +49,7 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
         for (DataPoint dataPoint : dataPoints) {
             int activityType = dataPoint.getValue(Field.FIELD_ACTIVITY).asInt();
 
-            // TODO: CHANGE ACTIVITY TYPE
-            if (activityType == 3) {
+            if (activityType != 3) {
                 totalActivityTime = dataPoint.getValue(Field.FIELD_DURATION).asInt();
             }
         }
@@ -98,18 +95,5 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
 
         mProgressBar.setProgress(steps);
         mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
-    }
-
-    @Override
-    public void onSpeedChanged(List<DataPoint> dataPoints) {
-        float speed = 0;
-
-        if (dataPoints.size() > 0) {
-            DataPoint datapoint = dataPoints.get(0);
-
-            speed = datapoint.getValue(Field.FIELD_AVERAGE).asFloat();
-        }
-
-        mSpeedTextView.setText(getString(R.string.avg_speed_format, speed));
     }
 }

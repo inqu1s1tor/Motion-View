@@ -12,6 +12,4 @@ public interface EventBridge {
     void onCaloriesChanged(List<DataPoint> dataPoints);
 
     void onStepsChanged(List<DataPoint> dataPoints);
-
-    void onSpeedChanged(List<DataPoint> dataPoints);
 }

@@ -14,7 +14,6 @@ class SubscribingManager {
     public void subscribe() {
         Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_DISTANCE_DELTA);
         Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_CALORIES_EXPENDED);
-        Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_SPEED);
         Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_DELTA);
         Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_ACTIVITY_SEGMENT);
     }
@@ -22,7 +21,6 @@ class SubscribingManager {
     public void unsubscribe() {
         Fitness.RecordingApi.unsubscribe(mClient, DataType.TYPE_DISTANCE_DELTA);
         Fitness.RecordingApi.unsubscribe(mClient, DataType.TYPE_CALORIES_EXPENDED);
-        Fitness.RecordingApi.unsubscribe(mClient, DataType.TYPE_SPEED);
         Fitness.RecordingApi.unsubscribe(mClient, DataType.TYPE_DISTANCE_DELTA);
         Fitness.RecordingApi.unsubscribe(mClient, DataType.TYPE_ACTIVITY_SEGMENT);
     }
