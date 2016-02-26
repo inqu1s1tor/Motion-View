@@ -57,6 +57,8 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         setContentView(R.layout.activity_settings);
         initSettings();
 
+        setHomeAsUpEnabled(true);
+
         mGoogleClientFacade.setBleScanCallback(new BleScanCallback() {
             @Override
             public void onDeviceFound(BleDevice device) {
@@ -125,6 +127,11 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
             pBar.setVisibility(View.VISIBLE);
             mGoogleClientFacade.startBleScan();
         }
+    }
+
+    @Override
+    protected void onHomeButtonPressed() {
+        finish();
     }
 
     public void initSettings() {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.MVApplication;
@@ -40,5 +41,20 @@ public abstract class GenericActivity extends AppCompatActivity {
 
     public void showShortToast(String content) {
         Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onHomeButtonPressed();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected void onHomeButtonPressed() {
+        // Empty
     }
 }

@@ -75,9 +75,6 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
             case R.id.settings:
                 SettingsActivity.start(this);
                 break;
-            case android.R.id.home:
-                onHomeButtonPressed();
-                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -106,7 +103,8 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
         mTabLayout.setVisibility(View.GONE);
     }
 
-    private void onHomeButtonPressed() {
+    @Override
+    protected void onHomeButtonPressed() {
         mFragmentLauncher.launchHistoryFragment();
 
         setHomeAsUpEnabled(false);
