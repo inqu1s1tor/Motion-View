@@ -54,7 +54,9 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
             }
         }
 
-        mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
+        if (isResumed()) {
+            mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
+        }
     }
 
     @Override
@@ -67,7 +69,9 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
             distance = (int) dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
         }
 
-        mDistanceTextView.setText(getString(R.string.total_distance_format, distance));
+        if (isResumed()) {
+            mDistanceTextView.setText(getString(R.string.total_distance_format, distance));
+        }
     }
 
     @Override
@@ -80,7 +84,9 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
             calories = (int) dataPoint.getValue(Field.FIELD_CALORIES).asFloat();
         }
 
-        mCaloriesTextView.setText(getString(R.string.total_calories_format, calories));
+        if (isResumed()) {
+            mCaloriesTextView.setText(getString(R.string.total_calories_format, calories));
+        }
     }
 
     @Override
@@ -93,7 +99,9 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
             steps = datapoint.getValue(Field.FIELD_STEPS).asInt();
         }
 
-        mProgressBar.setProgress(steps);
-        mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
+        if (isResumed()) {
+            mProgressBar.setProgress(steps);
+            mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
+        }
     }
 }

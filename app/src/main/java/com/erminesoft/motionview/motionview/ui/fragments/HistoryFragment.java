@@ -228,6 +228,10 @@ public class HistoryFragment extends GenericFragment {
 
         @Override
         public void onSuccess(List<Bucket> result) {
+            if (!isResumed()) {
+                return;
+            }
+
             BarData data = ChartDataWorker.processStepsBuckets(result, getContext());
             setChartData(data);
         }
@@ -250,6 +254,11 @@ public class HistoryFragment extends GenericFragment {
                 showLongToast("We can't get your activities data.");
                 return;
             }
+
+            if (!isResumed()) {
+                return;
+            }
+
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
