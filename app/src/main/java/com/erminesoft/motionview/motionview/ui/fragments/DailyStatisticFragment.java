@@ -20,7 +20,6 @@ public class DailyStatisticFragment extends BaseDailyStatisticFragment {
     private static final String TIMESTAMP_EXTRA = "timestamp_Extra";
 
     private ArrayList<DataSet> mDataSets;
-    private long mTimestamp;
 
     public static Bundle buildArgs(List<DataSet> datasets, long timestamp) {
         Bundle args = new Bundle();

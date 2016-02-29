@@ -56,29 +56,22 @@
             android:layout_margin="@dimen/text_view_default_margin"
             android:textSize="@dimen/steps_text_size"/>
 
-        <ScrollView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/fragment_today_hours_chart"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="200dp"/>
 
-                <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/activity_main_hours_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/fragment_today_activities_chart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-                <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/activity_main_calories_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-
-        </ScrollView>
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

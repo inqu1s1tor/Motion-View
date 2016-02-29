@@ -167,4 +167,8 @@ public class GoogleClientFacade {
     public void saveUserWeight(float weight) {
         mOfflineStorageManager.saveUserWeight(weight);
     }
+
+    public void getHoursDataPerDay(long timeStamp, BucketsResultListener listener) {
+        mOfflineStorageManager.getHoursDataPerDay(timeStamp, listener);
+    }
 }

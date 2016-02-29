@@ -269,4 +269,34 @@ class OfflineStorageManager {
             }
         });
     }
+
+    public void getHoursDataPerDay(final long timeStamp, final BucketsResultListener listener) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(timeStamp);
+
+                TimeWorker.setMidnight(calendar);
+                long startTime = calendar.getTimeInMillis();
+
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                long endTime = calendar.getTimeInMillis();
+
+                final DataReadResult readResult = Fitness.HistoryApi.readData(mClient, new DataReadRequest.Builder()
+                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                        .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
+                        .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                        .bucketByTime(3, TimeUnit.HOURS)
+                        .build()).await();
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onSuccess(readResult.getBuckets());
+                    }
+                });
+            }
+        });
+    }
 }
