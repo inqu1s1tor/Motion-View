@@ -152,7 +152,7 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
     }
 
     private void setDataForActivitiesChart(List<DataPoint> dataPoints) {
-
+        mActivitiesChart.setData(ChartDataWorker.processActivitiesData(dataPoints));
     }
 
     @Override

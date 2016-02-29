@@ -10,14 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/date_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/text_view_default_margin"
-            android:textSize="@dimen/date_text_size"/>
-
         <ProgressBar
             android:id="@+id/daily_progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -69,7 +61,7 @@
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/fragment_today_activities_chart"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="200dp"/>
 
         </LinearLayout>
 
