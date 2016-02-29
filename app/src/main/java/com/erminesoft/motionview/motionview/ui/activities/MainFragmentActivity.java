@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.bridge.ActivityBridge;
+import com.erminesoft.motionview.motionview.core.bridge.ActivityBridge;
 import com.erminesoft.motionview.motionview.ui.FragmentLauncher;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 

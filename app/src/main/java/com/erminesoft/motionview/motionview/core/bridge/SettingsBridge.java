@@ -1,4 +1,4 @@
-package com.erminesoft.motionview.motionview.bridge;
+package com.erminesoft.motionview.motionview.core.bridge;
 
 public interface SettingsBridge {
     void initGender();

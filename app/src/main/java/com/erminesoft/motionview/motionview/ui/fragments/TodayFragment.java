@@ -8,19 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
-import com.erminesoft.motionview.motionview.util.DataSetsWorker;
-import com.erminesoft.motionview.motionview.util.TimeWorker;
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.core.command.CommandType;
+import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.google.android.gms.fitness.data.DataSet;
 
 import java.util.List;
 
 public class TodayFragment extends BaseDailyStatisticFragment {
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mTimestamp = System.currentTimeMillis();
-
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -29,17 +28,27 @@ public class TodayFragment extends BaseDailyStatisticFragment {
         super.onStart();
 
         mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
-        mGoogleClientFacade.getDataPerDay(
-                TimeWorker.getCurrentDay(),
-                TimeWorker.getCurrentMonth(),
-                TimeWorker.getCurrentYear(),
-                new DataChangedListenerImpl());
+        Bundle bundle = ProcessDayDataCommand
+                .generateBundle(this, mGoogleClientFacade, System.currentTimeMillis());
+
+        mCommander.execute(new ResultCallback() {
+            @Override
+            public void onError(String s) {
+
+            }
+
+            @Override
+            public void onSuccess(String s) {
+
+            }
+        }, bundle);
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
+        mCommander.abort(CommandType.PROCESS_DAY_DATA);
         mGoogleClientFacade.unregisterListener();
     }
 
@@ -47,7 +56,6 @@ public class TodayFragment extends BaseDailyStatisticFragment {
 
         @Override
         public void onSuccess(final List<DataSet> dataSets) {
-            DataSetsWorker.processDataSets(dataSets, TodayFragment.this);
         }
 
         @Override

@@ -8,10 +8,7 @@ public interface Command {
 
     final String TRANSPORT_KEY = "transport";
 
-    void execute(ResultCallback callback);
-
     void execute(ResultCallback callback, Bundle bundle);
 
-    void abort();
-
+    void deny();
 }

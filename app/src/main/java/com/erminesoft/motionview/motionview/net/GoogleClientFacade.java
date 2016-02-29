@@ -15,7 +15,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
-public class GoogleClientFacade {
+import java.io.Serializable;
+
+public class GoogleClientFacade implements Serializable {
 
     private GoogleApiClient mClient;
     private BuildManager mBuildManager;

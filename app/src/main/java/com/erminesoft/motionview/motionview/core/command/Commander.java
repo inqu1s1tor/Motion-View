@@ -3,45 +3,55 @@ package com.erminesoft.motionview.motionview.core.command;
 import android.os.Bundle;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Commander {
 
-    private final Executor mExecutor;
-    private Map<CommandType, Command> commandMap;
+    private final ExecutorService mExecutor;
+    private Map<CommandType, Command> mCommandMap;
 
     public Commander() {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
-        commandMap = new EnumMap<CommandType, Command>(CommandType.class);
+        mCommandMap = new EnumMap<>(CommandType.class);
     }
 
-    public void execute(ResultCallback callback, Bundle bundle) {
-        CommandType type = (CommandType) bundle.getSerializable(Command.TRANSPORT_KEY);
+    public void execute(final ResultCallback callback, final Bundle bundle) {
+        mExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                CommandType type = (CommandType) bundle.getSerializable(Command.TRANSPORT_KEY);
+                Command command = mCommandMap.get(type);
 
-        Command command = commandMap.get(type);
-        if(command == null){
-            command = CommandFactory.getCommand(type);
-            commandMap.put(type, command);
+                if (command == null) {
+                    command = CommandFactory.getCommand(type);
+                    mCommandMap.put(type, command);
+                }
+
+                command.execute(callback, bundle);
+            }
+        });
+    }
+
+    public void abort(CommandType type) {
+        Command command = mCommandMap.get(type);
+
+        if (command != null) {
+            command.deny();
         }
-        command.execute(callback, bundle);
-    }
-
-    public void abort(Command command) {
-        command.abort();
     }
 
     public static final class CommandFactory {
 
-        public static SimpleCommand getCommand(CommandType type) {
-            SimpleCommand command = new SimpleCommand();
+        public static GenericCommand getCommand(CommandType type) {
+            GenericCommand command = new GenericCommand();
 
             switch (type) {
-                default:
+                case PROCESS_DAY_DATA:
+                    command = new ProcessDayDataCommand();
                     break;
             }
 

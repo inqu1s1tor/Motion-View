@@ -11,7 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.bridge.EventBridge;
+import com.erminesoft.motionview.motionview.core.bridge.EventBridge;
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
@@ -31,6 +31,7 @@ import static com.github.mikephil.charting.charts.CombinedChart.DrawOrder;
 
 public abstract class BaseDailyStatisticFragment extends GenericFragment implements EventBridge {
     private static final int DAILY_GOAL = 10000;
+    private static final String[] HOURS_IN_DAY = new String[]{"3", "6", "9", "12", "15", "18", "21", "24"};
 
     protected TextView mStepsTextView;
     protected TextView mCaloriesTextView;
@@ -131,7 +132,7 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
 
             @Override
             public void onSuccess(List<Bucket> buckets) {
-                CombinedData data = new CombinedData(new String[]{"3", "6", "9", "12", "15", "18", "21", "24"});
+                CombinedData data = new CombinedData(HOURS_IN_DAY);
                 data.setData(ChartDataWorker.processStepsBuckets(buckets));
                 data.setData(ChartDataWorker.processCaloriesData(buckets));
 
@@ -153,6 +154,7 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
 
     private void setDataForActivitiesChart(List<DataPoint> dataPoints) {
         mActivitiesChart.setData(ChartDataWorker.processActivitiesData(dataPoints));
+        mActivitiesChart.invalidate();
     }
 
     @Override
@@ -169,9 +171,7 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
             }
         }
 
-        if (isResumed()) {
-            mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
-        }
+        mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
     }
 
     @Override
@@ -184,9 +184,7 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
             distance = (int) dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
         }
 
-        if (isResumed()) {
-            mDistanceTextView.setText(getString(R.string.total_distance_format, distance));
-        }
+        mDistanceTextView.setText(getString(R.string.total_distance_format, distance));
     }
 
     @Override
@@ -199,9 +197,7 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
             calories = (int) dataPoint.getValue(Field.FIELD_CALORIES).asFloat();
         }
 
-        if (isResumed()) {
-            mCaloriesTextView.setText(getString(R.string.total_calories_format, calories));
-        }
+        mCaloriesTextView.setText(getString(R.string.total_calories_format, calories));
     }
 
     @Override
@@ -214,9 +210,7 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
             steps = datapoint.getValue(Field.FIELD_STEPS).asInt();
         }
 
-        if (isResumed()) {
-            mProgressBar.setProgress(steps);
-            mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
-        }
+        mProgressBar.setProgress(steps);
+        mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
     }
 }

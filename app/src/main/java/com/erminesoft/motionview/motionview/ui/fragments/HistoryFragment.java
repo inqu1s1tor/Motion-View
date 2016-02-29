@@ -212,7 +212,7 @@ public class HistoryFragment extends GenericFragment {
                 return;
             }
 
-            long timestamp = stepDataSet.getDataPoints().get(0).getTimestamp(TimeUnit.MILLISECONDS);
+            long timestamp = stepDataSet.getDataPoints().get(0).getStartTime(TimeUnit.MILLISECONDS);
 
             mActivity.getFragmentLauncher().launchDailyStatisticFragment(dataSets, timestamp);
             mActivity.onDailyStatisticLaunched();

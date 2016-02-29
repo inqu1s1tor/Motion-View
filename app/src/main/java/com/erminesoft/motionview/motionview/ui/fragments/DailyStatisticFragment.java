@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.util.DataSetsWorker;
 import com.google.android.gms.fitness.data.DataSet;
 
@@ -45,5 +47,18 @@ public class DailyStatisticFragment extends BaseDailyStatisticFragment {
         super.onStart();
 
         DataSetsWorker.processDataSets(mDataSets, this);
+
+        Bundle bundle = ProcessDayDataCommand.generateBundle(this, mGoogleClientFacade, mTimestamp);
+        mCommander.execute(new ResultCallback() {
+            @Override
+            public void onError(String s) {
+
+            }
+
+            @Override
+            public void onSuccess(String s) {
+
+            }
+        }, bundle);
     }
 }

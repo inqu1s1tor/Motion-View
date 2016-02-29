@@ -1,6 +1,6 @@
 package com.erminesoft.motionview.motionview.util;
 
-import com.erminesoft.motionview.motionview.bridge.EventBridge;
+import com.erminesoft.motionview.motionview.core.bridge.EventBridge;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;

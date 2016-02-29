@@ -1,4 +1,4 @@
-package com.erminesoft.motionview.motionview.bridge;
+package com.erminesoft.motionview.motionview.core.bridge;
 
 import com.erminesoft.motionview.motionview.core.MVApplication;
 import com.erminesoft.motionview.motionview.ui.FragmentLauncher;

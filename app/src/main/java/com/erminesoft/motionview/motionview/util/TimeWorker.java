@@ -45,4 +45,25 @@ public class TimeWorker {
 
         return String.format(context.getString(R.string.total_activity_time_format), hours, minutes);
     }
+
+    public static int getDay(long timestamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static int getMonth(long timestamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        return calendar.get(Calendar.MONTH);
+    }
+
+    public static int getYear(long timestamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        return calendar.get(Calendar.YEAR);
+    }
 }
