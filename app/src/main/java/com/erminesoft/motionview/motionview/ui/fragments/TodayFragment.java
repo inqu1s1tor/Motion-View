@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
@@ -31,7 +30,7 @@ public class TodayFragment extends BaseDailyStatisticFragment {
         Bundle bundle = ProcessDayDataCommand
                 .generateBundle(this, mGoogleClientFacade, System.currentTimeMillis());
 
-        mCommander.execute(new ResultCallback() {
+        mCommander.execute(bundle, new ResultCallback<String>() {
             @Override
             public void onError(String s) {
 
@@ -41,7 +40,7 @@ public class TodayFragment extends BaseDailyStatisticFragment {
             public void onSuccess(String s) {
 
             }
-        }, bundle);
+        });
     }
 
     @Override

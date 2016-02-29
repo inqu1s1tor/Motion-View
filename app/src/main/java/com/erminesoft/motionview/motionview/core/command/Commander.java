@@ -1,7 +1,6 @@
 package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
-
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 
 import java.util.EnumMap;
@@ -19,7 +18,7 @@ public class Commander {
         mCommandMap = new EnumMap<>(CommandType.class);
     }
 
-    public void execute(final ResultCallback callback, final Bundle bundle) {
+    public void execute(final Bundle bundle, final ResultCallback callback) {
         mExecutor.submit(new Runnable() {
             @Override
             public void run() {

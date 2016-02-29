@@ -2,7 +2,6 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
-
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
@@ -68,6 +67,18 @@ public class GoogleClientFacade implements Serializable {
         mOfflineStorageManager.getDataForInitHistory(installTime, resultListener);
     }
 
+    public void getHoursDataPerDay(long timeStamp, BucketsResultListener listener) {
+        mOfflineStorageManager.getHoursDataPerDay(timeStamp, listener);
+    }
+
+    public void saveUserHeight(int heightCentimeters) {
+        mOfflineStorageManager.saveUserHeight(heightCentimeters);
+    }
+
+    public void saveUserWeight(float weight) {
+        mOfflineStorageManager.saveUserWeight(weight);
+    }
+
     public void subscribe() {
         mSubscribingManager.subscribe();
     }
@@ -80,10 +91,10 @@ public class GoogleClientFacade implements Serializable {
         mRegisterManager.registerListener(DataType.TYPE_STEP_COUNT_DELTA, stepsChangingListener);
     }
 
+
     public void unregisterListener() {
         mRegisterManager.unregisterListener();
     }
-
 
     public void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
         mMapManager.createLocationRequest(updateInterval, fastestInterval, displacement);
@@ -141,10 +152,10 @@ public class GoogleClientFacade implements Serializable {
         mMapManager.startRouteOnMap();
     }
 
+
     public void stopRouteOnMap() {
         mMapManager.stopRouteOnMap();
     }
-
 
     public void startBleScan() {
         mBluetoothManager.startBleScan();
@@ -160,17 +171,5 @@ public class GoogleClientFacade implements Serializable {
 
     public void setBleScanCallback(BleScanCallback callback) {
         mBluetoothManager.setBleScanCallback(callback);
-    }
-
-    public void saveUserHeight(int heightCentimeters) {
-        mOfflineStorageManager.saveUserHeight(heightCentimeters);
-    }
-
-    public void saveUserWeight(float weight) {
-        mOfflineStorageManager.saveUserWeight(weight);
-    }
-
-    public void getHoursDataPerDay(long timeStamp, BucketsResultListener listener) {
-        mOfflineStorageManager.getHoursDataPerDay(timeStamp, listener);
     }
 }

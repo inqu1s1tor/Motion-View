@@ -1,7 +1,7 @@
 package com.erminesoft.motionview.motionview.core.callback;
 
-public interface ResultCallback {
-    void onError(String s);
+public interface ResultCallback<T> {
+    void onSuccess(T result);
 
-    void onSuccess(String s);
+    void onError(String error);
 }
