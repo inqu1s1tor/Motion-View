@@ -12,7 +12,9 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.core.command.CommandType;
+import com.erminesoft.motionview.motionview.core.command.GenerateHistoryChartDataCommand;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
@@ -21,7 +23,6 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 
@@ -144,10 +145,25 @@ public class HistoryFragment extends GenericFragment {
     }
 
     private void updateChartData(ChartDataWorker.Month currentMonth, int year) {
-        mGoogleClientFacade.getDataPerMonthFromHistory(
-                currentMonth,
-                year,
-                new OnGotDataResultListener());
+        Bundle bundle = GenerateHistoryChartDataCommand.generateBundle(currentMonth, year);
+
+        mCommander.execute(bundle, new ResultCallback() {
+            @Override
+            public void onSuccess(Object result) {
+                if (!(result instanceof BarData)) {
+                    onError("WRONG DATA");
+                    return;
+                }
+
+                BarData data = (BarData) result;
+                setChartData(data);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, error);
+            }
+        });
     }
 
     private int getYearBySpinnerPosition(int position) {
@@ -168,6 +184,13 @@ public class HistoryFragment extends GenericFragment {
         mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
         mBarChart.moveViewToX(data.getXValCount());
         mBarChart.animateY(ANIMATE_DURATION_MILLIS);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        mCommander.deny(CommandType.GENERATE_HISTORY_CHART_DATA);
     }
 
     private final class OnYearSpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {
@@ -203,15 +226,16 @@ public class HistoryFragment extends GenericFragment {
             List<DataSet> dataSets = (List<DataSet>) e.getData();
             DataSet stepDataSet = null;
             for (DataSet dataSet : dataSets) {
-                if (dataSet.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
-                    stepDataSet = dataSet;
 
-                    if (dataSet.getDataPoints().isEmpty()) {
-                        showShortToast(getString(R.string.no_data_for_this_day));
-                        return;
-                    }
+                if (!dataSet.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
+                    continue;
+                }
 
-                    break;
+                stepDataSet = dataSet;
+
+                if (dataSet.getDataPoints().isEmpty()) {
+                    showShortToast(getString(R.string.no_data_for_this_day));
+                    return;
                 }
             }
 
@@ -230,24 +254,5 @@ public class HistoryFragment extends GenericFragment {
         public void onNothingSelected() {
             Log.i(TAG, "Chart selection listener: Nothing selected.");
         }
-    }
-
-    private final class OnGotDataResultListener implements BucketsResultListener {
-
-        @Override
-        public void onSuccess(List<Bucket> result) {
-            if (!isResumed()) {
-                return;
-            }
-
-            BarData data = ChartDataWorker.processStepsBuckets(result, getContext());
-            setChartData(data);
-        }
-
-        @Override
-        public void onError(String error) {
-            Log.i(TAG, error);
-        }
-
     }
 }

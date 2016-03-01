@@ -3,7 +3,6 @@ package com.erminesoft.motionview.motionview.net;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
@@ -49,7 +48,7 @@ class OfflineStorageManager {
     }
 
     void getDataPerMonthFromHistory(final ChartDataWorker.Month month, final int year,
-                                    final BucketsResultListener resultListener) {
+                                    final ResultCallback resultListener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -114,8 +113,9 @@ class OfflineStorageManager {
                 if (TimeWorker.getCurrentDay() != day ||
                         TimeWorker.getCurrentMonth() != month ||
                         TimeWorker.getCurrentYear() != year) {
-                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                    calendar.add(Calendar.DAY_OF_YEAR, 1);
                     TimeWorker.setMidnight(calendar);
+                    calendar.add(Calendar.MILLISECOND, -1);
                 }
 
                 long endTime = calendar.getTimeInMillis();

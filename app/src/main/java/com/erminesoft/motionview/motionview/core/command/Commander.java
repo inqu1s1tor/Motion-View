@@ -3,6 +3,7 @@ package com.erminesoft.motionview.motionview.core.command;
 import android.os.Bundle;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -14,9 +15,11 @@ public class Commander {
     private final ExecutorService mExecutor;
     private Map<CommandType, Command> mCommandMap;
 
-    public Commander() {
+    public Commander(GoogleClientFacade googleClientFacade) {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
         mCommandMap = new EnumMap<>(CommandType.class);
+
+        CommandFactory.setGoogleClientFacade(googleClientFacade);
     }
 
     public void execute(final Bundle bundle, final ResultCallback callback) {
@@ -45,6 +48,11 @@ public class Commander {
     }
 
     private static final class CommandFactory {
+        static GoogleClientFacade mGoogleClientFacade;
+
+        static void setGoogleClientFacade(GoogleClientFacade googleClientFacade) {
+            mGoogleClientFacade = googleClientFacade;
+        }
 
         static GenericCommand getCommand(CommandType type) {
             GenericCommand command = new GenericCommand();
@@ -53,11 +61,15 @@ public class Commander {
                 case PROCESS_DAY_DATA:
                     command = new ProcessDayDataCommand();
                     break;
+                case GENERATE_HISTORY_CHART_DATA:
+                    command = new GenerateHistoryChartDataCommand();
+                    break;
                 case GENERATE_COMBINED_CHART_DATA:
                     command = new GenerateCombinedChartDataCommand();
                     break;
             }
 
+            command.setGoogleClientFacade(mGoogleClientFacade);
             return command;
         }
     }

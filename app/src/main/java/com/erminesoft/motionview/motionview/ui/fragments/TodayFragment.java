@@ -30,7 +30,7 @@ public class TodayFragment extends BaseDailyStatisticFragment {
 
         mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
         Bundle bundle = ProcessDayDataCommand
-                .generateBundle(this, mGoogleClientFacade, System.currentTimeMillis());
+                .generateBundle(this, System.currentTimeMillis());
 
         mCommander.execute(bundle, new ResultCallback() {
             @Override

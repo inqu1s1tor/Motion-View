@@ -129,7 +129,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
 
     private void setDataForCombinedChart() {
         Bundle bundle = GenerateCombinedChartDataCommand
-                .generateBundle(mTimestamp, mGoogleClientFacade);
+                .generateBundle(mTimestamp);
 
         mCommander.execute(bundle, new ResultCallback() {
             @Override
