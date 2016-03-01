@@ -145,42 +145,6 @@ class OfflineStorageManager {
         });
     }
 
-
-    void getDataForNow(final int day, final DataChangedListener listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.DAY_OF_MONTH, day);
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-                TimeWorker.setMidnight(calendar);
-                long endTime = calendar.getTimeInMillis();
-                calendar.set(Calendar.DAY_OF_MONTH, day);
-                TimeWorker.setMidnight(calendar);
-                long startTime = calendar.getTimeInMillis();
-
-                DataReadRequest request = buildReadRequest(startTime, endTime);
-
-                DataReadResult result = Fitness.HistoryApi.readData(mClient, request).await();
-
-                final List<Bucket> buckets = result.getBuckets();
-                if (buckets == null || buckets.size() == 0) {
-                    listener.onError(NO_DATA_ERROR);
-                    return;
-                }
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onSuccess(buckets.get(0).getDataSets());
-                    }
-                });
-            }
-        });
-    }
-
-
-
-
     void saveUserWeight(float weight) {
         Calendar cal = Calendar.getInstance();
         Date now = new Date();

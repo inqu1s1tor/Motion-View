@@ -1,6 +1,9 @@
 package com.erminesoft.motionview.motionview.net;
 
+import android.util.Log;
+
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.Fitness;
@@ -50,19 +53,19 @@ class RegisterManager {
 
 
     void registerListenerLocation(DataType dataType,
-                                  final DataChangedListener resultListenerFromActivity) {
+                                  final ResultCallback callback) {
         mSensorResultListener = new OnDataPointListener() {
             @Override
             public void onDataPoint(final DataPoint dataPoint) {
-                mOfflineStorageManager.getDataForNow(
-                        TimeWorker.getCurrentDay(),
-                        resultListenerFromActivity);
+                Log.i("LISTENER", dataPoint.toString());
+
+                callback.onSuccess(dataPoint);
             }
         };
 
         Fitness.SensorsApi.add(mClient, new SensorRequest.Builder()
                         .setDataType(dataType)
-                        .setFastestRate(1, TimeUnit.SECONDS)
+                        .setFastestRate(10, TimeUnit.SECONDS)
                         .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                         .build(),
                 mSensorResultListener);

@@ -34,7 +34,6 @@ class GoogleMapManager {
     private LocationListener listener;
     private GoogleMap mMap;
     private List<LatLng> mPoints = new ArrayList<>();
-    private PolylineOptions line;
 
     public void setClient(GoogleApiClient client) {
         mGoogleApiClient = client;

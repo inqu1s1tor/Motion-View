@@ -94,7 +94,7 @@ public class GoogleClientFacade implements Serializable {
     }
 
 
-    public void registerListenerForCurrentLocation(DataChangedListener locationChengedListener) {
+    public void registerListenerForCurrentLocation(com.erminesoft.motionview.motionview.core.callback.ResultCallback locationChengedListener) {
         mRegisterManager.registerListenerLocation(DataType.TYPE_LOCATION_SAMPLE, locationChengedListener);
     }
 

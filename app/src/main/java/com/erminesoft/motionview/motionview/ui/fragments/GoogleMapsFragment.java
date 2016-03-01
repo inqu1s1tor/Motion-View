@@ -5,27 +5,39 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCallback/*, GpsStatus.Listener*/ {
 
     private GoogleMap mMap;
+    private PolylineOptions polyLine;
     private static int UPDATE_INTERVAL = 10000;
     private static int FATEST_INTERVAL = 5000;
     private static int DISPLACEMENT = 10;
     private boolean routerStarted = false;
+    private List<LatLng> mPoints = new ArrayList<>();
     private ImageButton mStartWalkRouter;
     private LocationManager locationManager;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,20 +48,41 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                 .findFragmentById(R.id.map);
 
 
-       /* mGoogleClientFacade.registerListenerForCurrentLocation(new DataChangedListener() {
+        mGoogleClientFacade.registerListenerForCurrentLocation(new ResultCallback() {
             @Override
-            public void onError(String error) {
-                Log.d("!!!",""+error);
+            public void onSuccess(Object dataPoint) {
+                if (!(dataPoint instanceof DataPoint)) {
+                    onError("WRONG DATA");
+                    return;
+                }
+
+                DataPoint dp = (DataPoint) dataPoint;
+                if (Double.valueOf(String.valueOf(dp.getValue(Field.FIELD_ACCURACY))) < 11) {
+                    double lat = Double.valueOf(String.valueOf(dp.getValue(Field.FIELD_LATITUDE)));
+                    double longtitude = Double.valueOf(String.valueOf(dp.getValue(Field.FIELD_LONGITUDE)));
+                    final LatLng lt = new LatLng(lat, longtitude);
+                    mPoints.add(lt);
+                    polyLine = new PolylineOptions().width(12f).visible(true).geodesic(true);
+                    polyLine.add(mPoints.get(mPoints.size() - 1));
+                    polyLine.add(lt);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMap.addMarker(new MarkerOptions().position(lt));
+                            mMap.addPolyline(polyLine).setVisible(true);
+                        }
+                    });
+
+                }
+
+                Log.d("!!!", "" + dataPoint.toString());
             }
 
             @Override
-            public void onSuccess(List<DataSet> dataSets) {
-                LatLng lt = new LatLng(dataSets.get(0).getDataPoints().get(0).getValue(Field.FIELD_LATITUDE,dataSets.get(0).getDataPoints().get(0).getValue(Field.FIELD_LONGITUDE));
-                mMap.addMarker(new MarkerOptions().position(new LatLng()))
-                Log.d("!!!", "" + dataSets.get(0).toString());
+            public void onError(String error) {
+                Log.d("!!!", "" + error);
             }
         });
-*/
 
 
         mapFragment.getMapAsync(this);
