@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 public class ChartDataWorker {
     private static final Map<String, Integer> MONTHS = new HashMap<>();
@@ -153,51 +152,30 @@ public class ChartDataWorker {
         return new PieData(xVals, new PieDataSet(entries, "Activities"));
     }
 
-    public static Map<Integer, List<Month>> getAvailableYearsMonthsForSpinner(List<Bucket> buckets) {
-        if (buckets.isEmpty()) {
-            return null;
-        }
-
+    public static Map<Integer, List<Month>> getAvailableYearsMonthsForSpinner(long firstInstallTime) {
         Map<Integer, List<Month>> yearsMonthsMap = new TreeMap<>();
 
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime;
-
-        for (Bucket bucket : buckets) {
-            DataSet stepsDataSet = bucket.getDataSet(DataType.TYPE_STEP_COUNT_DELTA);
-            if (stepsDataSet.getDataPoints().size() == 0) {
-                continue;
-            }
-
-            startTime = stepsDataSet.getDataPoints().get(0).getStartTime(TimeUnit.MILLISECONDS);
-            break;
-        }
-
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(startTime);
+        calendar.setTimeInMillis(firstInstallTime);
 
         int startYear = calendar.get(Calendar.YEAR);
         int startMonth = calendar.get(Calendar.MONTH);
 
-        calendar.setTimeInMillis(endTime);
+        int currentYear = TimeWorker.getCurrentYear();
+        int currentMonth = TimeWorker.getCurrentMonth();
 
-        int currentYear = calendar.get(Calendar.YEAR);
-        int currentMonth = calendar.get(Calendar.MONTH);
+        for (int year = startYear; year <= currentYear; ++year) {
+            List<Month> months = new ArrayList<>();
+            boolean isCurrentYear = year == currentYear;
 
-        if (startMonth == currentMonth && startYear == currentYear) {
-            List<Month> availableMonth = new ArrayList<>();
-            availableMonth.add(MONTHS_LIST.get(currentMonth));
+            for (int month = startMonth;
+                 month <= (isCurrentYear ? currentMonth : MONTHS_LIST.size() - 1);
+                 ++month) {
+                months.add(MONTHS_LIST.get(month));
+            }
 
-            yearsMonthsMap.put(currentYear, availableMonth);
-            return yearsMonthsMap;
+            yearsMonthsMap.put(year, months);
         }
-        yearsMonthsMap.put(startYear++, MONTHS_LIST.subList(startMonth, MONTHS_LIST.size()));
-
-        for (int i = startYear; i < currentYear; i++) {
-            yearsMonthsMap.put(i, MONTHS_LIST);
-        }
-
-        yearsMonthsMap.put(currentYear, MONTHS_LIST.subList(0, currentMonth + 1));
 
         return yearsMonthsMap;
     }

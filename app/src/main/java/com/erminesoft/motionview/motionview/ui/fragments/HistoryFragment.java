@@ -15,6 +15,7 @@ import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
+import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.Entry;
@@ -67,7 +68,9 @@ public class HistoryFragment extends GenericFragment {
         ChartDataWorker.init(getContext());
 
         long firstInstallTime = mSharedDataManager.readLong(SharedDataManager.FIRST_INSTALL_TIME);
-        mGoogleClientFacade.getDataForInitHistory(firstInstallTime, new OnGotAllDataListener());
+        mAvailableHistory = ChartDataWorker.getAvailableYearsMonthsForSpinner(firstInstallTime);
+
+        initSpinners();
     }
 
     private void initSpinners() {
@@ -111,22 +114,27 @@ public class HistoryFragment extends GenericFragment {
     }
 
     private void updateMonthAndChart(int position) {
-        Calendar calendar = Calendar.getInstance();
         int year = getYearBySpinnerPosition(position);
+        List<ChartDataWorker.Month> months = mAvailableHistory.get(year);
 
         mMonthAdapter.clear();
-        mMonthAdapter.addAll(mAvailableHistory.get(year));
+        mMonthAdapter.addAll(months);
+        mMonthAdapter.notifyDataSetChanged();
 
         int selectedPosition = mMonthSpinner.getSelectedItemPosition();
-        ChartDataWorker.Month month;
 
         if (selectedPosition == AdapterView.INVALID_POSITION) {
-            month = new ChartDataWorker.Month(calendar.get(Calendar.MONTH));
-        } else {
-            month = mMonthAdapter.getItem(selectedPosition);
+            for (ChartDataWorker.Month month : months) {
+                if (month.getIndex() != TimeWorker.getCurrentMonth()) {
+                    continue;
+                }
+
+                selectedPosition = mMonthAdapter.getPosition(month);
+                break;
+            }
         }
 
-        mMonthSpinner.setSelection(mMonthAdapter.getPosition(month));
+        mMonthSpinner.setSelection(selectedPosition, true);
     }
 
     private void updateChartData(ChartDataWorker.Month item) {
@@ -241,35 +249,5 @@ public class HistoryFragment extends GenericFragment {
             Log.i(TAG, error);
         }
 
-    }
-
-
-    private final class OnGotAllDataListener implements BucketsResultListener {
-
-        @Override
-        public void onSuccess(List<Bucket> result) {
-            mAvailableHistory = ChartDataWorker.getAvailableYearsMonthsForSpinner(result);
-
-            if (mAvailableHistory == null) {
-                showLongToast("We can't get your activities data.");
-                return;
-            }
-
-            if (!isResumed()) {
-                return;
-            }
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    initSpinners();
-                }
-            });
-        }
-
-        @Override
-        public void onError(String error) {
-            Log.e(TAG, error);
-        }
     }
 }

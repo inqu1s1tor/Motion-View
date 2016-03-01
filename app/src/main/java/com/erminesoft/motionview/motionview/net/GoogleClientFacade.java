@@ -2,6 +2,7 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
+
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
@@ -61,10 +62,6 @@ public class GoogleClientFacade implements Serializable {
 
     public void getDataPerMonthFromHistory(ChartDataWorker.Month month, int year, BucketsResultListener resultListener) {
         mOfflineStorageManager.getDataPerMonthFromHistory(month, year, resultListener);
-    }
-
-    public void getDataForInitHistory(long installTime, BucketsResultListener resultListener) {
-        mOfflineStorageManager.getDataForInitHistory(installTime, resultListener);
     }
 
     public void getHoursDataPerDay(long timeStamp, BucketsResultListener listener) {

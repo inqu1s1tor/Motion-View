@@ -132,34 +132,6 @@ class OfflineStorageManager {
                 .build();
     }
 
-    public void getDataForInitHistory(final long installTime, final BucketsResultListener resultListener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Calendar calendar = Calendar.getInstance();
-                long endTime = calendar.getTimeInMillis();
-
-                calendar.setTimeInMillis(installTime);
-                long startTime = calendar.getTimeInMillis();
-
-                DataReadRequest request = new DataReadRequest.Builder()
-                        .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                        .bucketByTime(1, TimeUnit.DAYS)
-                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                        .build();
-
-                DataReadResult result = Fitness.HistoryApi
-                        .readData(mClient, request).await(30, TimeUnit.SECONDS);
-
-                if (!result.getStatus().isSuccess()) {
-                    resultListener.onError(NO_DATA_ERROR);
-                }
-
-                resultListener.onSuccess(result.getBuckets());
-            }
-        });
-    }
-
     public void saveUserHeight(int heightCentimeters) {
         float height = ((float) heightCentimeters) / 100.0f;
         Calendar cal = Calendar.getInstance();
