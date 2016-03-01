@@ -49,14 +49,14 @@ public class DailyStatisticFragment extends BaseDailyStatisticFragment {
         DataSetsWorker.processDataSets(mDataSets, this);
 
         Bundle bundle = ProcessDayDataCommand.generateBundle(this, mGoogleClientFacade, mTimestamp);
-        mCommander.execute(bundle, new ResultCallback<String>() {
+        mCommander.execute(bundle, new ResultCallback() {
             @Override
-            public void onError(String s) {
+            public void onSuccess(Object s) {
 
             }
 
             @Override
-            public void onSuccess(String s) {
+            public void onError(String s) {
 
             }
         });

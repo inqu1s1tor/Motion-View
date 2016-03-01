@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.EventBridge;
-import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.core.command.CommandType;
+import com.erminesoft.motionview.motionview.core.command.GenerateCombinedChartDataCommand;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.animation.Easing;
@@ -21,7 +23,6 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CombinedData;
-import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.Field;
 
@@ -29,20 +30,19 @@ import java.util.List;
 
 import static com.github.mikephil.charting.charts.CombinedChart.DrawOrder;
 
-public abstract class BaseDailyStatisticFragment extends GenericFragment implements EventBridge {
+abstract class BaseDailyStatisticFragment extends GenericFragment implements EventBridge {
     private static final int DAILY_GOAL = 10000;
-    private static final String[] HOURS_IN_DAY = new String[]{"3", "6", "9", "12", "15", "18", "21", "24"};
 
-    protected TextView mStepsTextView;
-    protected TextView mCaloriesTextView;
-    protected TextView mTimeTextView;
-    protected TextView mDistanceTextView;
-    protected ProgressBar mProgressBar;
+    private TextView mStepsTextView;
+    private TextView mCaloriesTextView;
+    private TextView mTimeTextView;
+    private TextView mDistanceTextView;
+    private ProgressBar mProgressBar;
 
-    protected CombinedChart mCombinedChart;
-    protected PieChart mActivitiesChart;
+    private CombinedChart mCombinedChart;
+    private PieChart mActivitiesChart;
 
-    protected long mTimestamp;
+    long mTimestamp;
 
     @Nullable
     @Override
@@ -128,15 +128,18 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
     }
 
     private void setDataForCombinedChart() {
-        mGoogleClientFacade.getHoursDataPerDay(mTimestamp, new BucketsResultListener() {
+        Bundle bundle = GenerateCombinedChartDataCommand
+                .generateBundle(mTimestamp, mGoogleClientFacade);
 
+        mCommander.execute(bundle, new ResultCallback() {
             @Override
-            public void onSuccess(List<Bucket> buckets) {
-                CombinedData data = new CombinedData(HOURS_IN_DAY);
-                data.setData(ChartDataWorker.processStepsBuckets(buckets));
-                data.setData(ChartDataWorker.processCaloriesData(buckets));
+            public void onSuccess(Object result) {
+                if (!(result instanceof CombinedData)) {
+                    onError("Wrong Data.");
+                    return;
+                }
 
-                mCombinedChart.setData(data);
+                mCombinedChart.setData((CombinedData) result);
                 onCombinedChartDataSet();
             }
 
@@ -212,5 +215,12 @@ public abstract class BaseDailyStatisticFragment extends GenericFragment impleme
 
         mProgressBar.setProgress(steps);
         mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        mCommander.deny(CommandType.GENERATE_COMBINED_CHART_DATA);
     }
 }

@@ -1,16 +1,12 @@
 package com.erminesoft.motionview.motionview.util;
 
 import android.content.Context;
-import android.graphics.Color;
 
 import com.erminesoft.motionview.motionview.R;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.google.android.gms.fitness.FitnessActivities;
@@ -23,25 +19,18 @@ import com.google.android.gms.fitness.data.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class ChartDataWorker {
-    private static final Map<String, Integer> MONTHS = new HashMap<>();
     private static final List<Month> MONTHS_LIST = new ArrayList<>();
 
     public static void init(Context context) {
-        if (!MONTHS.isEmpty()) {
-            return;
-        }
-
         List<String> months = Arrays
                 .asList(context.getResources().getStringArray(R.array.month_array));
 
         for (int i = 0; i < months.size(); i++) {
-            MONTHS.put(months.get(i), i);
             MONTHS_LIST.add(new Month(i, months.get(i)));
         }
     }
@@ -70,68 +59,6 @@ public class ChartDataWorker {
         BarDataSet dataSet = new BarDataSet(
                 entries, context.getString(R.string.chart_steps));
         return new BarData(xVals, dataSet);
-    }
-
-    public static BarData processStepsBuckets(List<Bucket> buckets) {
-        List<BarEntry> entries = new ArrayList<>();
-
-        for (int i = 0; i < buckets.size(); i++) {
-            Bucket bucket = buckets.get(i);
-            DataSet dataSet = bucket.getDataSet(DataType.TYPE_STEP_COUNT_DELTA);
-
-            float steps;
-            if (dataSet.getDataPoints().size() > 0) {
-                DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
-            } else {
-                steps = 0f;
-            }
-
-            entries.add(new BarEntry(steps, i, bucket.getDataSets()));
-        }
-
-        BarDataSet dataSet = new BarDataSet(
-                entries, "steps");
-        BarData barData = new BarData();
-
-        barData.addDataSet(dataSet);
-        return barData;
-    }
-
-    public static LineData processCaloriesData(List<Bucket> buckets) {
-        List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < buckets.size(); i++) {
-            Bucket bucket = buckets.get(i);
-            DataSet dataSet = bucket.getDataSet(DataType.TYPE_CALORIES_EXPENDED);
-
-            float calories;
-            if (dataSet.getDataPoints().size() > 0) {
-                DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                calories = dataPoint.getValue(Field.FIELD_CALORIES).asFloat();
-            } else {
-                calories = 0f;
-            }
-
-            entries.add(new Entry(calories, i, bucket.getDataSets()));
-        }
-
-        LineDataSet set = new LineDataSet(entries, "Line DataSet");
-
-        set.setColor(Color.rgb(240, 238, 70));
-        set.setLineWidth(2.5f);
-        set.setCircleColor(Color.rgb(240, 238, 70));
-        set.setCircleRadius(5f);
-        set.setFillColor(Color.rgb(240, 238, 70));
-        set.setDrawCubic(true);
-        set.setDrawValues(true);
-        set.setValueTextSize(10f);
-        set.setValueTextColor(Color.rgb(240, 238, 70));
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-        LineData lineData = new LineData();
-        lineData.addDataSet(set);
-
-        return lineData;
     }
 
     public static PieData processActivitiesData(List<DataPoint> dataPoints) {
@@ -180,33 +107,11 @@ public class ChartDataWorker {
         return yearsMonthsMap;
     }
 
-    public static int getIndexByName(String month) {
-        return MONTHS.get(month);
-    }
-
-    public static String getNameByIndex(int index) {
-        for (Map.Entry<String, Integer> entry : MONTHS.entrySet()) {
-            if (entry.getValue().compareTo(index) == 0) {
-                return entry.getKey();
-            }
-        }
-
-        return null;
-    }
-
     public static class Month {
         private int mIndex;
         private String mName;
 
-        public Month(int index) {
-            this(index, getNameByIndex(index));
-        }
-
-        public Month(String name) {
-            this(getIndexByName(name), name);
-        }
-
-        public Month(int index, String name) {
+        Month(int index, String name) {
             mIndex = index;
             mName = name;
         }

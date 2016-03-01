@@ -64,7 +64,7 @@ public class GoogleClientFacade implements Serializable {
         mOfflineStorageManager.getDataPerMonthFromHistory(month, year, resultListener);
     }
 
-    public void getHoursDataPerDay(long timeStamp, BucketsResultListener listener) {
+    public void getHoursDataPerDay(long timeStamp, com.erminesoft.motionview.motionview.core.callback.ResultCallback listener) {
         mOfflineStorageManager.getHoursDataPerDay(timeStamp, listener);
     }
 

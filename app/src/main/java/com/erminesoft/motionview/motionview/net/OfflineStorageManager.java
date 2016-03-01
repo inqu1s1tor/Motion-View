@@ -5,6 +5,7 @@ import android.os.Looper;
 
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -71,7 +72,7 @@ class OfflineStorageManager {
         });
     }
 
-    void getHoursDataPerDay(final long timeStamp, final BucketsResultListener listener) {
+    void getHoursDataPerDay(final long timeStamp, final ResultCallback listener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {

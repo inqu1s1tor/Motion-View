@@ -1,6 +1,7 @@
 package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
+
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 
 import java.util.EnumMap;
@@ -35,7 +36,7 @@ public class Commander {
         });
     }
 
-    public void abort(CommandType type) {
+    public void deny(CommandType type) {
         Command command = mCommandMap.get(type);
 
         if (command != null) {
@@ -43,14 +44,17 @@ public class Commander {
         }
     }
 
-    public static final class CommandFactory {
+    private static final class CommandFactory {
 
-        public static GenericCommand getCommand(CommandType type) {
+        static GenericCommand getCommand(CommandType type) {
             GenericCommand command = new GenericCommand();
 
             switch (type) {
                 case PROCESS_DAY_DATA:
                     command = new ProcessDayDataCommand();
+                    break;
+                case GENERATE_COMBINED_CHART_DATA:
+                    command = new GenerateCombinedChartDataCommand();
                     break;
             }
 

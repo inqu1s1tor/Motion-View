@@ -32,14 +32,14 @@ public class TodayFragment extends BaseDailyStatisticFragment {
         Bundle bundle = ProcessDayDataCommand
                 .generateBundle(this, mGoogleClientFacade, System.currentTimeMillis());
 
-        mCommander.execute(bundle, new ResultCallback<String>() {
+        mCommander.execute(bundle, new ResultCallback() {
             @Override
-            public void onError(String s) {
+            public void onSuccess(Object s) {
 
             }
 
             @Override
-            public void onSuccess(String s) {
+            public void onError(String s) {
 
             }
         });
@@ -49,7 +49,7 @@ public class TodayFragment extends BaseDailyStatisticFragment {
     public void onStop() {
         super.onStop();
 
-        mCommander.abort(CommandType.PROCESS_DAY_DATA);
+        mCommander.deny(CommandType.PROCESS_DAY_DATA);
         mGoogleClientFacade.unregisterListener();
     }
 
