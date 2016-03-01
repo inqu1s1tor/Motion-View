@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
@@ -246,7 +245,7 @@ public class HistoryFragment extends GenericFragment {
 
             long timestamp = stepDataSet.getDataPoints().get(0).getStartTime(TimeUnit.MILLISECONDS);
 
-            mActivity.getFragmentLauncher().launchDailyStatisticFragment(dataSets, timestamp);
+            mActivity.getFragmentLauncher().launchDailyStatisticFragment(timestamp);
             mActivity.onDailyStatisticLaunched();
         }
 

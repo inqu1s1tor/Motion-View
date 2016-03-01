@@ -6,11 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
-import com.erminesoft.motionview.motionview.core.command.CommandType;
-import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.util.DataSetsWorker;
 import com.google.android.gms.fitness.data.DataSet;
 
@@ -29,27 +25,12 @@ public class TodayFragment extends BaseDailyStatisticFragment {
         super.onStart();
 
         mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
-        Bundle bundle = ProcessDayDataCommand
-                .generateBundle(this, System.currentTimeMillis());
-
-        mCommander.execute(bundle, new ResultCallback() {
-            @Override
-            public void onSuccess(Object s) {
-
-            }
-
-            @Override
-            public void onError(String s) {
-
-            }
-        });
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        mCommander.deny(CommandType.PROCESS_DAY_DATA);
         mGoogleClientFacade.unregisterListener();
     }
 

@@ -9,12 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.EventBridge;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
 import com.erminesoft.motionview.motionview.core.command.GenerateCombinedChartDataCommand;
+import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.animation.Easing;
@@ -66,6 +66,19 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
     @Override
     public void onStart() {
         super.onStart();
+
+        Bundle bundle = ProcessDayDataCommand.generateBundle(this, mTimestamp);
+        mCommander.execute(bundle, new ResultCallback() {
+            @Override
+            public void onSuccess(Object result) {
+                //Empty
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, error);
+            }
+        });
 
         initCharts();
     }
@@ -221,6 +234,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
     public void onStop() {
         super.onStop();
 
+        mCommander.deny(CommandType.PROCESS_DAY_DATA);
         mCommander.deny(CommandType.GENERATE_COMBINED_CHART_DATA);
     }
 }
