@@ -18,7 +18,7 @@ class BuildManager {
     private boolean mResolvingError = false;
     private GoogleApiClient mClient;
 
-    public GoogleApiClient buildGoogleApiClient(
+    GoogleApiClient buildGoogleApiClient(
             final FragmentActivity fragmentActivity,
             GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
         mClient = new GoogleApiClient.Builder(fragmentActivity)
@@ -66,7 +66,7 @@ class BuildManager {
         return mClient;
     }
 
-    public void tryConnectClient(GoogleApiClient client, int resultCode) {
+    void tryConnectClient(GoogleApiClient client, int resultCode) {
         mResolvingError = false;
         if (resultCode == Activity.RESULT_OK) {
             if (!client.isConnecting() &&

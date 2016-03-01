@@ -17,19 +17,19 @@ class BluetoothManager {
     private StartBleScanRequest request;
     private GoogleApiClient mGoogleApiClient;
 
-    public void setClient(GoogleApiClient client) {
+    void setClient(GoogleApiClient client) {
         mGoogleApiClient = client;
     }
 
-    public void setBleScanCallback(BleScanCallback scanCallback) {
+    void setBleScanCallback(BleScanCallback scanCallback) {
         this.scanCallback = scanCallback;
     }
 
-    public void setResultCallback(ResultCallback<Status> resultStatusCallback) {
+    void setResultCallback(ResultCallback<Status> resultStatusCallback) {
         this.resultStatusCallback = resultStatusCallback;
     }
 
-    public void setRequest(int timeout) {
+    void setRequest(int timeout) {
         if (scanCallback == null) {
             return;
         }
@@ -59,7 +59,7 @@ class BluetoothManager {
                 .build();
     }
 
-    public void startBleScan() {
+    void startBleScan() {
         if (this.request == null) {
             return;
         }

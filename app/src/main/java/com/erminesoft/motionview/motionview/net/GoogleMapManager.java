@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class GoogleMapManager {
-    public static final String TAG = RegisterManager.class.getSimpleName();
+    private static final String TAG = RegisterManager.class.getSimpleName();
 
     private GoogleApiClient mGoogleApiClient;
     private boolean mRequestingLocationUpdates = false;
@@ -43,33 +43,33 @@ class GoogleMapManager {
         mGoogleApiClient = client;
     }
 
-    public void setGoogleMap(GoogleMap gm) {
+    void setGoogleMap(GoogleMap gm) {
         mMap = gm;
     }
 
-    public void setOnChangeLocationListener(LocationListener l) {
+    void setOnChangeLocationListener(LocationListener l) {
         listener = l;
     }
 
-    public void addPointsToLineForRoute(LatLng point) {
+    void addPointsToLineForRoute(LatLng point) {
         mPoints.add(point);
     }
 
-    public void clearPoints() {
+    void clearPoints() {
         mPoints.clear();
     }
 
-    public void clearMap() {
+    void clearMap() {
         mMap.clear();
     }
 
-    public void clearRouteLine() {
+    void clearRouteLine() {
         if (line.getPoints().size() > 0) {
             line = new PolylineOptions().width(12f).color(R.color.greenRoute);
         }
     }
 
-    public void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
+    void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(updateInterval);
         mLocationRequest.setFastestInterval(fastestInterval);
@@ -77,7 +77,7 @@ class GoogleMapManager {
         mLocationRequest.setSmallestDisplacement(displacement);
     }
 
-    public Location getLocation() {
+    Location getLocation() {
         if (ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -97,7 +97,7 @@ class GoogleMapManager {
         }
     }
 
-    public Location getPreLastLocation() {
+    Location getPreLastLocation() {
         Location loc = new Location(LocationManager.GPS_PROVIDER);
         loc.reset();
         LatLng latLng = mPoints.get(mPoints.size() - 1);
@@ -106,7 +106,7 @@ class GoogleMapManager {
         return loc;
     }
 
-    public void togglePeriodicLocationUpdates() {
+    void togglePeriodicLocationUpdates() {
         if (!mRequestingLocationUpdates) {
             mRequestingLocationUpdates = true;
             startLocationUpdates();
@@ -118,7 +118,7 @@ class GoogleMapManager {
         }
     }
 
-    public void startLocationUpdates() {
+    void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(),
@@ -131,11 +131,11 @@ class GoogleMapManager {
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, listener);
     }
 
-    public void stopLocationUpdates() {
+    void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, listener);
     }
 
-    public void setMarkerAtFirstShow() {
+    void setMarkerAtFirstShow() {
         LatLng startLocation;
         if (ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -153,7 +153,7 @@ class GoogleMapManager {
         mMap.moveCamera(CameraUpdateFactory.newLatLng(startLocation));
     }
 
-    public void startRouteOnMap() {
+    void startRouteOnMap() {
         LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
         for (int i = 0; i < mPoints.size(); i++) {
             if (i == mPoints.size() - 1) {
@@ -174,7 +174,7 @@ class GoogleMapManager {
         mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
     }
 
-    public void stopRouteOnMap() {
+    void stopRouteOnMap() {
         LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
         for (int i = 0; i < mPoints.size(); i++) {
             if (i == 0) {

@@ -17,16 +17,16 @@ class RegisterManager {
     private OfflineStorageManager mOfflineStorageManager;
     private OnDataPointListener mSensorResultListener;
 
-    public RegisterManager(OfflineStorageManager manager) {
+    RegisterManager(OfflineStorageManager manager) {
         mOfflineStorageManager = manager;
     }
 
-    public void setClient(GoogleApiClient client) {
+    void setClient(GoogleApiClient client) {
         mClient = client;
     }
 
-    public void registerListener(DataType dataType,
-                                 final DataChangedListener resultListenerFromActivity) {
+    void registerListener(DataType dataType,
+                          final DataChangedListener resultListenerFromActivity) {
         mSensorResultListener = new OnDataPointListener() {
             @Override
             public void onDataPoint(final DataPoint dataPoint) {
@@ -48,7 +48,7 @@ class RegisterManager {
                 mSensorResultListener);
     }
 
-    public void unregisterListener() {
+    void unregisterListener() {
         Fitness.SensorsApi.remove(mClient, mSensorResultListener);
     }
 
