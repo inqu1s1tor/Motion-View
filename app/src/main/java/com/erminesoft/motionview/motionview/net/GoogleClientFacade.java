@@ -4,6 +4,7 @@ import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
+import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -55,7 +56,7 @@ public class GoogleClientFacade implements Serializable {
         mBuildManager.onDialogDismissed();
     }
 
-    public void getDataPerDay(int day, int month, int year, com.erminesoft.motionview.motionview.core.callback.ResultCallback stepsChangingListener) {
+    public void getDataPerDay(int day, int month, int year, DataChangedListener stepsChangingListener) {
         mOfflineStorageManager.getDataPerDay(day, month, year, stepsChangingListener);
     }
 
@@ -83,7 +84,7 @@ public class GoogleClientFacade implements Serializable {
         mSubscribingManager.unsubscribe();
     }
 
-    public void registerListenerForStepCounter(com.erminesoft.motionview.motionview.core.callback.ResultCallback stepsChangingListener) {
+    public void registerListenerForStepCounter(DataChangedListener stepsChangingListener) {
         mRegisterManager.registerListener(DataType.TYPE_STEP_COUNT_DELTA, stepsChangingListener);
     }
 
@@ -93,8 +94,8 @@ public class GoogleClientFacade implements Serializable {
     }
 
 
-    public void registerListenerForCurrentLocation(com.erminesoft.motionview.motionview.core.callback.ResultCallback locationChengedListener) {
-        mRegisterManager.registerListener(DataType.TYPE_LOCATION_SAMPLE, locationChengedListener);
+    public void registerListenerForCurrentLocation(DataChangedListener locationChengedListener) {
+        mRegisterManager.registerListenerLocation(DataType.TYPE_LOCATION_SAMPLE, locationChengedListener);
     }
 
 

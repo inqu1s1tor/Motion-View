@@ -48,7 +48,7 @@ public class ProcessDayDataCommand extends GenericCommand {
         super.execute(callback, bundle);
 
         if (bundle.equals(Bundle.EMPTY)) {
-
+            callback.onError("EMPTY BUNDLE");
             return;
         }
 
@@ -57,7 +57,7 @@ public class ProcessDayDataCommand extends GenericCommand {
                 (GoogleClientFacade) bundle.getSerializable(GOOGLE_CLIENT_KEY);
 
         if (googleClientFacade == null) {
-
+            callback.onError("EMPTY GOOGLE CLIENT FACADE");
             return;
         }
 
@@ -67,12 +67,7 @@ public class ProcessDayDataCommand extends GenericCommand {
                 TimeWorker.getDay(timestamp),
                 TimeWorker.getMonth(timestamp),
                 TimeWorker.getYear(timestamp),
-                new ResultCallback() {
-                    @Override
-                    public void onSuccess(Bundle result) {
-
-                    }
-                });
+                new DataChangedListenerImpl());
     }
 
     private void processDataSets(List<DataSet> dataSets) {

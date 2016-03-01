@@ -1,30 +1,23 @@
 package com.erminesoft.motionview.motionview.ui.fragments;
 
 
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
-import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.List;
-
-public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCallback, GpsStatus.Listener {
+public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCallback/*, GpsStatus.Listener*/ {
 
     private GoogleMap mMap;
     private static int UPDATE_INTERVAL = 10000;
@@ -43,14 +36,20 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                 .findFragmentById(R.id.map);
 
 
-        mGoogleClientFacade.registerListenerForCurrentLocation(new ResultCallback() {
+       /* mGoogleClientFacade.registerListenerForCurrentLocation(new DataChangedListener() {
             @Override
-            public void onSuccess(Bundle result) {
-                List<Bucket> buckets = result.getParcelableArrayList(RESULT_KEY);
-                Log.d("!!!", buckets.get(buckets.size() - 1).getDataSets().get(0).getDataPoints().get(0).toString());
+            public void onError(String error) {
+                Log.d("!!!",""+error);
+            }
+
+            @Override
+            public void onSuccess(List<DataSet> dataSets) {
+                LatLng lt = new LatLng(dataSets.get(0).getDataPoints().get(0).getValue(Field.FIELD_LATITUDE,dataSets.get(0).getDataPoints().get(0).getValue(Field.FIELD_LONGITUDE));
+                mMap.addMarker(new MarkerOptions().position(new LatLng()))
+                Log.d("!!!", "" + dataSets.get(0).toString());
             }
         });
-
+*/
 
 
         mapFragment.getMapAsync(this);
@@ -126,7 +125,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     }
 
 
-    @Override
+   /* @Override
     public void onGpsStatusChanged(int event) {
 
         if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
@@ -147,6 +146,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                 showShortToast(satellites + "(NO SATTEL.) Used In Last Fix (" + satellitesInFix + ")");
             }
         }
-    }
+    }*/
 
 }

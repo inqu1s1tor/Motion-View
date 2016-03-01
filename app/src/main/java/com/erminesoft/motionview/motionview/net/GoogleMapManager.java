@@ -60,7 +60,6 @@ class GoogleMapManager {
         mMap.clear();
     }
 
-
     void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(updateInterval);
@@ -68,13 +67,6 @@ class GoogleMapManager {
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setSmallestDisplacement(displacement);
     }
-
-    void clearRouteLine() {
-        if (line.getPoints().size() > 0) {
-            line = new PolylineOptions().width(12f).color(R.color.greenRoute);
-        }
-    }
-
 
     Location getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(),

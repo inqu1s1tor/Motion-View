@@ -1,9 +1,7 @@
 package com.erminesoft.motionview.motionview.core.callback;
 
-import android.os.Bundle;
+public interface ResultCallback<T> {
+    void onSuccess(T result);
 
-public interface ResultCallback {
-    String RESULT_KEY = "result_key";
-
-    void onSuccess(Bundle result);
+    void onError(String error);
 }

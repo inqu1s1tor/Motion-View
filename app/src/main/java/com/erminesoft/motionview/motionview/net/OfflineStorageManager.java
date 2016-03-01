@@ -1,11 +1,10 @@
 package com.erminesoft.motionview.motionview.net;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -19,7 +18,6 @@ import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -103,7 +101,7 @@ class OfflineStorageManager {
         });
     }
 
-    void getDataPerDay(final int day, final int month, final int year, final ResultCallback listener) {
+    void getDataPerDay(final int day, final int month, final int year, final DataChangedListener listener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -132,22 +130,55 @@ class OfflineStorageManager {
 
                 final List<Bucket> buckets = result.getBuckets();
                 if (buckets == null || buckets.size() == 0) {
+                    listener.onError(NO_DATA_ERROR);
                     return;
                 }
 
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelableArrayList(ResultCallback.RESULT_KEY,
-                                (ArrayList<DataSet>) buckets.get(0).getDataSets());
-
-                        listener.onSuccess(bundle);
+                        listener.onSuccess(buckets.get(0).getDataSets());
                     }
                 });
             }
         });
     }
+
+
+    void getDataForNow(final int day, final DataChangedListener listener) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                TimeWorker.setMidnight(calendar);
+                long endTime = calendar.getTimeInMillis();
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+                TimeWorker.setMidnight(calendar);
+                long startTime = calendar.getTimeInMillis();
+
+                DataReadRequest request = buildReadRequest(startTime, endTime);
+
+                DataReadResult result = Fitness.HistoryApi.readData(mClient, request).await();
+
+                final List<Bucket> buckets = result.getBuckets();
+                if (buckets == null || buckets.size() == 0) {
+                    listener.onError(NO_DATA_ERROR);
+                    return;
+                }
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onSuccess(buckets.get(0).getDataSets());
+                    }
+                });
+            }
+        });
+    }
+
+
+
 
     void saveUserWeight(float weight) {
         Calendar cal = Calendar.getInstance();
@@ -275,36 +306,5 @@ class OfflineStorageManager {
         dataSet.add(generatedDataPoint);
 
         return dataSet;
-    }
-
-    public void getCurrentLocationFromHistory(final long timeStamp, final ResultCallback listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Calendar calendar = Calendar.getInstance();
-
-                long endTime = calendar.getTimeInMillis();
-
-                TimeWorker.setMidnight(calendar);
-                long startTime = calendar.getTimeInMillis();
-
-                final DataReadResult readResult = Fitness.HistoryApi.readData(mClient, new DataReadRequest.Builder()
-                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                        .aggregate(DataType.TYPE_LOCATION_SAMPLE, DataType.AGGREGATE_LOCATION_BOUNDING_BOX)
-                        .bucketByTime(10, TimeUnit.MINUTES)
-                        .build()).await();
-
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelableArrayList(ResultCallback.RESULT_KEY,
-                                (ArrayList<Bucket>) readResult.getBuckets());
-
-                        listener.onSuccess(bundle);
-                    }
-                });
-            }
-        });
     }
 }
