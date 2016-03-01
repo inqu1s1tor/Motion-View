@@ -28,18 +28,19 @@ public class TodayFragment extends BaseDailyStatisticFragment {
     public void onStart() {
         super.onStart();
 
-        mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
+        mGoogleClientFacade.registerListenerForStepCounter(new ResultCallback() {
+            @Override
+            public void onSuccess(Bundle result) {
+
+            }
+        });
+
         Bundle bundle = ProcessDayDataCommand
                 .generateBundle(this, mGoogleClientFacade, System.currentTimeMillis());
 
-        mCommander.execute(bundle, new ResultCallback<String>() {
+        mCommander.execute(bundle, new ResultCallback() {
             @Override
-            public void onError(String s) {
-
-            }
-
-            @Override
-            public void onSuccess(String s) {
+            public void onSuccess(Bundle s) {
 
             }
         });

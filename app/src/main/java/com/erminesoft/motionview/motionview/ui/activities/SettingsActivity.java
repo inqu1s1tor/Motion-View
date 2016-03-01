@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.SettingsBridge;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
+import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.BleDevice;
@@ -55,6 +56,9 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         super.onCreate(savedInstanceState);
         mSharedDataManager = getMVApplication().getSharedDataManager();
         setContentView(R.layout.activity_settings);
+
+        setTitle(getString(R.string.settings));
+
         initSettings();
 
         setHomeAsUpEnabled(true);
@@ -87,8 +91,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         scanBtDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BluetoothAdapter systemService = BluetoothAdapter.getDefaultAdapter();
-                if (!systemService.isEnabled()) {
+                if (!ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
                     startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 200);
                 } else {
                     devicesArray.clear();

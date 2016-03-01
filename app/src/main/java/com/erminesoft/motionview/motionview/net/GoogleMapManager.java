@@ -29,15 +29,12 @@ class GoogleMapManager {
     private static final String TAG = RegisterManager.class.getSimpleName();
 
     private GoogleApiClient mGoogleApiClient;
-    private boolean mRequestingLocationUpdates = false;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
     private LocationListener listener;
     private GoogleMap mMap;
-
     private List<LatLng> mPoints = new ArrayList<>();
-    private PolylineOptions line = new PolylineOptions().width(12f).color(R.color.greenRoute);
-
+    private PolylineOptions line;
 
     public void setClient(GoogleApiClient client) {
         mGoogleApiClient = client;
@@ -63,11 +60,6 @@ class GoogleMapManager {
         mMap.clear();
     }
 
-    void clearRouteLine() {
-        if (line.getPoints().size() > 0) {
-            line = new PolylineOptions().width(12f).color(R.color.greenRoute);
-        }
-    }
 
     void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
         mLocationRequest = new LocationRequest();
@@ -77,46 +69,49 @@ class GoogleMapManager {
         mLocationRequest.setSmallestDisplacement(displacement);
     }
 
-    Location getLocation() {
+    void clearRouteLine() {
+        if (line.getPoints().size() > 0) {
+            line = new PolylineOptions().width(12f).color(R.color.greenRoute);
+        }
+    }
+
+
+    Location getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Have no permissions");
+
             return null;
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
+            Log.d("!!!!! - all good - ", "" + mLastLocation);
             return mLastLocation;
         } else {
             mLastLocation = new Location(LocationManager.GPS_PROVIDER);
-            Log.d("!!!!!", "" + mLastLocation);
-            mLastLocation.setLatitude(0);
-            mLastLocation.setLongitude(0);
-            return null;
+            Log.d("!!!!! - error - ", "" + mLastLocation);
+            mLastLocation.setLatitude(2.0);
+            mLastLocation.setLongitude(1.0);
+            return mLastLocation;
         }
     }
 
     Location getPreLastLocation() {
         Location loc = new Location(LocationManager.GPS_PROVIDER);
         loc.reset();
-        LatLng latLng = mPoints.get(mPoints.size() - 1);
+        LatLng latLng;
+        if (mPoints.size() >= 2) {
+            latLng = mPoints.get(mPoints.size() - 2);
+        } else {
+            latLng = mPoints.get(mPoints.size() - 1);
+        }
         loc.setLongitude(latLng.longitude);
         loc.setLatitude(latLng.latitude);
         return loc;
     }
 
-    void togglePeriodicLocationUpdates() {
-        if (!mRequestingLocationUpdates) {
-            mRequestingLocationUpdates = true;
-            startLocationUpdates();
-            Log.d(TAG, "Periodic location updates started!");
-        } else {
-            mRequestingLocationUpdates = false;
-            stopLocationUpdates();
-            Log.d(TAG, "Periodic location updates stopped!");
-        }
-    }
 
     void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(),
@@ -148,33 +143,47 @@ class GoogleMapManager {
         } else {
             startLocation = new LatLng(0, 0);
         }
+
         mMap.addMarker(new MarkerOptions().position(startLocation).title("Current location").snippet("Start Point"));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(startLocation));
     }
 
-    void startRouteOnMap() {
-        LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
-        for (int i = 0; i < mPoints.size(); i++) {
-            if (i == mPoints.size() - 1) {
-                MarkerOptions endMarkerOptions = new MarkerOptions()
-                        .position(mPoints.get(i))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.rout)).visible(true);
-                mMap.addMarker(endMarkerOptions);
-            }
-            line.add(mPoints.get(i));
-            latLngBuilder.include(mPoints.get(i));
-        }
+    void setStartMarker() {
+        MarkerOptions startMarkerOptions = new MarkerOptions()
+                .position(new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude()))
+                .anchor(0.5f, 1f)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_start_icon));
+        mMap.addMarker(startMarkerOptions);
+    }
 
-        mMap.addPolyline(line);
-        int size = mGoogleApiClient.getContext().getResources().getDisplayMetrics().widthPixels;
+    void startRouteOnMap() {
+        LatLng preLatLoc = new LatLng(getPreLastLocation().getLatitude(), getPreLastLocation().getLongitude());
+        LatLng curLatLoc = new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude());
+        PolylineOptions line = new PolylineOptions().width(12f).color(R.color.greenRoute).geodesic(true);
+        line.add(preLatLoc);
+        line.add(curLatLoc);
+        mMap.addPolyline(line).setGeodesic(true);
+        mPoints.add(curLatLoc);
+
+        LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
+        latLngBuilder.include(new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude()));
         LatLngBounds latLngBounds = latLngBuilder.build();
+        int size = mGoogleApiClient.getContext().getResources().getDisplayMetrics().widthPixels;
         CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 15);
         mMap.moveCamera(track);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
     }
 
     void stopRouteOnMap() {
+        MarkerOptions endMarkerOptions = new MarkerOptions()
+                .position(new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude()))
+                .anchor(0.5f, 1f)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_stop_icon)).visible(true);
+        mMap.addMarker(endMarkerOptions);
+    }
+
+    /*void stopRouteOnMap() {
         LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
         for (int i = 0; i < mPoints.size(); i++) {
             if (i == 0) {
@@ -198,6 +207,6 @@ class GoogleMapManager {
         CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 9);
         mMap.moveCamera(track);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
-    }
+    }*/
 
 }

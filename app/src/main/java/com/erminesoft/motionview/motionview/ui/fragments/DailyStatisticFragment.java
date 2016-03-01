@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.util.DataSetsWorker;
@@ -48,14 +49,9 @@ public class DailyStatisticFragment extends BaseDailyStatisticFragment {
         DataSetsWorker.processDataSets(mDataSets, this);
 
         Bundle bundle = ProcessDayDataCommand.generateBundle(this, mGoogleClientFacade, mTimestamp);
-        mCommander.execute(bundle, new ResultCallback<String>() {
+        mCommander.execute(bundle, new ResultCallback() {
             @Override
-            public void onError(String s) {
-
-            }
-
-            @Override
-            public void onSuccess(String s) {
+            public void onSuccess(Bundle s) {
 
             }
         });
