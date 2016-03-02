@@ -24,6 +24,8 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CombinedData;
 import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 
 import java.util.List;
@@ -69,9 +71,15 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
 
         Bundle bundle = ProcessDayDataCommand.generateBundle(this, mTimestamp);
         mCommander.execute(bundle, new ResultCallback() {
+            @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object result) {
-                //Empty
+                if (!(result instanceof List<?>)) {
+                    onError("WRONG result TYPE");
+                    return;
+                }
+
+                processData((List<DataSet>) result);
             }
 
             @Override
@@ -81,6 +89,29 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
         });
 
         initCharts();
+    }
+
+    private void processData(List<DataSet> dataSets) {
+        for (DataSet dataSet : dataSets) {
+            DataType dataType = dataSet.getDataType();
+            final List<DataPoint> dataPoints = dataSet.getDataPoints();
+
+            if (dataType.equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
+                onTotalTimeChanged(dataPoints);
+            }
+
+            if (dataType.equals(DataType.AGGREGATE_CALORIES_EXPENDED)) {
+                onCaloriesChanged(dataPoints);
+            }
+
+            if (dataType.equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
+                onDistanceChanged(dataPoints);
+            }
+
+            if (dataType.equals(DataType.AGGREGATE_STEP_COUNT_DELTA)) {
+                onStepsChanged(dataPoints);
+            }
+        }
     }
 
     private void initCharts() {

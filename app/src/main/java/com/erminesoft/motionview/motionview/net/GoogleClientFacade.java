@@ -2,7 +2,6 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
-
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
@@ -55,7 +54,10 @@ public class GoogleClientFacade implements Serializable {
         mBuildManager.onDialogDismissed();
     }
 
-    public void getDataPerDay(int day, int month, int year, DataChangedListener stepsChangingListener) {
+    /**
+     * @param stepsChangingListener returns List of DataSets
+     */
+    public void getDataPerDay(int day, int month, int year, ResultCallback stepsChangingListener) {
         mOfflineStorageManager.getDataPerDay(day, month, year, stepsChangingListener);
     }
 
@@ -89,7 +91,7 @@ public class GoogleClientFacade implements Serializable {
         mSubscribingManager.unsubscribe();
     }
 
-    public void registerListenerForStepCounter(DataChangedListener stepsChangingListener) {
+    public void registerListenerForStepCounter(ResultCallback stepsChangingListener) {
         mRegisterManager.registerListener(DataType.TYPE_STEP_COUNT_DELTA, stepsChangingListener);
     }
 
