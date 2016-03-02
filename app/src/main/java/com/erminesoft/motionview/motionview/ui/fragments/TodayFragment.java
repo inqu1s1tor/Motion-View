@@ -24,7 +24,23 @@ public class TodayFragment extends BaseDailyStatisticFragment {
     public void onStart() {
         super.onStart();
 
-        mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
+        mGoogleClientFacade.registerListenerForStepCounter(new ResultCallback() {
+            @Override
+            public void onSuccess(Object dataSets) {
+                if (!(dataSets instanceof List<?>)){
+                    onError("WRONG DATA");
+                    return;
+                }
+
+                DataSetsWorker.processDataSets((List<DataSet>) dataSets, TodayFragment.this);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, error);
+            }
+
+        });
     }
 
     @Override
@@ -32,19 +48,5 @@ public class TodayFragment extends BaseDailyStatisticFragment {
         super.onStop();
 
         mGoogleClientFacade.unregisterListener();
-    }
-
-    private final class DataChangedListenerImpl implements ResultCallback {
-
-        @Override
-        public void onSuccess(Object dataSets) {
-            DataSetsWorker.processDataSets((List<DataSet>) dataSets, TodayFragment.this);
-        }
-
-        @Override
-        public void onError(String error) {
-            Log.e(TAG, error);
-        }
-
     }
 }

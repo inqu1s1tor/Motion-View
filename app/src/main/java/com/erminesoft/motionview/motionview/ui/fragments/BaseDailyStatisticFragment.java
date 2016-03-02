@@ -69,17 +69,22 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
     public void onStart() {
         super.onStart();
 
-        Bundle bundle = ProcessDayDataCommand.generateBundle(this, mTimestamp);
+        Bundle bundle = ProcessDayDataCommand.generateBundle(mTimestamp);
         mCommander.execute(bundle, new ResultCallback() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onSuccess(Object result) {
+            public void onSuccess(final Object result) {
                 if (!(result instanceof List<?>)) {
                     onError("WRONG result TYPE");
                     return;
                 }
 
-                processData((List<DataSet>) result);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        processData((List<DataSet>) result);
+                    }
+                });
             }
 
             @Override
@@ -177,14 +182,19 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
 
         mCommander.execute(bundle, new ResultCallback() {
             @Override
-            public void onSuccess(Object result) {
+            public void onSuccess(final Object result) {
                 if (!(result instanceof CombinedData)) {
                     onError("Wrong Data.");
                     return;
                 }
 
-                mCombinedChart.setData((CombinedData) result);
-                onCombinedChartDataSet();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCombinedChart.setData((CombinedData) result);
+                        onCombinedChartDataSet();
+                    }
+                });
             }
 
             @Override

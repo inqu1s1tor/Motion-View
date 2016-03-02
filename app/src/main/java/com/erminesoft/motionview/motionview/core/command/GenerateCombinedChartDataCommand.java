@@ -17,6 +17,7 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,30 +53,15 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
 
         mCombinedData = new CombinedData(HOURS_IN_DAY);
 
-        mGoogleClientFacade.getHoursDataPerDay(timeStamp, new ResultCallback() {
-            @Override
-            public void onSuccess(Object result) {
-                if (!(result instanceof List<?>)) {
-                    onError("Wrong Data in " +
-                            GenerateCombinedChartDataCommand.class.getSimpleName());
-                    return;
-                }
+        DataReadResult result = mGoogleClientFacade.getHoursDataPerDay(timeStamp);
+        List<Bucket> buckets = result.getBuckets();
 
-                List<Bucket> buckets = (List<Bucket>) result;
+        processStepsData(buckets);
+        processCaloriesData(buckets);
 
-                processStepsData(buckets);
-                processCaloriesData(buckets);
-
-                if (!isDenied()) {
-                    callback.onSuccess(mCombinedData);
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
+        if (!isDenied()) {
+            callback.onSuccess(mCombinedData);
+        }
     }
 
     private void processStepsData(List<Bucket> buckets) {

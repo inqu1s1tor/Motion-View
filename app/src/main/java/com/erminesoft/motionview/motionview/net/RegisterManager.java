@@ -5,11 +5,14 @@ import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
+import com.google.android.gms.fitness.result.DataReadResult;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 class RegisterManager {
@@ -27,17 +30,24 @@ class RegisterManager {
     }
 
     void registerListener(DataType dataType,
-                          final ResultCallback resultListenerFromActivity) {
+                          final ResultCallback listener) {
         mSensorResultListener = new OnDataPointListener() {
             @Override
             public void onDataPoint(final DataPoint dataPoint) {
                 mOfflineStorageManager.insertSteps(dataPoint);
 
-                mOfflineStorageManager.getDataPerDay(
+                DataReadResult result = mOfflineStorageManager.getDataPerDay(
                         TimeWorker.getCurrentDay(),
                         TimeWorker.getCurrentMonth(),
-                        TimeWorker.getCurrentYear(),
-                        resultListenerFromActivity);
+                        TimeWorker.getCurrentYear());
+
+                final List<Bucket> buckets = result.getBuckets();
+                if (buckets == null || buckets.size() == 0) {
+                    listener.onError("NO DATA");
+                    return;
+                }
+
+                listener.onSuccess(buckets.get(0).getDataSets());
             }
         };
 

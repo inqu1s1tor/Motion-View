@@ -6,24 +6,18 @@ import android.os.Looper;
 import com.erminesoft.motionview.motionview.core.bridge.EventBridge;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
+import com.google.android.gms.fitness.data.Bucket;
+import com.google.android.gms.fitness.result.DataReadResult;
+
+import java.util.List;
 
 public class ProcessDayDataCommand extends GenericCommand {
-    private static final String EVENT_BRIDGE_KEY = "eventView_KEY";
     private static final String TIMESTAMP_KEY = "timestamp";
 
-    private final Handler mHandler;
-    private EventBridge mEventView;
-
-    ProcessDayDataCommand() {
-        mHandler = new Handler(Looper.getMainLooper());
-    }
-
-    public static Bundle generateBundle(EventBridge eventView,
-                                        long timestamp) {
+    public static Bundle generateBundle(long timestamp) {
         Bundle bundle = new Bundle();
 
         bundle.putSerializable(Command.TRANSPORT_KEY, CommandType.PROCESS_DAY_DATA);
-        bundle.putSerializable(EVENT_BRIDGE_KEY, eventView);
         bundle.putLong(TIMESTAMP_KEY, timestamp);
 
         return bundle;
@@ -38,8 +32,6 @@ public class ProcessDayDataCommand extends GenericCommand {
             return;
         }
 
-        mEventView = (EventBridge) bundle.getSerializable(EVENT_BRIDGE_KEY);
-
         if (mGoogleClientFacade == null) {
             callback.onError("EMPTY GOOGLE CLIENT FACADE");
             return;
@@ -47,27 +39,19 @@ public class ProcessDayDataCommand extends GenericCommand {
 
         long timestamp = bundle.getLong(TIMESTAMP_KEY);
 
-        mGoogleClientFacade.getDataPerDay(
+        DataReadResult result = mGoogleClientFacade.getDataPerDay(
                 TimeWorker.getDay(timestamp),
                 TimeWorker.getMonth(timestamp),
-                TimeWorker.getYear(timestamp),
-                new ResultCallback() {
-                    @Override
-                    public void onSuccess(final Object result) {
-                        if (!isDenied()) {
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.onSuccess(result);
-                                }
-                            });
-                        }
-                    }
+                TimeWorker.getYear(timestamp));
 
-                    @Override
-                    public void onError(String error) {
-                        callback.onError(error);
-                    }
-                });
+        final List<Bucket> buckets = result.getBuckets();
+        if (buckets == null || buckets.size() == 0) {
+            callback.onError("NO DATA");
+            return;
+        }
+
+        if (!isDenied()) {
+            callback.onSuccess(buckets.get(0).getDataSets());
+        }
     }
 }
