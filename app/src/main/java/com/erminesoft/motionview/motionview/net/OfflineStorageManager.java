@@ -2,20 +2,13 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.os.Handler;
 import android.os.Looper;
-
-import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.Bucket;
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataSource;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.data.*;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
@@ -49,7 +42,7 @@ class OfflineStorageManager {
     }
 
     void getDataPerMonthFromHistory(final ChartDataWorker.Month month, final int year,
-                                    final BucketsResultListener resultListener) {
+                                    final ResultCallback resultListener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -102,27 +95,52 @@ class OfflineStorageManager {
         });
     }
 
-    void getDataPerDay(final int day, final int month, final int year, final DataChangedListener listener) {
+    void getDataPerDay(int day, int month, int year, DataChangedListener listener) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+
+        if (TimeWorker.getCurrentDay() != day ||
+                TimeWorker.getCurrentMonth() != month ||
+                TimeWorker.getCurrentYear() != year) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            TimeWorker.setMidnight(calendar);
+            calendar.add(Calendar.MILLISECOND, -1);
+        }
+
+        long endTime = calendar.getTimeInMillis();
+
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        TimeWorker.setMidnight(calendar);
+
+        long startTime = calendar.getTimeInMillis();
+
+        DataReadRequest request = buildReadRequest(startTime, endTime);
+
+        DataReadResult result = Fitness.HistoryApi.readData(mClient, request).await();
+
+        final List<Bucket> buckets = result.getBuckets();
+        if (buckets == null || buckets.size() == 0) {
+            listener.onError(NO_DATA_ERROR);
+            return;
+        }
+
+        listener.onSuccess(buckets.get(0).getDataSets());
+    }
+
+
+    void getDataForNow(final int day, final DataChangedListener listener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, month);
                 calendar.set(Calendar.DAY_OF_MONTH, day);
-
-                if (TimeWorker.getCurrentDay() != day ||
-                        TimeWorker.getCurrentMonth() != month ||
-                        TimeWorker.getCurrentYear() != year) {
-                    calendar.add(Calendar.DAY_OF_MONTH, 1);
-                    TimeWorker.setMidnight(calendar);
-                }
-
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                TimeWorker.setMidnight(calendar);
                 long endTime = calendar.getTimeInMillis();
-
                 calendar.set(Calendar.DAY_OF_MONTH, day);
                 TimeWorker.setMidnight(calendar);
-
                 long startTime = calendar.getTimeInMillis();
 
                 DataReadRequest request = buildReadRequest(startTime, endTime);
@@ -134,7 +152,6 @@ class OfflineStorageManager {
                     listener.onError(NO_DATA_ERROR);
                     return;
                 }
-
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {

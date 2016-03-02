@@ -8,7 +8,6 @@ import android.util.Log;
 import com.erminesoft.motionview.motionview.core.bridge.EventBridge;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
-import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -20,24 +19,21 @@ import java.util.List;
 public class ProcessDayDataCommand extends GenericCommand {
     private static final String TAG = ProcessDayDataCommand.class.getSimpleName();
     private static final String EVENT_BRIDGE_KEY = "eventView_KEY";
-    private static final String GOOGLE_CLIENT_KEY = "googleClientFACADE";
     private static final String TIMESTAMP_KEY = "timestamp";
 
     private final Handler mHandler;
     private EventBridge mEventView;
 
-    public ProcessDayDataCommand() {
+    ProcessDayDataCommand() {
         mHandler = new Handler(Looper.getMainLooper());
     }
 
     public static Bundle generateBundle(EventBridge eventView,
-                                        GoogleClientFacade googleClientFacade,
                                         long timestamp) {
         Bundle bundle = new Bundle();
 
         bundle.putSerializable(Command.TRANSPORT_KEY, CommandType.PROCESS_DAY_DATA);
         bundle.putSerializable(EVENT_BRIDGE_KEY, eventView);
-        bundle.putSerializable(GOOGLE_CLIENT_KEY, googleClientFacade);
         bundle.putLong(TIMESTAMP_KEY, timestamp);
 
         return bundle;
@@ -53,17 +49,15 @@ public class ProcessDayDataCommand extends GenericCommand {
         }
 
         mEventView = (EventBridge) bundle.getSerializable(EVENT_BRIDGE_KEY);
-        GoogleClientFacade googleClientFacade =
-                (GoogleClientFacade) bundle.getSerializable(GOOGLE_CLIENT_KEY);
 
-        if (googleClientFacade == null) {
+        if (mGoogleClientFacade == null) {
             callback.onError("EMPTY GOOGLE CLIENT FACADE");
             return;
         }
 
         long timestamp = bundle.getLong(TIMESTAMP_KEY);
 
-        googleClientFacade.getDataPerDay(
+        mGoogleClientFacade.getDataPerDay(
                 TimeWorker.getDay(timestamp),
                 TimeWorker.getMonth(timestamp),
                 TimeWorker.getYear(timestamp),

@@ -3,9 +3,11 @@ package com.erminesoft.motionview.motionview.core.command;
 import android.os.Bundle;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
 
-public class GenericCommand implements Command {
+class GenericCommand implements Command {
     private boolean mDenied;
+    protected GoogleClientFacade mGoogleClientFacade;
 
     @Override
     public void execute(ResultCallback callback, Bundle bundle) {
@@ -17,7 +19,11 @@ public class GenericCommand implements Command {
         mDenied = true;
     }
 
-    protected boolean isDenied() {
+    boolean isDenied() {
         return mDenied;
+    }
+
+    void setGoogleClientFacade(GoogleClientFacade googleClientFacade) {
+        mGoogleClientFacade = googleClientFacade;
     }
 }

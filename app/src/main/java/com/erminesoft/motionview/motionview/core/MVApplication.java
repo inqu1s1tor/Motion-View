@@ -17,7 +17,7 @@ public class MVApplication extends Application{
 
         mGoogleClientFacade = new GoogleClientFacade();
         mSharedDataManager = new SharedDataManager(this);
-        mCommander = new Commander();
+        mCommander = new Commander(mGoogleClientFacade);
     }
 
     public GoogleClientFacade getGoogleClientFacade() {

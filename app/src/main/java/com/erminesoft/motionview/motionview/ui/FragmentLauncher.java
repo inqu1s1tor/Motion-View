@@ -4,16 +4,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.ui.factory.FragmentsFactory;
 import com.erminesoft.motionview.motionview.ui.fragments.DailyStatisticFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.GenericFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.HistoryFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.TodayFragment;
-import com.google.android.gms.fitness.data.DataSet;
-
-import java.util.List;
 
 public class FragmentLauncher {
 
@@ -47,8 +43,8 @@ public class FragmentLauncher {
         launchWithoutAnimation(fragment, null);
     }
 
-    public void launchDailyStatisticFragment(List<DataSet> datasets, long timestamp) {
-        Bundle bundle = DailyStatisticFragment.buildArgs(datasets, timestamp);
+    public void launchDailyStatisticFragment(long timestamp) {
+        Bundle bundle = DailyStatisticFragment.buildArgs(timestamp);
         GenericFragment fragment = new DailyStatisticFragment();
         fragment.setArguments(bundle);
         launchWithoutAnimation(fragment, null);

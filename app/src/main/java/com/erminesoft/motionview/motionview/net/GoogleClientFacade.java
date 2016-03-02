@@ -3,11 +3,10 @@ package com.erminesoft.motionview.motionview.net;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 
-import com.erminesoft.motionview.motionview.core.callback.BucketsResultListener;
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.request.BleScanCallback;
@@ -60,11 +59,17 @@ public class GoogleClientFacade implements Serializable {
         mOfflineStorageManager.getDataPerDay(day, month, year, stepsChangingListener);
     }
 
-    public void getDataPerMonthFromHistory(ChartDataWorker.Month month, int year, BucketsResultListener resultListener) {
+    /**
+     * @param resultListener returning List of Buckets
+     */
+    public void getDataPerMonthFromHistory(ChartDataWorker.Month month, int year, ResultCallback resultListener) {
         mOfflineStorageManager.getDataPerMonthFromHistory(month, year, resultListener);
     }
 
-    public void getHoursDataPerDay(long timeStamp, com.erminesoft.motionview.motionview.core.callback.ResultCallback listener) {
+    /**
+     * @param listener returning List of Buckets
+     */
+    public void getHoursDataPerDay(long timeStamp, ResultCallback listener) {
         mOfflineStorageManager.getHoursDataPerDay(timeStamp, listener);
     }
 
@@ -97,8 +102,6 @@ public class GoogleClientFacade implements Serializable {
     public void registerListenerForCurrentLocation(com.erminesoft.motionview.motionview.core.callback.ResultCallback locationChengedListener) {
         mRegisterManager.registerListenerLocation(DataType.TYPE_LOCATION_SAMPLE, locationChengedListener);
     }
-
-
 
 
     public void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
@@ -162,7 +165,7 @@ public class GoogleClientFacade implements Serializable {
         mBluetoothManager.setRequest(timeout);
     }
 
-    public void setResultCallback(ResultCallback<Status> callback) {
+    public void setResultCallback(com.google.android.gms.common.api.ResultCallback<Status> callback) {
         mBluetoothManager.setResultCallback(callback);
     }
 

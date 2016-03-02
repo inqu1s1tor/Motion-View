@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
-import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -25,16 +24,14 @@ import java.util.List;
 public class GenerateCombinedChartDataCommand extends GenericCommand {
 
     private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String GOOGLE_CLIENT_FACADE_KEY = "googleClientFacade";
     private static final String[] HOURS_IN_DAY = new String[]{"3", "6", "9", "12", "15", "18", "21", "24"};
 
     private CombinedData mCombinedData;
 
-    public static Bundle generateBundle(long timestamp, GoogleClientFacade googleClientFacade) {
+    public static Bundle generateBundle(long timestamp) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Command.TRANSPORT_KEY, CommandType.GENERATE_COMBINED_CHART_DATA);
         bundle.putLong(TIMESTAMP_KEY, timestamp);
-        bundle.putSerializable(GOOGLE_CLIENT_FACADE_KEY, googleClientFacade);
 
         return bundle;
     }
@@ -43,20 +40,19 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
     public void execute(final ResultCallback callback, Bundle bundle) {
         super.execute(callback, bundle);
 
-        if (!bundle.containsKey(TIMESTAMP_KEY) || !bundle.containsKey(GOOGLE_CLIENT_FACADE_KEY)) {
+        if (!bundle.containsKey(TIMESTAMP_KEY)) {
             return;
         }
 
-        GoogleClientFacade googleClientFacade = (GoogleClientFacade) bundle.getSerializable(GOOGLE_CLIENT_FACADE_KEY);
         long timeStamp = bundle.getLong(TIMESTAMP_KEY);
 
-        if (googleClientFacade == null) {
+        if (mGoogleClientFacade == null) {
             return;
         }
 
         mCombinedData = new CombinedData(HOURS_IN_DAY);
 
-        googleClientFacade.getHoursDataPerDay(timeStamp, new ResultCallback() {
+        mGoogleClientFacade.getHoursDataPerDay(timeStamp, new ResultCallback() {
             @Override
             public void onSuccess(Object result) {
                 if (!(result instanceof List<?>)) {
