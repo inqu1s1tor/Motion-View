@@ -41,61 +41,31 @@ class OfflineStorageManager {
         Fitness.HistoryApi.insertData(mClient, dataSet);
     }
 
-    void getDataPerMonthFromHistory(final ChartDataWorker.Month month, final int year,
-                                    final ResultCallback resultListener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                DataReadRequest request = generateReadRequestForMonth(month, year);
+    DataReadResult getDataPerMonthFromHistory(final ChartDataWorker.Month month, final int year) {
+        DataReadRequest request = generateReadRequestForMonth(month, year);
 
-                final DataReadResult readResult = Fitness.HistoryApi.readData(mClient, request).await();
-
-                if (isReadResultEmpty(readResult)) {
-                    resultListener.onError(NO_DATA_ERROR);
-                    return;
-                }
-
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        resultListener.onSuccess(readResult.getBuckets());
-                    }
-                });
-            }
-        });
+        return Fitness.HistoryApi.readData(mClient, request).await();
     }
 
-    void getHoursDataPerDay(final long timeStamp, final ResultCallback listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(timeStamp);
+    DataReadResult getHoursDataPerDay(final long timeStamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeStamp);
 
-                TimeWorker.setMidnight(calendar);
-                long startTime = calendar.getTimeInMillis();
+        TimeWorker.setMidnight(calendar);
+        long startTime = calendar.getTimeInMillis();
 
-                calendar.add(Calendar.DAY_OF_YEAR, 1);
-                long endTime = calendar.getTimeInMillis();
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        long endTime = calendar.getTimeInMillis();
 
-                final DataReadResult readResult = Fitness.HistoryApi.readData(mClient, new DataReadRequest.Builder()
-                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                        .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
-                        .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                        .bucketByTime(3, TimeUnit.HOURS)
-                        .build()).await();
-
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onSuccess(readResult.getBuckets());
-                    }
-                });
-            }
-        });
+        return Fitness.HistoryApi.readData(mClient, new DataReadRequest.Builder()
+                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
+                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                .bucketByTime(3, TimeUnit.HOURS)
+                .build()).await();
     }
 
-    void getDataPerDay(int day, int month, int year, DataChangedListener listener) {
+    DataReadResult getDataPerDay(int day, int month, int year) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
@@ -118,15 +88,7 @@ class OfflineStorageManager {
 
         DataReadRequest request = buildReadRequest(startTime, endTime);
 
-        DataReadResult result = Fitness.HistoryApi.readData(mClient, request).await();
-
-        final List<Bucket> buckets = result.getBuckets();
-        if (buckets == null || buckets.size() == 0) {
-            listener.onError(NO_DATA_ERROR);
-            return;
-        }
-
-        listener.onSuccess(buckets.get(0).getDataSets());
+        return Fitness.HistoryApi.readData(mClient, request).await();
     }
 
 
@@ -201,10 +163,6 @@ class OfflineStorageManager {
         );
 
         Fitness.HistoryApi.insertData(mClient, heightDataSet);
-    }
-
-    private boolean isReadResultEmpty(DataReadResult readResult) {
-        return readResult.getBuckets().size() == 0 && readResult.getDataSets().size() == 0;
     }
 
     private DataReadRequest generateReadRequestForMonth(ChartDataWorker.Month month, int year) {

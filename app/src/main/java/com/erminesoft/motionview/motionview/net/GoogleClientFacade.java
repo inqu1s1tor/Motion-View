@@ -10,13 +10,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.request.BleScanCallback;
+import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.Serializable;
-
-public class GoogleClientFacade implements Serializable {
+public class GoogleClientFacade {
 
     private GoogleApiClient mClient;
     private BuildManager mBuildManager;
@@ -55,22 +54,16 @@ public class GoogleClientFacade implements Serializable {
         mBuildManager.onDialogDismissed();
     }
 
-    public void getDataPerDay(int day, int month, int year, DataChangedListener stepsChangingListener) {
-        mOfflineStorageManager.getDataPerDay(day, month, year, stepsChangingListener);
+    public DataReadResult getDataPerDay(int day, int month, int year) {
+        return mOfflineStorageManager.getDataPerDay(day, month, year);
     }
 
-    /**
-     * @param resultListener returning List of Buckets
-     */
-    public void getDataPerMonthFromHistory(ChartDataWorker.Month month, int year, ResultCallback resultListener) {
-        mOfflineStorageManager.getDataPerMonthFromHistory(month, year, resultListener);
+    public DataReadResult getDataPerMonthFromHistory(ChartDataWorker.Month month, int year) {
+        return mOfflineStorageManager.getDataPerMonthFromHistory(month, year);
     }
 
-    /**
-     * @param listener returning List of Buckets
-     */
-    public void getHoursDataPerDay(long timeStamp, ResultCallback listener) {
-        mOfflineStorageManager.getHoursDataPerDay(timeStamp, listener);
+    public DataReadResult getHoursDataPerDay(long timeStamp) {
+        return mOfflineStorageManager.getHoursDataPerDay(timeStamp);
     }
 
     public void saveUserHeight(int heightCentimeters) {
@@ -89,7 +82,7 @@ public class GoogleClientFacade implements Serializable {
         mSubscribingManager.unsubscribe();
     }
 
-    public void registerListenerForStepCounter(DataChangedListener stepsChangingListener) {
+    public void registerListenerForStepCounter(ResultCallback stepsChangingListener) {
         mRegisterManager.registerListener(DataType.TYPE_STEP_COUNT_DELTA, stepsChangingListener);
     }
 

@@ -6,8 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
-import com.erminesoft.motionview.motionview.util.DataSetsWorker;
+
+import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.google.android.gms.fitness.data.DataSet;
 
 import java.util.List;
@@ -24,7 +24,23 @@ public class TodayFragment extends BaseDailyStatisticFragment {
     public void onStart() {
         super.onStart();
 
-        mGoogleClientFacade.registerListenerForStepCounter(new DataChangedListenerImpl());
+        mGoogleClientFacade.registerListenerForStepCounter(new ResultCallback() {
+            @Override
+            public void onSuccess(Object dataSets) {
+                if (!(dataSets instanceof List<?>)){
+                    onError("WRONG DATA");
+                    return;
+                }
+
+                processData((List<DataSet>) dataSets);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, error);
+            }
+
+        });
     }
 
     @Override
@@ -32,19 +48,5 @@ public class TodayFragment extends BaseDailyStatisticFragment {
         super.onStop();
 
         mGoogleClientFacade.unregisterListener();
-    }
-
-    private final class DataChangedListenerImpl implements DataChangedListener {
-
-        @Override
-        public void onSuccess(final List<DataSet> dataSets) {
-            DataSetsWorker.processDataSets(dataSets, TodayFragment.this);
-        }
-
-        @Override
-        public void onError(String error) {
-            Log.e(TAG, error);
-        }
-
     }
 }

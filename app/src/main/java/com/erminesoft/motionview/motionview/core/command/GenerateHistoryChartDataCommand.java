@@ -12,6 +12,7 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,26 +43,17 @@ public class GenerateHistoryChartDataCommand extends GenericCommand {
         ChartDataWorker.Month month = (ChartDataWorker.Month) bundle.getSerializable(MONTH_KEY);
         int year = bundle.getInt(YEAR_KEY);
 
-        mGoogleClientFacade.getDataPerMonthFromHistory(month, year, new ResultCallback() {
-            @Override
-            public void onSuccess(Object result) {
-                if (!(result instanceof List<?>)) {
-                    onError("Wrong data in " + GenerateHistoryChartDataCommand.class.getSimpleName());
-                    return;
-                }
+        DataReadResult result = mGoogleClientFacade.getDataPerMonthFromHistory(month, year);
+        List<Bucket> buckets = result.getBuckets();
 
-                List<Bucket> buckets = (ArrayList<Bucket>) result;
+        if (buckets.get(0).getDataSets().isEmpty()) {
+            callback.onError("EMPTY DATA in " + getClass().getSimpleName());
+            return;
+        }
 
-                if (!isDenied()) {
-                    callback.onSuccess(processStepsBuckets(buckets));
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
+        if (!isDenied()) {
+            callback.onSuccess(processStepsBuckets(buckets));
+        }
     }
 
     private BarData processStepsBuckets(List<Bucket> buckets) {

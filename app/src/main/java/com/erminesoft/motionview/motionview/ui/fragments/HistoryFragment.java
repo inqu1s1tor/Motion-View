@@ -153,9 +153,14 @@ public class HistoryFragment extends GenericFragment {
                     onError("WRONG DATA");
                     return;
                 }
+                final BarData data = (BarData) result;
 
-                BarData data = (BarData) result;
-                setChartData(data);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setChartData(data);
+                    }
+                });
             }
 
             @Override
