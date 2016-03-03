@@ -210,11 +210,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         AppEventsLogger.deactivateApp(getContext());

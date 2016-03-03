@@ -14,6 +14,7 @@ public abstract class GenericFragment extends Fragment {
     public static final String HISTORY = "history";
     public static final String MAP = "map";
     public static final String TODAY = "today";
+    public static final String DAILY_STATISTIC = "daily statistic";
 
     protected final String TAG = this.getClass().getSimpleName();
     protected GoogleClientFacade mGoogleClientFacade;

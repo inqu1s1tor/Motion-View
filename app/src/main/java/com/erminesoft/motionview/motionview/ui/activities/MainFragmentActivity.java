@@ -35,7 +35,7 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
         setTitle(getString(R.string.app_name));
 
         mFragmentLauncher = new FragmentLauncher(getSupportFragmentManager());
-        mFragmentLauncher.launchTodayFragment();
+        //mFragmentLauncher.launchTodayFragment();
 
         mTabLayout = (TabLayout) findViewById(R.id.main_fragment_container_tab_container);
 

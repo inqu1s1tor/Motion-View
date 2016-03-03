@@ -64,9 +64,6 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         mYearSpinner = (Spinner) view.findViewById(R.id.fragment_history_year_spinner);
         mMonthSpinner = (Spinner) view.findViewById(R.id.fragment_history_month_spinner);
         mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_history_progress_bar);
-
-        initDataForSpinners();
-        initChart();
     }
 
     @Override
@@ -75,6 +72,18 @@ public class HistoryFragment extends GenericFragment implements Receiver {
 
         DataBuffer.getInstance()
                 .register(CommandType.GENERATE_HISTORY_CHART_DATA, this);
+
+        initDataForSpinners();
+        initChart();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (!hidden) {
+            initDataForSpinners();
+        }
     }
 
     private void initDataForSpinners() {
@@ -87,6 +96,8 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     }
 
     private void initSpinners() {
+        mProgressBar.setVisibility(View.VISIBLE);
+
         initAdapters();
 
         mYearSpinner.setAdapter(mYearAdapter);
@@ -188,9 +199,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     }
 
     private void setChartData(final BarData data) {
-        if (mProgressBar.getVisibility() != View.GONE) {
-            mProgressBar.setVisibility(View.GONE);
-        }
+        mProgressBar.setVisibility(View.GONE);
 
         mBarChart.clear();
         mBarChart.setData(data);

@@ -1,9 +1,9 @@
 package com.erminesoft.motionview.motionview.ui;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.ui.fragments.DailyStatisticFragment;
@@ -13,8 +13,6 @@ import com.erminesoft.motionview.motionview.ui.fragments.HistoryFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.TodayFragment;
 
 public class FragmentLauncher {
-
-
     private final FragmentManager manager;
 
     public FragmentLauncher(FragmentManager manager) {
@@ -26,39 +24,69 @@ public class FragmentLauncher {
     }
 
     private void launch(GenericFragment fragment, String tag, int animationIn, int AnimationOut) {
-
         FragmentTransaction transaction = manager.beginTransaction();
 
-        if (!TextUtils.isEmpty(tag)) {
-            transaction.addToBackStack(tag);
+        Fragment f = manager.findFragmentByTag(tag);
+        Fragment visibleFragment = getVisibleFragment();
+
+        if (visibleFragment != null) {
+            transaction.hide(visibleFragment);
         }
 
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commitAllowingStateLoss();
+        if (tag.compareTo(GenericFragment.DAILY_STATISTIC) == 0) {
+            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            return;
+        }
 
+        if (f == null) {
+            transaction.add(R.id.fragment_container, fragment, tag);
+        } else {
+            transaction.show(f);
+        }
+
+        transaction.commitAllowingStateLoss();
+    }
+
+    private Fragment getVisibleFragment() {
+        Fragment fragment = null;
+
+        if (manager.getFragments() == null) {
+            return null;
+        }
+
+        for (Fragment f : manager.getFragments()) {
+            if (f != null && f.isVisible()) {
+                fragment = f;
+                break;
+            }
+        }
+
+        return fragment;
     }
 
 
     public void launchTodayFragment() {
         GenericFragment fragment = new TodayFragment();
-        launchWithoutAnimation(fragment, null);
+        launchWithoutAnimation(fragment, GenericFragment.TODAY);
     }
 
     public void launchDailyStatisticFragment(long timestamp) {
-        Bundle bundle = DailyStatisticFragment.buildArgs(timestamp);
         GenericFragment fragment = new DailyStatisticFragment();
+
+        Bundle bundle = DailyStatisticFragment.buildArgs(timestamp);
         fragment.setArguments(bundle);
-        launchWithoutAnimation(fragment, null);
+
+        launchWithoutAnimation(fragment, GenericFragment.DAILY_STATISTIC);
     }
 
     public void launchHistoryFragment() {
         GenericFragment fragment = new HistoryFragment();
-        launchWithoutAnimation(fragment, null);
+        launchWithoutAnimation(fragment, GenericFragment.HISTORY);
     }
 
     public void launchMapFragment() {
         GenericFragment fragment = new GoogleMapsFragment();
-        launchWithoutAnimation(fragment, null);
+        launchWithoutAnimation(fragment, GenericFragment.MAP);
     }
 
     public void launchByTag(String tag) {

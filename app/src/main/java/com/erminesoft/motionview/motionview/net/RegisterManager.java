@@ -1,8 +1,5 @@
 package com.erminesoft.motionview.motionview.net;
 
-import android.util.Log;
-
-import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
