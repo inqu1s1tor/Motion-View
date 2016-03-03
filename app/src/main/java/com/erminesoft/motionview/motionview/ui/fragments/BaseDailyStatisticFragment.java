@@ -103,7 +103,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
             if (dataType.equals(DataType.AGGREGATE_STEP_COUNT_DELTA)) {
                 onStepsChanged(dataPoints);
-                continue;
             }
         }
     }
@@ -219,7 +218,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
             int activityType = dataPoint.getValue(Field.FIELD_ACTIVITY).asInt();
 
             if (activityType != 3) {
-                totalActivityTime = dataPoint.getValue(Field.FIELD_DURATION).asInt();
+                totalActivityTime += dataPoint.getValue(Field.FIELD_DURATION).asInt();
             }
         }
 

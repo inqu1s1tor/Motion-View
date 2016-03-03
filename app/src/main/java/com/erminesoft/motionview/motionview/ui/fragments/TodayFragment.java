@@ -26,13 +26,18 @@ public class TodayFragment extends BaseDailyStatisticFragment {
 
         mGoogleClientFacade.registerListenerForStepCounter(new ResultCallback() {
             @Override
-            public void onSuccess(Object dataSets) {
+            public void onSuccess(final Object dataSets) {
                 if (!(dataSets instanceof List<?>)){
                     onError("WRONG DATA");
                     return;
                 }
 
-                processData((List<DataSet>) dataSets);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        processData((List<DataSet>) dataSets);
+                    }
+                });
             }
 
             @Override

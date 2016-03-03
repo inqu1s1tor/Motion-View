@@ -11,15 +11,6 @@ public class TimeWorker {
 
     private static final int MINUTES_IN_HOUR = 60;
 
-    public static boolean isCurrentDay(long time) {
-        Calendar calendar = Calendar.getInstance();
-        Calendar secondCalendar = Calendar.getInstance();
-        secondCalendar.setTimeInMillis(time);
-
-        return calendar.get(Calendar.DAY_OF_YEAR) == secondCalendar.get(Calendar.DAY_OF_YEAR) &&
-                calendar.get(Calendar.YEAR) == secondCalendar.get(Calendar.YEAR);
-    }
-
     public static int getCurrentDay() {
         return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
     }

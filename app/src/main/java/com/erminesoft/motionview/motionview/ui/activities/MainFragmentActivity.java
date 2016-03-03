@@ -17,7 +17,6 @@ import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
 public class MainFragmentActivity extends GenericActivity implements ActivityBridge {
     private TabLayout mTabLayout;
-    private Toolbar mToolbar;
     private FragmentLauncher mFragmentLauncher;
 
     public static void start(Activity activity) {
@@ -29,13 +28,12 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_container);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         setTitle(getString(R.string.app_name));
 
         mFragmentLauncher = new FragmentLauncher(getSupportFragmentManager());
-        //mFragmentLauncher.launchTodayFragment();
 
         mTabLayout = (TabLayout) findViewById(R.id.main_fragment_container_tab_container);
 
@@ -114,8 +112,8 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         getMVApplication().getCommander().denyAll();
     }
 

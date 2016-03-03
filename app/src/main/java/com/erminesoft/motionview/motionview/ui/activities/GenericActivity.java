@@ -36,18 +36,18 @@ public abstract class GenericActivity extends AppCompatActivity {
         }
     }
 
-    public final void setHomeAsUpEnabled(boolean enabled) {
+    protected final void setHomeAsUpEnabled(boolean enabled) {
         ActionBar actionBar = getSupportActionBar();
 
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(enabled);
     }
 
-    public void showShortToast(String content) {
+    protected void showShortToast(String content) {
         Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 
-    public void showLongToast(String content) {
+    protected void showLongToast(String content) {
         Toast.makeText(this, content, Toast.LENGTH_LONG).show();
     }
 

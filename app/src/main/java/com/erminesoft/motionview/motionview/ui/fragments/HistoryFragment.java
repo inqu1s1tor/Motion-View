@@ -36,7 +36,6 @@ public class HistoryFragment extends GenericFragment implements Receiver {
 
     private static final float MIN_VALUES = 2f;
     private static final float MAX_VALUES = 2f;
-    private static final int ANIMATE_DURATION_MILLIS = 1000;
     private static final String EMPTY_STRING = "";
 
     private Map<Integer, List<ChartDataWorker.Month>> mAvailableHistory;
@@ -82,7 +81,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         super.onHiddenChanged(hidden);
 
         if (!hidden) {
-            initDataForSpinners();
+            updateChartData(mMonthAdapter.getItem(mMonthSpinner.getSelectedItemPosition()));
         }
     }
 
@@ -161,10 +160,10 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         mMonthSpinner.setSelection(selectedPosition, true);
     }
 
-    private void updateChartData(ChartDataWorker.Month item) {
+    private void updateChartData(ChartDataWorker.Month month) {
         int year = getYearBySpinnerPosition(mYearSpinner.getSelectedItemPosition());
 
-        updateChartData(item, year);
+        updateChartData(month, year);
     }
 
     private void updateChartData(ChartDataWorker.Month currentMonth, int year) {
@@ -198,7 +197,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         });
     }
 
-    private void setChartData(final BarData data) {
+    private void setChartData(BarData data) {
         mProgressBar.setVisibility(View.GONE);
 
         mBarChart.clear();
@@ -206,7 +205,6 @@ public class HistoryFragment extends GenericFragment implements Receiver {
 
         mBarChart.setVisibleXRange(MIN_VALUES, MAX_VALUES);
         mBarChart.moveViewToX(data.getXValCount());
-        mBarChart.animateY(ANIMATE_DURATION_MILLIS);
     }
 
     @Override
