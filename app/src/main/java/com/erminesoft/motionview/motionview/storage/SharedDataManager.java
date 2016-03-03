@@ -3,13 +3,14 @@ package com.erminesoft.motionview.motionview.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import java.util.Date;
 
 public class SharedDataManager {
 
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+
     private static final String APP_PREFERENCES = "motion_view_settings";
     public static final String FIRST_INSTALL_TIME = "FIRST_INSTALL_TIME";
     public static final String USER_WEIGHT = "USER_WEIGHT";
@@ -19,37 +20,23 @@ public class SharedDataManager {
 
     public SharedDataManager(Context context) {
         sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        long firstStart = sharedPreferences.getLong(FIRST_INSTALL_TIME, 0);
-        if (firstStart == 0) {
-            Date d = new Date();
-            editor.putLong(FIRST_INSTALL_TIME, d.getTime());
-            editor.apply();
+
+        long firstStart = sharedPreferences.getLong(FIRST_INSTALL_TIME, -1);
+        if (firstStart == -1) {
+            sharedPreferences.edit().putLong(FIRST_INSTALL_TIME,System.currentTimeMillis()).apply();
         }
     }
 
     public void writeInt(String fieldName, int data) {
-        if (fieldName.length() == 0 || data == 0 || fieldName == null) {
-            return;
-        }
-        editor.putInt(fieldName, data);
-        editor.apply();
+        sharedPreferences.edit().putInt(fieldName, data).apply();
     }
 
     public void writeLong(String fieldName, long data) {
-        if (fieldName.length() == 0 || data == 0 || fieldName == null) {
-            return;
-        }
-        editor.putLong(fieldName, data);
-        editor.apply();
+        sharedPreferences.edit().putLong(fieldName, data).apply();
     }
 
     public void writeString(String fieldName, String data) {
-        if (fieldName.length() == 0 || fieldName == null || data == null) {
-            return;
-        }
-        editor.putString(fieldName, data);
-        editor.apply();
+        sharedPreferences.edit().putString(fieldName, data).apply();
     }
 
     public String readString(String fieldName) {

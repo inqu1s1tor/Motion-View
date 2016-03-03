@@ -73,6 +73,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_map, container, false);
+
         mStartWalkRouter = (ImageButton) view.findViewById(R.id.activity_maps_steps_button);
         share = (Button) view.findViewById(R.id.button);
         gpsStatus = (ImageView) view.findViewById(R.id.gps_status);

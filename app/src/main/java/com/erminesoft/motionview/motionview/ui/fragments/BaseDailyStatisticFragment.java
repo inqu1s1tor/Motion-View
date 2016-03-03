@@ -44,13 +44,17 @@ abstract class BaseDailyStatisticFragment extends GenericFragment {
     private CombinedChart mCombinedChart;
     private PieChart mActivitiesChart;
 
-    long mTimestamp;
+    protected long mTimestamp;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_today, container, false);
+        return inflater.inflate(R.layout.fragment_today, container, false);
+    }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mStepsTextView = (TextView) view.findViewById(R.id.steps_text_view);
         mCaloriesTextView = (TextView) view.findViewById(R.id.calories_text_view);
         mTimeTextView = (TextView) view.findViewById(R.id.total_time_text_view);
@@ -61,8 +65,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment {
 
         mCombinedChart = (CombinedChart) view.findViewById(R.id.fragment_today_hours_chart);
         mActivitiesChart = (PieChart) view.findViewById(R.id.fragment_today_activities_chart);
-
-        return view;
     }
 
     @Override
@@ -103,18 +105,22 @@ abstract class BaseDailyStatisticFragment extends GenericFragment {
 
             if (dataType.equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
                 onTotalTimeChanged(dataPoints);
+                continue;
             }
 
             if (dataType.equals(DataType.AGGREGATE_CALORIES_EXPENDED)) {
                 onCaloriesChanged(dataPoints);
+                continue;
             }
 
             if (dataType.equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
                 onDistanceChanged(dataPoints);
+                continue;
             }
 
             if (dataType.equals(DataType.AGGREGATE_STEP_COUNT_DELTA)) {
                 onStepsChanged(dataPoints);
+                continue;
             }
         }
     }

@@ -10,6 +10,8 @@ import android.content.pm.Signature;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -51,7 +53,11 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     private Button scanBtDevices;
 
     private TextView userWeightHeader;
+
+    private TextInputLayout userWeightTextIl;
     private EditText userWeightText;
+
+
     private EditText userHeightText;
 
     private RadioButton male;
@@ -65,27 +71,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
-
-
-
-
-
         printKeyHash(this);
-
-
-
-
-
-
-
-
-
-
-
-
 
         mSharedDataManager = getMVApplication().getSharedDataManager();
         setContentView(R.layout.activity_settings);
@@ -144,7 +130,18 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     @Override
     protected void onPause() {
         super.onPause();
-        mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(String.valueOf(userHeightText.getText())));
+
+        String weight = String.valueOf(userHeightText.getText());
+
+        if(TextUtils.isEmpty(weight)){
+            userWeightTextIl.setError("Error");
+            return;
+        } else {
+            mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(weight));
+        }
+
+
+
         mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, Integer.parseInt(String.valueOf(userWeightText.getText())));
 
         mGoogleClientFacade.saveUserHeight(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT));
@@ -152,6 +149,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
 
         radioGroup = (RadioGroup) findViewById(R.id.settings_user_radio_group);
         RadioButton r = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
+
         if (r.getText().equals("Male")) {
             mSharedDataManager.writeString(SharedDataManager.USER_GENDER, "male");
         } else if (r.getText().equals("Female")) {
@@ -234,6 +232,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         userWeightHeader.setText(getString(R.string.settings_user_weight_height_header));
         userWeightText = (EditText) findViewById(R.id.settings_user_weight);
         userWeightText.setText(String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT)));
+        userWeightTextIl = (TextInputLayout) findViewById(R.id.settings_user_weight_il);
         userWeightText.requestFocus();
     }
 

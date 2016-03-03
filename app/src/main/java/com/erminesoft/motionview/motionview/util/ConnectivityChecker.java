@@ -14,19 +14,25 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 public class ConnectivityChecker {
 
-    public static boolean bluetoothCheckConnection(BluetoothAdapter mBluetoothAdapter){
+    public static boolean bluetoothCheckConnection(BluetoothAdapter mBluetoothAdapter) {
         return BluetoothAdapter.STATE_ON == mBluetoothAdapter.getState();
     }
 
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivity != null) {
-            NetworkInfo info = connectivity.getActiveNetworkInfo();
-            if (info != null)
-                if (info.getState() == NetworkInfo.State.CONNECTED) {
-                    return true;
-                }
+        if (connectivity == null) {
+            return false;
         }
+
+        NetworkInfo info = connectivity.getActiveNetworkInfo();
+        if (info == null) {
+            return false;
+        }
+
+        if (info.getState() == NetworkInfo.State.CONNECTED) {
+            return true;
+        }
+
         return false;
     }
 

@@ -116,7 +116,7 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
     private final class OnTabSelectedListenerImpl implements TabLayout.OnTabSelectedListener {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-            mFragmentLauncher.launch(String.valueOf(tab.getText()));
+            mFragmentLauncher.launchByTag(String.valueOf(tab.getText()));
         }
 
         @Override

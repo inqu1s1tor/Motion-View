@@ -13,13 +13,14 @@ import java.util.concurrent.Executors;
 public class Commander {
 
     private final ExecutorService mExecutor;
+    private final CommandFactory commandFactory;
     private Map<CommandType, Command> mCommandMap;
 
     public Commander(GoogleClientFacade googleClientFacade) {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
         mCommandMap = new EnumMap<>(CommandType.class);
 
-        CommandFactory.setGoogleClientFacade(googleClientFacade);
+        commandFactory = new CommandFactory(googleClientFacade);
     }
 
     public void execute(final Bundle bundle, final ResultCallback callback) {
@@ -30,7 +31,7 @@ public class Commander {
                 Command command = mCommandMap.get(type);
 
                 if (command == null) {
-                    command = CommandFactory.getCommand(type);
+                    command = commandFactory.getCommand(type);
                     mCommandMap.put(type, command);
                 }
 
@@ -48,13 +49,13 @@ public class Commander {
     }
 
     private static final class CommandFactory {
-        static GoogleClientFacade mGoogleClientFacade;
+        private GoogleClientFacade mGoogleClientFacade;
 
-        static void setGoogleClientFacade(GoogleClientFacade googleClientFacade) {
-            mGoogleClientFacade = googleClientFacade;
+        public CommandFactory(GoogleClientFacade mGoogleClientFacade) {
+            this.mGoogleClientFacade = mGoogleClientFacade;
         }
 
-        static GenericCommand getCommand(CommandType type) {
+         GenericCommand getCommand(CommandType type) {
             GenericCommand command = new GenericCommand();
 
             switch (type) {

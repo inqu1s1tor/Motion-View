@@ -4,10 +4,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.ui.factory.FragmentsFactory;
 import com.erminesoft.motionview.motionview.ui.fragments.DailyStatisticFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.GenericFragment;
+import com.erminesoft.motionview.motionview.ui.fragments.GoogleMapsFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.HistoryFragment;
 import com.erminesoft.motionview.motionview.ui.fragments.TodayFragment;
 
@@ -55,8 +56,24 @@ public class FragmentLauncher {
         launchWithoutAnimation(fragment, null);
     }
 
-    public void launch(String s) {
-        GenericFragment fragment = FragmentsFactory.getFragment(s);
+    public void launchMapFragment() {
+        GenericFragment fragment = new GoogleMapsFragment();
         launchWithoutAnimation(fragment, null);
+    }
+
+    public void launchByTag(String tag) {
+        switch (tag.toLowerCase()) {
+            case GenericFragment.HISTORY:
+                launchHistoryFragment();
+                break;
+
+            case GenericFragment.MAP:
+                launchMapFragment();
+                break;
+
+            default:
+                launchTodayFragment();
+                break;
+        }
     }
 }
