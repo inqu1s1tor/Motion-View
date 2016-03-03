@@ -2,6 +2,7 @@ package com.erminesoft.motionview.motionview.net;
 
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
+
 import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
@@ -14,9 +15,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.Serializable;
-
-public class GoogleClientFacade implements Serializable {
+public class GoogleClientFacade {
 
     private GoogleApiClient mClient;
     private BuildManager mBuildManager;

@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.bridge.EventBridge;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
 import com.erminesoft.motionview.motionview.core.command.GenerateCombinedChartDataCommand;
@@ -32,7 +32,7 @@ import java.util.List;
 
 import static com.github.mikephil.charting.charts.CombinedChart.DrawOrder;
 
-abstract class BaseDailyStatisticFragment extends GenericFragment implements EventBridge {
+abstract class BaseDailyStatisticFragment extends GenericFragment {
     private static final int DAILY_GOAL = 10000;
 
     private TextView mStepsTextView;
@@ -96,7 +96,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
         initCharts();
     }
 
-    private void processData(List<DataSet> dataSets) {
+    protected void processData(List<DataSet> dataSets) {
         for (DataSet dataSet : dataSets) {
             DataType dataType = dataSet.getDataType();
             final List<DataPoint> dataPoints = dataSet.getDataPoints();
@@ -214,8 +214,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
         mActivitiesChart.invalidate();
     }
 
-    @Override
-    public void onTotalTimeChanged(List<DataPoint> dataPoints) {
+    private void onTotalTimeChanged(List<DataPoint> dataPoints) {
         int totalActivityTime = 0;
 
         setDataForActivitiesChart(dataPoints);
@@ -231,8 +230,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
         mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
     }
 
-    @Override
-    public void onDistanceChanged(List<DataPoint> dataPoints) {
+    private void onDistanceChanged(List<DataPoint> dataPoints) {
         int distance = 0;
 
         if (dataPoints.size() > 0) {
@@ -244,8 +242,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
         mDistanceTextView.setText(getString(R.string.total_distance_format, distance));
     }
 
-    @Override
-    public void onCaloriesChanged(List<DataPoint> dataPoints) {
+    private void onCaloriesChanged(List<DataPoint> dataPoints) {
         int calories = 0;
 
         if (dataPoints.size() > 0) {
@@ -257,8 +254,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Eve
         mCaloriesTextView.setText(getString(R.string.total_calories_format, calories));
     }
 
-    @Override
-    public void onStepsChanged(List<DataPoint> dataPoints) {
+    private void onStepsChanged(List<DataPoint> dataPoints) {
         int steps = 0;
 
         if (dataPoints.size() > 0) {

@@ -6,8 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
-import com.erminesoft.motionview.motionview.util.DataSetsWorker;
 import com.google.android.gms.fitness.data.DataSet;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class TodayFragment extends BaseDailyStatisticFragment {
                     return;
                 }
 
-                DataSetsWorker.processDataSets((List<DataSet>) dataSets, TodayFragment.this);
+                processData((List<DataSet>) dataSets);
             }
 
             @Override

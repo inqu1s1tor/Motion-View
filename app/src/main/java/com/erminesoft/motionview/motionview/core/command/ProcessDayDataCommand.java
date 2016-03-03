@@ -1,9 +1,7 @@
 package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import com.erminesoft.motionview.motionview.core.bridge.EventBridge;
+
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.fitness.data.Bucket;
