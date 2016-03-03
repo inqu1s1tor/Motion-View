@@ -1,13 +1,16 @@
 package com.erminesoft.motionview.motionview.ui.activities;
-
-
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
+import com.erminesoft.motionview.motionview.util.DialogHelper;
 import com.google.android.gms.common.api.GoogleApiClient;
-
 
 public class SplashActivity extends GenericActivity {
 
@@ -15,58 +18,38 @@ public class SplashActivity extends GenericActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        mGoogleClientFacade.buildGoogleApiClient(this, new GoogleConnectionCallback());
+        if (checkConnectivity()) {
+            mGoogleClientFacade.buildGoogleApiClient(this, new GoogleConnectionCallback());
+        } else {
+            finish();
+        }
     }
 
     private class GoogleConnectionCallback implements GoogleApiClient.ConnectionCallbacks {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
-
-            if (checkConnectivity()) {
-                mGoogleClientFacade.subscribe();
-                MainFragmentActivity.start(SplashActivity.this);
-            } else {
-                finish();
-            }
-
+            mGoogleClientFacade.subscribe();
+            MainFragmentActivity.start(SplashActivity.this);
             finish();
         }
-
         @Override
         public void onConnectionSuspended(int i) {
-
         }
     }
-
 
     private boolean checkConnectivity() {
 
-        if (!ConnectivityChecker.isPlayServiceArePresents(getApplicationContext())) {
-            showShortToast("Play Services are missed");
+        if (!ConnectivityChecker.isPlayServiceArePresents(this)) {
+            showLongToast("Play Services are missed");
             return false;
         }
-/*
 
-        if (!ConnectivityChecker.isNetworkAvailable(getApplicationContext())) {
-            Toast.makeText(getBaseContext(), "Check internet connection", Toast.LENGTH_LONG).show();
+        if(!ConnectivityChecker.isNetworkAvailable(this)) {
+            showLongToast("Wi-Fi/Internet is not active.");
             return false;
         }
-*/
-
-        /*if (!ConnectivityChecker.bluetoothCheckConnection(BluetoothAdapter.getDefaultAdapter())) {
-            Toast.makeText(getBaseContext(), "Check bluetooth", Toast.LENGTH_SHORT).show();
-            return false;
-        }*/
-
-/*
-
-        // checkout GPS connection & satellites quantity
-        if (!ConnectivityChecker.isLocationActive(getApplicationContext())) {
-            Toast.makeText(getBaseContext(), "Check location service", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-*/
 
         return true;
     }
+
 }

@@ -4,8 +4,13 @@ package com.erminesoft.motionview.motionview.ui.activities;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,10 +26,16 @@ import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.SettingsBridge;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
+/*import com.facebook.appevents.AppEventsLogger;
+import com.facebook.share.model.ShareLinkContent;*/
+import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.BleDevice;
 import com.google.android.gms.fitness.request.BleScanCallback;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +65,28 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
+
+
+
+
+        printKeyHash(this);
+
+
+
+
+
+
+
+
+
+
+
+
+
         mSharedDataManager = getMVApplication().getSharedDataManager();
         setContentView(R.layout.activity_settings);
 
@@ -104,6 +137,11 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(String.valueOf(userHeightText.getText())));
@@ -119,6 +157,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         } else if (r.getText().equals("Female")) {
             mSharedDataManager.writeString(SharedDataManager.USER_GENDER, "female");
         }
+
     }
 
     @Override
@@ -239,5 +278,38 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     @Override
     public void initConnectedSocialNetworks() {
 
+    }
+
+    public String printKeyHash(Activity context) {
+        PackageInfo packageInfo;
+        String key = null;
+        try {
+            //getting application package name, as defined in manifest
+            String packageName = context.getApplicationContext().getPackageName();
+
+            //Retriving package info
+            packageInfo = context.getPackageManager().getPackageInfo(packageName,
+                    PackageManager.GET_SIGNATURES);
+
+            Log.e("Package Name=", context.getApplicationContext().getPackageName());
+
+            for (Signature signature : packageInfo.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                key = new String(Base64.encode(md.digest(), 0));
+
+                // String key = new String(Base64.encodeBytes(md.digest()));
+                Log.e("Key Hash=", key);
+            }
+        } catch (PackageManager.NameNotFoundException e1) {
+            Log.e("Name not found", e1.toString());
+        }
+        catch (NoSuchAlgorithmException e) {
+            Log.e("No such an algorithm", e.toString());
+        } catch (Exception e) {
+            Log.e("Exception", e.toString());
+        }
+
+        return key;
     }
 }

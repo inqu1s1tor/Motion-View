@@ -2,6 +2,7 @@ package com.erminesoft.motionview.motionview.core;
 
 import android.app.Application;
 
+
 import com.erminesoft.motionview.motionview.core.command.Commander;
 import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;

@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.erminesoft.motionview.motionview.R;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -17,6 +19,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -141,11 +144,13 @@ class GoogleMapManager {
     }
 
     void setStartMarker() {
+        LatLng startPoint = new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude());
         MarkerOptions startMarkerOptions = new MarkerOptions()
-                .position(new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude()))
+                .position(startPoint)
                 .anchor(0.5f, 1f)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_start_icon));
         mMap.addMarker(startMarkerOptions);
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(startPoint,15f,0f,0f)));
     }
 
     void startRouteOnMap() {

@@ -91,12 +91,6 @@ public class GoogleClientFacade {
         mRegisterManager.unregisterListener();
     }
 
-
-    public void registerListenerForCurrentLocation(com.erminesoft.motionview.motionview.core.callback.ResultCallback locationChengedListener) {
-        mRegisterManager.registerListenerLocation(DataType.TYPE_LOCATION_SAMPLE, locationChengedListener);
-    }
-
-
     public void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
         mMapManager.createLocationRequest(updateInterval, fastestInterval, displacement);
     }
@@ -144,7 +138,6 @@ public class GoogleClientFacade {
     public void startRouteOnMap() {
         mMapManager.startRouteOnMap();
     }
-
 
     public void stopRouteOnMap() {
         mMapManager.stopRouteOnMap();

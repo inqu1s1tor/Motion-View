@@ -61,28 +61,6 @@ class RegisterManager {
                 mSensorResultListener);
     }
 
-
-    void registerListenerLocation(DataType dataType,
-                                  final ResultCallback callback) {
-        mSensorResultListener = new OnDataPointListener() {
-            @Override
-            public void onDataPoint(final DataPoint dataPoint) {
-                Log.i("LISTENER", dataPoint.toString());
-
-                callback.onSuccess(dataPoint);
-            }
-        };
-
-        Fitness.SensorsApi.add(mClient, new SensorRequest.Builder()
-                        .setDataType(dataType)
-                        .setFastestRate(10, TimeUnit.SECONDS)
-                        .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
-                        .build(),
-                mSensorResultListener);
-    }
-
-
-
     void unregisterListener() {
         Fitness.SensorsApi.remove(mClient, mSensorResultListener);
     }

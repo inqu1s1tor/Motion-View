@@ -30,6 +30,7 @@ public abstract class GenericActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ErrorDialogFragment.REQUEST_RESOLVE_ERROR) {
             mGoogleClientFacade.tryConnectClient(resultCode);
         }
@@ -46,6 +47,10 @@ public abstract class GenericActivity extends AppCompatActivity {
         Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 
+    public void showLongToast(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_LONG).show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -60,4 +65,6 @@ public abstract class GenericActivity extends AppCompatActivity {
     protected void onHomeButtonPressed() {
         // Empty
     }
+
+
 }

@@ -59,4 +59,7 @@
         <item>Map</item>
     </string-array>
 
+
+
+    <string name="facebook_app_id">166522683731423</string>
 </resources>

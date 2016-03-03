@@ -82,6 +82,7 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ErrorDialogFragment.REQUEST_RESOLVE_ERROR) {
             mGoogleClientFacade.tryConnectClient(resultCode);
         }
