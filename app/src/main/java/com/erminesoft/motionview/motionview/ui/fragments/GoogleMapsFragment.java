@@ -1,25 +1,21 @@
 package com.erminesoft.motionview.motionview.ui.fragments;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.net.Uri;
-
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +27,10 @@ import android.widget.ImageView;
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.erminesoft.motionview.motionview.util.DialogHelper;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -76,17 +76,12 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mStartWalkRouter = (ImageButton) view.findViewById(R.id.activity_maps_steps_button);
         share = (Button) view.findViewById(R.id.button);
         gpsStatus = (ImageView) view.findViewById(R.id.gps_status);
-        locationManager = (LocationManager)  getContext().getSystemService(Context.LOCATION_SERVICE);
-
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
 
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
-
 
                 FacebookSdk.sdkInitialize(getContext());
 
@@ -98,38 +93,31 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
 
                 loginManager.logInWithPublishPermissions(getActivity(), permissionNeeds);
 
-                loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>()
-                {
+                loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
-                    public void onSuccess(LoginResult loginResult)
-                    {
+                    public void onSuccess(LoginResult loginResult) {
                         sharePhotoToFacebook();
                     }
 
                     @Override
-                    public void onCancel()
-                    {
-                        Log.d("!!!!!!","onCancel");
+                    public void onCancel() {
+                        Log.d("!!!!!!", "onCancel");
                     }
 
                     @Override
-                    public void onError(FacebookException exception)
-                    {
+                    public void onError(FacebookException exception) {
                         Log.d("!!!!!!", "onError");
                     }
                 });
-
-
-
-
-
 
 
             }
         });
 
 
-
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
         locationManager.addGpsStatusListener(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
