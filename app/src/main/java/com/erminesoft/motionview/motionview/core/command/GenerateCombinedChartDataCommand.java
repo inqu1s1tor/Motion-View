@@ -3,7 +3,7 @@ package com.erminesoft.motionview.motionview.core.command;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -38,8 +38,8 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
     }
 
     @Override
-    public void execute(final ResultCallback callback, Bundle bundle) {
-        super.execute(callback, bundle);
+    public void execute() {
+        Bundle bundle = getBundle();
 
         if (!bundle.containsKey(TIMESTAMP_KEY)) {
             return;
@@ -60,7 +60,7 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
         processCaloriesData(buckets);
 
         if (!isDenied()) {
-            callback.onSuccess(mCombinedData);
+            DataBuffer.getInstance().putData(mCombinedData, CommandType.GENERATE_COMBINED_CHART_DATA);
         }
     }
 

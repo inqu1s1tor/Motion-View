@@ -1,8 +1,9 @@
 package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
+import android.util.Log;
 
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -32,11 +33,11 @@ public class GenerateHistoryChartDataCommand extends GenericCommand {
     }
 
     @Override
-    public void execute(final ResultCallback callback, Bundle bundle) {
-        super.execute(callback, bundle);
+    public void execute() {
+        Bundle bundle = getBundle();
 
         if (!bundle.containsKey(MONTH_KEY)) {
-            callback.onError("EMPTY BUNDLE");
+            Log.e(TAG, "EMPTY BUNDLE");
             return;
         }
 
@@ -47,12 +48,14 @@ public class GenerateHistoryChartDataCommand extends GenericCommand {
         List<Bucket> buckets = result.getBuckets();
 
         if (buckets.get(0).getDataSets().isEmpty()) {
-            callback.onError("EMPTY DATA in " + getClass().getSimpleName());
+            Log.e(TAG, "EMPTY DATA");
             return;
         }
 
+        BarData data = processStepsBuckets(buckets);
+
         if (!isDenied()) {
-            callback.onSuccess(processStepsBuckets(buckets));
+            DataBuffer.getInstance().putData(data, CommandType.GENERATE_HISTORY_CHART_DATA);
         }
     }
 

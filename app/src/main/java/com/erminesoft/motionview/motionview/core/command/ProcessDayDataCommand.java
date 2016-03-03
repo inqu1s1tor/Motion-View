@@ -1,10 +1,12 @@
 package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
+import android.util.Log;
 
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.fitness.data.Bucket;
+import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.util.List;
@@ -22,18 +24,8 @@ public class ProcessDayDataCommand extends GenericCommand {
     }
 
     @Override
-    public void execute(final ResultCallback callback, Bundle bundle) {
-        super.execute(callback, bundle);
-
-        if (bundle.equals(Bundle.EMPTY)) {
-            callback.onError("EMPTY BUNDLE");
-            return;
-        }
-
-        if (mGoogleClientFacade == null) {
-            callback.onError("EMPTY GOOGLE CLIENT FACADE");
-            return;
-        }
+    protected void execute() {
+        Bundle bundle = getBundle();
 
         long timestamp = bundle.getLong(TIMESTAMP_KEY);
 
@@ -44,12 +36,14 @@ public class ProcessDayDataCommand extends GenericCommand {
 
         final List<Bucket> buckets = result.getBuckets();
         if (buckets == null || buckets.size() == 0) {
-            callback.onError("NO DATA");
+            Log.e(TAG, "NO DATA");
             return;
         }
 
+        List<DataSet> dataSets = buckets.get(0).getDataSets();
+
         if (!isDenied()) {
-            callback.onSuccess(buckets.get(0).getDataSets());
+            DataBuffer.getInstance().putData(dataSets, CommandType.PROCESS_DAY_DATA);
         }
     }
 }

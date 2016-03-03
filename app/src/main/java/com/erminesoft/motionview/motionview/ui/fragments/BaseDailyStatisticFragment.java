@@ -11,10 +11,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.core.bridge.Receiver;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
 import com.erminesoft.motionview.motionview.core.command.GenerateCombinedChartDataCommand;
 import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
+import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.animation.Easing;
@@ -32,7 +33,7 @@ import java.util.List;
 
 import static com.github.mikephil.charting.charts.CombinedChart.DrawOrder;
 
-abstract class BaseDailyStatisticFragment extends GenericFragment {
+abstract class BaseDailyStatisticFragment extends GenericFragment implements Receiver {
     private static final int DAILY_GOAL = 10000;
 
     private TextView mStepsTextView;
@@ -72,28 +73,10 @@ abstract class BaseDailyStatisticFragment extends GenericFragment {
         super.onStart();
 
         Bundle bundle = ProcessDayDataCommand.generateBundle(mTimestamp);
-        mCommander.execute(bundle, new ResultCallback() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(final Object result) {
-                if (!(result instanceof List<?>)) {
-                    onError("WRONG result TYPE");
-                    return;
-                }
+        mCommander.execute(bundle);
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        processData((List<DataSet>) result);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, error);
-            }
-        });
+        DataBuffer.getInstance().register(CommandType.PROCESS_DAY_DATA, this);
+        DataBuffer.getInstance().register(CommandType.GENERATE_COMBINED_CHART_DATA, this);
 
         initCharts();
     }
@@ -186,28 +169,35 @@ abstract class BaseDailyStatisticFragment extends GenericFragment {
         Bundle bundle = GenerateCombinedChartDataCommand
                 .generateBundle(mTimestamp);
 
-        mCommander.execute(bundle, new ResultCallback() {
-            @Override
-            public void onSuccess(final Object result) {
-                if (!(result instanceof CombinedData)) {
-                    onError("Wrong Data.");
-                    return;
-                }
+        mCommander.execute(bundle);
+    }
 
+    @Override
+    public void notify(final Object data, CommandType type) {
+        switch (type) {
+            case PROCESS_DAY_DATA: {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mCombinedChart.setData((CombinedData) result);
+                        processData((List<DataSet>) data);
+                    }
+                });
+                break;
+            }
+            case GENERATE_COMBINED_CHART_DATA: {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCombinedChart.setData((CombinedData) data);
                         onCombinedChartDataSet();
                     }
                 });
+                break;
             }
 
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, error);
-            }
-        });
+            default:
+                Log.e(TAG, "WRONG DATA TYPE");
+        }
     }
 
     private void onCombinedChartDataSet() {
@@ -277,7 +267,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment {
     public void onStop() {
         super.onStop();
 
-        mCommander.deny(CommandType.PROCESS_DAY_DATA);
-        mCommander.deny(CommandType.GENERATE_COMBINED_CHART_DATA);
+        DataBuffer.getInstance().unregister(this);
     }
 }

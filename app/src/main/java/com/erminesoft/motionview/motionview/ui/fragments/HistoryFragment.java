@@ -10,10 +10,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+import com.erminesoft.motionview.motionview.core.bridge.Receiver;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
 import com.erminesoft.motionview.motionview.core.command.GenerateHistoryChartDataCommand;
+import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
@@ -30,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class HistoryFragment extends GenericFragment {
+public class HistoryFragment extends GenericFragment implements Receiver {
 
     private static final float MIN_VALUES = 2f;
     private static final float MAX_VALUES = 2f;
@@ -50,7 +52,12 @@ public class HistoryFragment extends GenericFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_history, container, false);
+        return inflater.inflate(R.layout.fragment_history, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         mBarChart = (BarChart) view.findViewById(R.id.bar_chart);
 
@@ -60,8 +67,14 @@ public class HistoryFragment extends GenericFragment {
 
         initDataForSpinners();
         initChart();
+    }
 
-        return view;
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        DataBuffer.getInstance()
+                .register(CommandType.GENERATE_HISTORY_CHART_DATA, this);
     }
 
     private void initDataForSpinners() {
@@ -144,30 +157,10 @@ public class HistoryFragment extends GenericFragment {
     }
 
     private void updateChartData(ChartDataWorker.Month currentMonth, int year) {
-        Bundle bundle = GenerateHistoryChartDataCommand.generateBundle(currentMonth, year);
+        Bundle bundle =
+                GenerateHistoryChartDataCommand.generateBundle(currentMonth, year);
 
-        mCommander.execute(bundle, new ResultCallback() {
-            @Override
-            public void onSuccess(Object result) {
-                if (!(result instanceof BarData)) {
-                    onError("WRONG DATA");
-                    return;
-                }
-                final BarData data = (BarData) result;
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setChartData(data);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, error);
-            }
-        });
+        mCommander.execute(bundle);
     }
 
     private int getYearBySpinnerPosition(int position) {
@@ -175,6 +168,23 @@ public class HistoryFragment extends GenericFragment {
         int currentYear = calendar.get(Calendar.YEAR);
         int yearsDelta = mAvailableHistory.size() - 1 - position;
         return currentYear - yearsDelta;
+    }
+
+    @Override
+    public void notify(Object data, CommandType type) {
+        if (!BarData.class.isInstance(data)) {
+            Log.e(TAG, "WRONG TYPE");
+            return;
+        }
+
+        final BarData barData = BarData.class.cast(data);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setChartData(barData);
+            }
+        });
     }
 
     private void setChartData(final BarData data) {
@@ -194,7 +204,7 @@ public class HistoryFragment extends GenericFragment {
     public void onStop() {
         super.onStop();
 
-        mCommander.deny(CommandType.GENERATE_HISTORY_CHART_DATA);
+        DataBuffer.getInstance().unregister(this);
     }
 
     private final class OnYearSpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {

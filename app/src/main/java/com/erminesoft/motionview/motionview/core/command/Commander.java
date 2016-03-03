@@ -2,7 +2,6 @@ package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
 
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
 
 import java.util.EnumMap;
@@ -23,27 +22,30 @@ public class Commander {
         commandFactory = new CommandFactory(googleClientFacade);
     }
 
-    public void execute(final Bundle bundle, final ResultCallback callback) {
+    public void execute(final Bundle bundle) {
+        CommandType type = (CommandType) bundle.getSerializable(Command.TRANSPORT_KEY);
+        Command command = mCommandMap.get(type);
+
+        if (command == null) {
+            command = commandFactory.getCommand(type);
+            mCommandMap.put(type, command);
+        }
+
+        if (command.isRunning()) {
+            return;
+        }
+
+        final Command finalCommand = command;
         mExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                CommandType type = (CommandType) bundle.getSerializable(Command.TRANSPORT_KEY);
-                Command command = mCommandMap.get(type);
-
-                if (command == null) {
-                    command = commandFactory.getCommand(type);
-                    mCommandMap.put(type, command);
-                }
-
-                command.execute(callback, bundle);
+                finalCommand.execute(bundle);
             }
         });
     }
 
-    public void deny(CommandType type) {
-        Command command = mCommandMap.get(type);
-
-        if (command != null) {
+    public void denyAll() {
+        for (Command command : mCommandMap.values()) {
             command.deny();
         }
     }
@@ -51,7 +53,7 @@ public class Commander {
     private static final class CommandFactory {
         private GoogleClientFacade mGoogleClientFacade;
 
-        public CommandFactory(GoogleClientFacade mGoogleClientFacade) {
+        CommandFactory(GoogleClientFacade mGoogleClientFacade) {
             this.mGoogleClientFacade = mGoogleClientFacade;
         }
 

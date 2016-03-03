@@ -2,13 +2,13 @@ package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
 
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
+interface Command {
 
-public interface Command {
+    String TRANSPORT_KEY = "transport";
 
-    final String TRANSPORT_KEY = "transport";
-
-    void execute(ResultCallback callback, Bundle bundle);
+    void execute(Bundle bundle);
 
     void deny();
+
+    boolean isRunning();
 }

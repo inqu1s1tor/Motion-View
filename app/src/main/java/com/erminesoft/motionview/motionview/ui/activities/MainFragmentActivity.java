@@ -113,6 +113,12 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
         mTabLayout.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getMVApplication().getCommander().denyAll();
+    }
+
     private final class OnTabSelectedListenerImpl implements TabLayout.OnTabSelectedListener {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
