@@ -81,14 +81,7 @@ public class FragmentLauncher {
     }
 
     public void launchHistoryFragment() {
-        GenericFragment fragment;
-
-        Fragment existState = manager.findFragmentByTag(GenericFragment.HISTORY);
-        if (existState == null) {
-            fragment = new HistoryFragment();
-        } else {
-            fragment = (GenericFragment) existState;
-        }
+        GenericFragment fragment = new HistoryFragment();
         launchWithoutAnimation(fragment, GenericFragment.HISTORY);
     }
 
