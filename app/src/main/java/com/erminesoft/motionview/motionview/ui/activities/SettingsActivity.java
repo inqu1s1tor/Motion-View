@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -28,19 +28,19 @@ import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.SettingsBridge;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
-/*import com.facebook.appevents.AppEventsLogger;
-import com.facebook.share.model.ShareLinkContent;*/
-import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.BleDevice;
 import com.google.android.gms.fitness.request.BleScanCallback;
+import com.google.android.gms.plus.Plus;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import java.util.ArrayList;
 import java.util.List;
+
+/*import com.facebook.appevents.AppEventsLogger;
+import com.facebook.share.model.ShareLinkContent;*/
 
 public class SettingsActivity extends GenericActivity implements SettingsBridge {
     private static final String FITNESS_HISTORY_INTENT = "com.google.android.gms.fitness.settings.GOOGLE_FITNESS_SETTINGS";
@@ -75,6 +75,11 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
 
         mSharedDataManager = getMVApplication().getSharedDataManager();
         setContentView(R.layout.activity_settings);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        String url = GoogleSignIn.loadConnected(mGoogleClientFacade.mClient).getCover().getCoverPhoto().getUrl();
 
         setTitle(getString(R.string.settings));
 
@@ -146,16 +151,6 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
 
         mGoogleClientFacade.saveUserHeight(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT));
         mGoogleClientFacade.saveUserWeight((float) mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT));
-
-        radioGroup = (RadioGroup) findViewById(R.id.settings_user_radio_group);
-        RadioButton r = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
-
-        if (r.getText().equals("Male")) {
-            mSharedDataManager.writeString(SharedDataManager.USER_GENDER, "male");
-        } else if (r.getText().equals("Female")) {
-            mSharedDataManager.writeString(SharedDataManager.USER_GENDER, "female");
-        }
-
     }
 
     @Override
@@ -175,7 +170,6 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     }
 
     public void initSettings() {
-        initGender();
         initWeight();
         initHeight();
         initCleanHistory();
@@ -212,23 +206,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     }
 
     @Override
-    public void initGender() {
-        male = (RadioButton) findViewById(R.id.settings_user_male_radio_button);
-        female = (RadioButton) findViewById(R.id.settings_user_female_radio_button);
-        if (mSharedDataManager.readString(SharedDataManager.USER_GENDER).equals("male")) {
-            male.setChecked(true);
-            female.setChecked(false);
-        } else if (mSharedDataManager.readString(SharedDataManager.USER_GENDER).equals("female")) {
-            male.setChecked(false);
-            female.setChecked(true);
-        } else {
-            male.setChecked(true);
-        }
-    }
-
-    @Override
     public void initWeight() {
-        userWeightHeader = (TextView) findViewById(R.id.settings_user_weight_height_header);
         userWeightHeader.setText(getString(R.string.settings_user_weight_height_header));
         userWeightText = (EditText) findViewById(R.id.settings_user_weight);
         userWeightText.setText(String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT)));

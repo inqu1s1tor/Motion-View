@@ -6,12 +6,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
+import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.plus.Plus;
 
 class BuildManager {
 
@@ -27,14 +29,12 @@ class BuildManager {
                 .addApi(Fitness.HISTORY_API)
                 .addApi(Fitness.BLE_API)
                 .addApi(LocationServices.API)
-                .addScope(Fitness.SCOPE_ACTIVITY_READ_WRITE)
-                .addScope(Fitness.SCOPE_BODY_READ_WRITE)
-                .addScope(Fitness.SCOPE_LOCATION_READ_WRITE)
-                .addScope(Fitness.SCOPE_NUTRITION_READ_WRITE)
+                .addApi()
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
                 .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
-                .addScope(new Scope(Scopes.FITNESS_NUTRITION_READ_WRITE))
+                .addScope(new Scope(Scopes.PLUS_LOGIN))
+                .addScope(new Scope(Scopes.PLUS_ME))
                 .addConnectionCallbacks(connectionCallbacks)
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override

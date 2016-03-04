@@ -3,7 +3,6 @@ package com.erminesoft.motionview.motionview.net;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 
-import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -17,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class GoogleClientFacade {
 
-    private GoogleApiClient mClient;
+    public GoogleApiClient mClient;
     private BuildManager mBuildManager;
     private RegisterManager mRegisterManager;
     private OfflineStorageManager mOfflineStorageManager;

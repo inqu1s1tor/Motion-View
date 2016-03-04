@@ -1,157 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_activity_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusableInTouchMode="true">
-
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/settings_user_weight_height_header"
-            android:text="@string/settings_user_weight_hint"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/settings_user_weight_il"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/settings_user_weight"
-                android:layout_marginBottom="10dp"
-                android:inputType="none"
-                android:hint="@string/settings_user_weight_hint"
-                android:numeric="integer"
-                android:textSize="12sp"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/settings_user_height"
-                android:layout_marginBottom="10dp"
-                android:inputType="none"
-                android:hint="@string/settings_user_height_hint"
-                android:numeric="integer"
-                android:textSize="12sp"/>
-        </android.support.design.widget.TextInputLayout>
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/user_male_female_header"
-            android:id="@+id/settings_user_male_female_header"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:transitionGroup="false"
-            android:layout_marginBottom="10dp"
-            android:id="@+id/settings_user_radio_group">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/user_male_radiobutton"
-                android:id="@+id/settings_user_male_radio_button"
-                android:layout_marginRight="15dp"
-                android:checked="false"
-                android:layout_weight="1"
-                android:enabled="true" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/user_female_radiobutton"
-                android:id="@+id/settings_user_female_radio_button"
-                android:layout_weight="1"
-                android:enabled="true" />
-        </RadioGroup>
-
-        <LinearLayout
-            android:orientation="horizontal"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/main_activity_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="10dp">
+            android:focusableInTouchMode="true">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            
+            <ImageView
+                android:id="@+id/settings_profile_cover_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"/>
+            
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                app:layout_collapseMode="pin" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/settings_user_weight_il"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/settings_user_weight"
+                    android:layout_marginBottom="@dimen/edit_text_user_info_margin_bottom"
+                    android:inputType="numberDecimal"
+                    android:hint="@string/settings_user_weight_hint"
+                    android:textSize="@dimen/edit_text_user_info_text_size"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/settings_user_height"
+                    android:layout_marginBottom="@dimen/edit_text_user_info_margin_bottom"
+                    android:inputType="numberDecimal"
+                    android:hint="@string/settings_user_height_hint"
+                    android:textSize="@dimen/edit_text_user_info_text_size"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_delete_history_header"
+                    android:id="@+id/settings_delete_history_header"
+                    android:layout_weight="1"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_delete_history_button_text"
+                    android:id="@+id/settings_clean_history_button"
+                    android:layout_weight="1"
+                    style="?android:attr/buttonStyleSmall"
+                    android:textSize="12sp"/>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_delete_history_header"
-                android:id="@+id/settings_delete_history_header"
-                android:layout_weight="1"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:text="@string/bluetooth_list_header_text"
+                android:id="@+id/bluetooth_list_header_text"
+                android:textStyle="bold"
+                android:textSize="15sp"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_delete_history_button_text"
-                android:id="@+id/settings_clean_history_button"
-                android:layout_weight="1"
-                style="?android:attr/buttonStyleSmall"
-                android:textSize="12sp" />
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/bluetooth_list_header_text"
-            android:id="@+id/bluetooth_list_header_text"
-            android:textStyle="bold"
-            android:textSize="15sp" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="1">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/bt_scan_button"
-                android:id="@+id/bt_scan_button"
-                android:layout_marginRight="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                style="?android:attr/buttonStyleSmall"
-                android:textSize="12dp" />
-
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:id="@+id/bt_available_devices" />
-
-            <ProgressBar
-                android:layout_width="58dp"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/bt_scan_progress"
-                android:max="100"
-                android:visibility="visible" />
+                android:weightSum="1">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bt_scan_button"
+                    android:id="@+id/bt_scan_button"
+                    android:layout_marginRight="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    style="?android:attr/buttonStyleSmall"
+                    android:textSize="12dp"/>
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:id="@+id/bt_available_devices"/>
+
+                <ProgressBar
+                    android:layout_width="58dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/bt_scan_progress"
+                    android:max="100"
+                    android:visibility="visible"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
 </ScrollView>

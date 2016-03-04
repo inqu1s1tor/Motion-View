@@ -1,7 +1,6 @@
 package com.erminesoft.motionview.motionview.core.bridge;
 
 public interface SettingsBridge {
-    void initGender();
 
     void initWeight();
 

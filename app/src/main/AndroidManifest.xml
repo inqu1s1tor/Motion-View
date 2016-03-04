@@ -39,7 +39,8 @@
             android:name=".ui.activities.MainFragmentActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
-        <activity android:name=".ui.activities.SettingsActivity"/>
+        <activity android:name=".ui.activities.SettingsActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
 
 
