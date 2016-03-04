@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
@@ -15,24 +16,24 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.*;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.SettingsBridge;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.BleDevice;
 import com.google.android.gms.fitness.request.BleScanCallback;
+import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.internal.PlusSession;
+import com.google.android.gms.plus.model.people.Person;
+import com.google.android.gms.plus.model.people.PersonBuffer;
+import com.google.android.gms.signin.internal.AuthAccountResult;
+import com.squareup.picasso.Picasso;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -52,17 +53,10 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
     private ProgressBar pBar;
     private Button scanBtDevices;
 
-    private TextView userWeightHeader;
-
     private TextInputLayout userWeightTextIl;
     private EditText userWeightText;
 
-
     private EditText userHeightText;
-
-    private RadioButton male;
-    private RadioButton female;
-    private RadioGroup radioGroup;
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, SettingsActivity.class));
@@ -79,7 +73,10 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        String url = GoogleSignIn.loadConnected(mGoogleClientFacade.mClient).getCover().getCoverPhoto().getUrl();
+        Person person = Plus.PeopleApi.getCurrentPerson(mGoogleClientFacade.mClient).freeze();
+
+        Picasso.with(this).load(person.getCover().getCoverPhoto().getUrl()).into((ImageView) findViewById(R.id.settings_profile_cover_image));
+        Picasso.with(this).load(person.getImage().getUrl()).into((ImageView) findViewById(R.id.settings_avatar));
 
         setTitle(getString(R.string.settings));
 
@@ -207,7 +204,6 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
 
     @Override
     public void initWeight() {
-        userWeightHeader.setText(getString(R.string.settings_user_weight_height_header));
         userWeightText = (EditText) findViewById(R.id.settings_user_weight);
         userWeightText.setText(String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT)));
         userWeightTextIl = (TextInputLayout) findViewById(R.id.settings_user_weight_il);

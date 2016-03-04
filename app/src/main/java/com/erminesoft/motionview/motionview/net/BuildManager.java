@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.IntentSender;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -29,11 +27,12 @@ class BuildManager {
                 .addApi(Fitness.HISTORY_API)
                 .addApi(Fitness.BLE_API)
                 .addApi(LocationServices.API)
-                .addApi()
+                .addApi(Plus.API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
                 .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
-                .addScope(new Scope(Scopes.PLUS_LOGIN))
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .addScope(new Scope(Scopes.PLUS_ME))
                 .addConnectionCallbacks(connectionCallbacks)
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
