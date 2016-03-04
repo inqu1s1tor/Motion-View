@@ -70,6 +70,7 @@ public class FragmentLauncher {
         launchWithoutAnimation(fragment, GenericFragment.TODAY);
     }
 
+    //Chto eto?
     public void launchDailyStatisticFragment(long timestamp) {
         GenericFragment fragment = new DailyStatisticFragment();
 
@@ -80,7 +81,14 @@ public class FragmentLauncher {
     }
 
     public void launchHistoryFragment() {
-        GenericFragment fragment = new HistoryFragment();
+        GenericFragment fragment;
+
+        Fragment existState = manager.findFragmentByTag(GenericFragment.HISTORY);
+        if (existState == null) {
+            fragment = new HistoryFragment();
+        } else {
+            fragment = (GenericFragment) existState;
+        }
         launchWithoutAnimation(fragment, GenericFragment.HISTORY);
     }
 
