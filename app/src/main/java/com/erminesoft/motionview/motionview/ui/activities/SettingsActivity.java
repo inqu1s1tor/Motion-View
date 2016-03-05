@@ -3,12 +3,13 @@ package com.erminesoft.motionview.motionview.ui.activities;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
@@ -16,23 +17,22 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.SettingsBridge;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.BleDevice;
 import com.google.android.gms.fitness.request.BleScanCallback;
-import com.google.android.gms.plus.People;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.internal.PlusSession;
 import com.google.android.gms.plus.model.people.Person;
-import com.google.android.gms.plus.model.people.PersonBuffer;
-import com.google.android.gms.signin.internal.AuthAccountResult;
 import com.squareup.picasso.Picasso;
 
 import java.security.MessageDigest;
@@ -73,18 +73,24 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Person person = Plus.PeopleApi.getCurrentPerson(mGoogleClientFacade.mClient).freeze();
+        Person person = mGoogleFitnessFacade.getCurrentPlusProfile();
+        String imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
+                "://" + getResources().getResourcePackageName(R.drawable.default_cover) +
+                '/' + getResources().getResourceTypeName(R.drawable.default_cover) +
+                '/' + getResources().getResourceEntryName(R.drawable.default_cover)).toString();
 
-        Picasso.with(this).load(person.getCover().getCoverPhoto().getUrl()).into((ImageView) findViewById(R.id.settings_profile_cover_image));
+        if (person.getCover() != null) {
+            imageUri= person.getCover().getCoverPhoto().getUrl();
+        }
+
+        Picasso.with(this).load(imageUri).into((ImageView) findViewById(R.id.settings_profile_cover_image));
         Picasso.with(this).load(person.getImage().getUrl()).into((ImageView) findViewById(R.id.settings_avatar));
 
         setTitle(getString(R.string.settings));
-
         initSettings();
-
         setHomeAsUpEnabled(true);
 
-        mGoogleClientFacade.setBleScanCallback(new BleScanCallback() {
+        mGoogleFitnessFacade.setBleScanCallback(new BleScanCallback() {
             @Override
             public void onDeviceFound(BleDevice device) {
                 Log.d("!!!!!!", "Nearest device : " + device.getName());
@@ -101,14 +107,14 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
             }
         });
 
-        mGoogleClientFacade.setResultCallback(new ResultCallback<Status>() {
+        mGoogleFitnessFacade.setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(Status status) {
                 Log.d("!!!!!!", " Scan result : " + status.getStatus());
             }
         });
 
-        mGoogleClientFacade.setRequest(10);
+        mGoogleFitnessFacade.setRequest(10);
         scanBtDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +124,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
                     devicesArray.clear();
                     btDeviceList.setVisibility(View.GONE);
                     pBar.setVisibility(View.VISIBLE);
-                    mGoogleClientFacade.startBleScan();
+                    mGoogleFitnessFacade.startBleScan();
                 }
             }
         });
@@ -146,8 +152,8 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
 
         mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, Integer.parseInt(String.valueOf(userWeightText.getText())));
 
-        mGoogleClientFacade.saveUserHeight(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT));
-        mGoogleClientFacade.saveUserWeight((float) mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT));
+        mGoogleFitnessFacade.saveUserHeight(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT));
+        mGoogleFitnessFacade.saveUserWeight((float) mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT));
     }
 
     @Override
@@ -157,7 +163,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
             devicesArray.clear();
             btDeviceList.setVisibility(View.GONE);
             pBar.setVisibility(View.VISIBLE);
-            mGoogleClientFacade.startBleScan();
+            mGoogleFitnessFacade.startBleScan();
         }
     }
 

@@ -4,11 +4,11 @@ import android.app.Application;
 
 
 import com.erminesoft.motionview.motionview.core.command.Commander;
-import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
+import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 
 public class MVApplication extends Application{
-    private GoogleClientFacade mGoogleClientFacade;
+    private GoogleFitnessFacade mGoogleFitnessFacade;
     private SharedDataManager mSharedDataManager;
     private Commander mCommander;
 
@@ -16,13 +16,13 @@ public class MVApplication extends Application{
     public void onCreate() {
         super.onCreate();
 
-        mGoogleClientFacade = new GoogleClientFacade();
+        mGoogleFitnessFacade = new GoogleFitnessFacade();
         mSharedDataManager = new SharedDataManager(this);
-        mCommander = new Commander(mGoogleClientFacade);
+        mCommander = new Commander(mGoogleFitnessFacade);
     }
 
-    public GoogleClientFacade getGoogleClientFacade() {
-        return mGoogleClientFacade;
+    public GoogleFitnessFacade getGoogleFitnessFacade() {
+        return mGoogleFitnessFacade;
     }
 
     public SharedDataManager getSharedDataManager() {

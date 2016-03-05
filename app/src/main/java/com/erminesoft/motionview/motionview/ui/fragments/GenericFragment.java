@@ -6,7 +6,7 @@ import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.bridge.ActivityBridge;
 import com.erminesoft.motionview.motionview.core.command.Commander;
-import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
+import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 
 public abstract class GenericFragment extends Fragment {
@@ -17,7 +17,7 @@ public abstract class GenericFragment extends Fragment {
     public static final String DAILY_STATISTIC = "daily statistic";
 
     protected final String TAG = this.getClass().getSimpleName();
-    protected GoogleClientFacade mGoogleClientFacade;
+    protected GoogleFitnessFacade mGoogleFitnessFacade;
     protected SharedDataManager mSharedDataManager;
     protected Commander mCommander;
     protected ActivityBridge mActivity;
@@ -27,7 +27,7 @@ public abstract class GenericFragment extends Fragment {
         super.onAttach(context);
 
         mActivity = (ActivityBridge) getActivity();
-        mGoogleClientFacade = mActivity.getMVApplication().getGoogleClientFacade();
+        mGoogleFitnessFacade = mActivity.getMVApplication().getGoogleFitnessFacade();
         mSharedDataManager = mActivity.getMVApplication().getSharedDataManager();
         mCommander = mActivity.getMVApplication().getCommander();
     }

@@ -1,4 +1,4 @@
-package com.erminesoft.motionview.motionview.net;
+package com.erminesoft.motionview.motionview.net.fitness;
 
 
 import android.Manifest;
@@ -10,8 +10,6 @@ import android.util.Log;
 
 import com.erminesoft.motionview.motionview.R;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationAvailability;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;

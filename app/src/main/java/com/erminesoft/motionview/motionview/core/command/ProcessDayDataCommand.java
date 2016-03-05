@@ -29,7 +29,7 @@ public class ProcessDayDataCommand extends GenericCommand {
 
         long timestamp = bundle.getLong(TIMESTAMP_KEY);
 
-        DataReadResult result = mGoogleClientFacade.getDataPerDay(
+        DataReadResult result = mGoogleFitnessFacade.getDataPerDay(
                 TimeWorker.getDay(timestamp),
                 TimeWorker.getMonth(timestamp),
                 TimeWorker.getYear(timestamp));

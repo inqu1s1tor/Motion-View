@@ -44,7 +44,7 @@ public class GenerateHistoryChartDataCommand extends GenericCommand {
         ChartDataWorker.Month month = (ChartDataWorker.Month) bundle.getSerializable(MONTH_KEY);
         int year = bundle.getInt(YEAR_KEY);
 
-        DataReadResult result = mGoogleClientFacade.getDataPerMonthFromHistory(month, year);
+        DataReadResult result = mGoogleFitnessFacade.getDataPerMonthFromHistory(month, year);
         List<Bucket> buckets = result.getBuckets();
 
         if (buckets.get(0).getDataSets().isEmpty()) {

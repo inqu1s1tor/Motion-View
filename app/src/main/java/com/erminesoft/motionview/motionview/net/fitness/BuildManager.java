@@ -1,11 +1,9 @@
-package com.erminesoft.motionview.motionview.net;
+package com.erminesoft.motionview.motionview.net.fitness;
 
 import android.app.Activity;
-import android.content.IntentSender;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
-import com.google.android.gms.common.ConnectionResult;
+
+import com.erminesoft.motionview.motionview.net.BaseBuildManager;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
@@ -13,14 +11,16 @@ import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.plus.Plus;
 
-class BuildManager {
-
+class BuildManager extends BaseBuildManager{
     private boolean mResolvingError = false;
     private GoogleApiClient mClient;
 
     GoogleApiClient buildGoogleApiClient(
             final FragmentActivity fragmentActivity,
             GoogleApiClient.ConnectionCallbacks connectionCallbacks) {
+
+        setFragmentActivity(fragmentActivity);
+
         mClient = new GoogleApiClient.Builder(fragmentActivity)
                 .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.RECORDING_API)
@@ -33,29 +33,8 @@ class BuildManager {
                 .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
-                .addScope(new Scope(Scopes.PLUS_ME))
                 .addConnectionCallbacks(connectionCallbacks)
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        if (mResolvingError) {
-                            return;
-                        }
-
-                        if (connectionResult.hasResolution()) {
-                            try {
-                                mResolvingError = true;
-                                connectionResult.startResolutionForResult(
-                                        fragmentActivity, ErrorDialogFragment.REQUEST_RESOLVE_ERROR);
-                            } catch (IntentSender.SendIntentException e) {
-                                mClient.connect();
-                            }
-                        } else {
-                            showErrorDialog(fragmentActivity, connectionResult.getErrorCode());
-                            mResolvingError = true;
-                        }
-                    }
-                })
+                .addOnConnectionFailedListener(new OnConnectionFailedListenerImpl(mClient))
                 .build();
 
         if (!mResolvingError) {
@@ -73,13 +52,5 @@ class BuildManager {
                 client.connect();
             }
         }
-    }
-
-    private void showErrorDialog(FragmentActivity fragmentActivity, int errorCode) {
-        ErrorDialogFragment.showErrorDialog(fragmentActivity, errorCode);
-    }
-
-    public void onDialogDismissed() {
-        mResolvingError = false;
     }
 }

@@ -1,15 +1,9 @@
 package com.erminesoft.motionview.motionview.ui.activities;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
-import com.erminesoft.motionview.motionview.util.DialogHelper;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 public class SplashActivity extends GenericActivity {
@@ -19,7 +13,7 @@ public class SplashActivity extends GenericActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         if (checkConnectivity()) {
-            mGoogleClientFacade.buildGoogleApiClient(this, new GoogleConnectionCallback());
+            mGoogleFitnessFacade.buildGoogleApiClient(this, new GoogleConnectionCallback());
         } else {
             finish();
         }
@@ -28,7 +22,7 @@ public class SplashActivity extends GenericActivity {
     private class GoogleConnectionCallback implements GoogleApiClient.ConnectionCallbacks {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
-            mGoogleClientFacade.subscribe();
+            mGoogleFitnessFacade.subscribe();
             MainFragmentActivity.start(SplashActivity.this);
             finish();
         }

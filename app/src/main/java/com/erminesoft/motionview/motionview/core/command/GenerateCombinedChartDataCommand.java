@@ -47,13 +47,13 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
 
         long timeStamp = bundle.getLong(TIMESTAMP_KEY);
 
-        if (mGoogleClientFacade == null) {
+        if (mGoogleFitnessFacade == null) {
             return;
         }
 
         mCombinedData = new CombinedData(HOURS_IN_DAY);
 
-        DataReadResult result = mGoogleClientFacade.getHoursDataPerDay(timeStamp);
+        DataReadResult result = mGoogleFitnessFacade.getHoursDataPerDay(timeStamp);
         List<Bucket> buckets = result.getBuckets();
 
         processStepsData(buckets);

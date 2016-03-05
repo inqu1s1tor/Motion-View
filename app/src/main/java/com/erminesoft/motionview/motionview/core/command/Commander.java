@@ -2,7 +2,7 @@ package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
 
-import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
+import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -15,11 +15,11 @@ public class Commander {
     private final CommandFactory commandFactory;
     private Map<CommandType, Command> mCommandMap;
 
-    public Commander(GoogleClientFacade googleClientFacade) {
+    public Commander(GoogleFitnessFacade googleFitnessFacade) {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
         mCommandMap = new EnumMap<>(CommandType.class);
 
-        commandFactory = new CommandFactory(googleClientFacade);
+        commandFactory = new CommandFactory(googleFitnessFacade);
     }
 
     public void execute(final Bundle bundle) {
@@ -51,10 +51,10 @@ public class Commander {
     }
 
     private static final class CommandFactory {
-        private GoogleClientFacade mGoogleClientFacade;
+        private GoogleFitnessFacade mGoogleFitnessFacade;
 
-        CommandFactory(GoogleClientFacade mGoogleClientFacade) {
-            this.mGoogleClientFacade = mGoogleClientFacade;
+        CommandFactory(GoogleFitnessFacade mGoogleFitnessFacade) {
+            this.mGoogleFitnessFacade = mGoogleFitnessFacade;
         }
 
          GenericCommand getCommand(CommandType type) {
@@ -72,7 +72,7 @@ public class Commander {
                     break;
             }
 
-            command.setGoogleClientFacade(mGoogleClientFacade);
+            command.setGoogleFitnessFacade(mGoogleFitnessFacade);
             return command;
         }
     }
