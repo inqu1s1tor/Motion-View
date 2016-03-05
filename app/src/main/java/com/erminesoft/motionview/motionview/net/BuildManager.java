@@ -12,6 +12,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.plus.Plus;
 
 class BuildManager {
 
@@ -27,6 +28,7 @@ class BuildManager {
                 .addApi(Fitness.HISTORY_API)
                 .addApi(Fitness.BLE_API)
                 .addApi(LocationServices.API)
+                .addApi(Plus.API)
                 .addScope(Fitness.SCOPE_ACTIVITY_READ_WRITE)
                 .addScope(Fitness.SCOPE_BODY_READ_WRITE)
                 .addScope(Fitness.SCOPE_LOCATION_READ_WRITE)

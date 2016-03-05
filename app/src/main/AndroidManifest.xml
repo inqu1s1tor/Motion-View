@@ -41,6 +41,10 @@
 
         <activity android:name=".ui.activities.SettingsActivity"/>
 
+        <activity
+            android:name=".ui.activities.ShareMapActivity"
+           />
+
 
 
 
@@ -56,7 +60,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:label="@string/app_name" />
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider1234"
+        <provider android:authorities="com.facebook.app.FacebookContentProvider166522683731423"
             android:name="com.facebook.FacebookContentProvider"
             android:exported="true" />
 

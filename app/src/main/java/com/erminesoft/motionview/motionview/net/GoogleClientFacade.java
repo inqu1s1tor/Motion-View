@@ -3,7 +3,6 @@ package com.erminesoft.motionview.motionview.net;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 
-import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -14,6 +13,8 @@ import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
 
 public class GoogleClientFacade {
 
@@ -95,6 +96,10 @@ public class GoogleClientFacade {
         mMapManager.createLocationRequest(updateInterval, fastestInterval, displacement);
     }
 
+    public List<LatLng> getTrackPoints(){
+        return mMapManager.getTrackPoints();
+    }
+
     public void startLocation() {
         mMapManager.startLocationUpdates();
     }
@@ -142,6 +147,8 @@ public class GoogleClientFacade {
     public void stopRouteOnMap() {
         mMapManager.stopRouteOnMap();
     }
+
+    public void drawRouteByPointsOnMap(List<LatLng> points,GoogleMap googleMap){ mMapManager.drawRouteByPointsOnMap(points,googleMap);}
 
     public void startBleScan() {
         mBluetoothManager.startBleScan();

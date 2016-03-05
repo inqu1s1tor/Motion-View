@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/map_for_share"
+        tools:context=".ui.activities.GoogleMapActivityMapsActivity"
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/share_map_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/share_this_map"
+        style="@style/com_facebook_button_share" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/share_google_button"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentBottom="false"
+        android:layout_toRightOf="@+id/share_map_button"
+        android:layout_alignBottom="@+id/map_for_share"
+        style="@style/com_facebook_button"
+        android:text="Share to G+" />
+
+</RelativeLayout>
+
+
+
+
+

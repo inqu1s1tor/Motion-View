@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -28,9 +27,6 @@ import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.SettingsBridge;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
-/*import com.facebook.appevents.AppEventsLogger;
-import com.facebook.share.model.ShareLinkContent;*/
-import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.BleDevice;
@@ -38,9 +34,11 @@ import com.google.android.gms.fitness.request.BleScanCallback;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import java.util.ArrayList;
 import java.util.List;
+
+/*import com.facebook.appevents.AppEventsLogger;
+import com.facebook.share.model.ShareLinkContent;*/
 
 public class SettingsActivity extends GenericActivity implements SettingsBridge {
     private static final String FITNESS_HISTORY_INTENT = "com.google.android.gms.fitness.settings.GOOGLE_FITNESS_SETTINGS";
@@ -68,6 +66,9 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         activity.startActivity(new Intent(activity, SettingsActivity.class));
     }
 
+
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +86,7 @@ public class SettingsActivity extends GenericActivity implements SettingsBridge 
         mGoogleClientFacade.setBleScanCallback(new BleScanCallback() {
             @Override
             public void onDeviceFound(BleDevice device) {
+
                 Log.d("!!!!!!", "Nearest device : " + device.getName());
                 haveResults(device);
             }

@@ -90,6 +90,7 @@ public class FragmentLauncher {
         launchWithoutAnimation(fragment, GenericFragment.MAP);
     }
 
+
     public void launchByTag(String tag) {
         switch (tag.toLowerCase()) {
             case GenericFragment.HISTORY:
