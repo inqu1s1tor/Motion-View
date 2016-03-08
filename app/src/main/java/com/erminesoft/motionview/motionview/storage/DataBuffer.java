@@ -1,5 +1,7 @@
 package com.erminesoft.motionview.motionview.storage;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
@@ -13,9 +15,11 @@ import java.util.Map;
 public class DataBuffer {
     private static volatile DataBuffer mInstance;
     private Map<CommandType, List<Receiver>> mReceiversMap;
+    private Handler mHandler;
 
     private DataBuffer(){
         mReceiversMap = new EnumMap<>(CommandType.class);
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
     public static DataBuffer getInstance() {
@@ -49,16 +53,21 @@ public class DataBuffer {
         }
     }
 
-    public void putData(Object data, CommandType type) {
+    public void putData(final Object data, final CommandType type) {
         List<Receiver> receivers = mReceiversMap.get(type);
 
-        if (receivers == null) {
+        if (receivers == null || receivers.isEmpty()) {
             Log.e(DataBuffer.class.getSimpleName(), "No receivers for this class type - " + type);
             return;
         }
 
-        for (Receiver receiver : receivers) {
-            receiver.notify(data, type);
+        for (final Receiver receiver : receivers) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    receiver.notify(data, type);
+                }
+            });
         }
     }
 }

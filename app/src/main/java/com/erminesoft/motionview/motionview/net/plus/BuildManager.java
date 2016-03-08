@@ -14,8 +14,6 @@ class BuildManager extends BaseBuildManager {
     private GoogleApiClient mClient;
 
     GoogleApiClient buildConnectClient(final FragmentActivity activity) {
-
-
         if (mClient == null) {
             GoogleSignInOptions options = new GoogleSignInOptions
                     .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -26,6 +24,7 @@ class BuildManager extends BaseBuildManager {
 
             mClient = new GoogleApiClient.Builder(activity)
                     .addApi(Auth.GOOGLE_SIGN_IN_API, options)
+                    .addApi(Plus.API)
                     .addOnConnectionFailedListener(new OnConnectionFailedListenerImpl(mClient))
                     .build();
         }

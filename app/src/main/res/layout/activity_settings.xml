@@ -12,7 +12,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
             app:contentScrim="?attr/colorPrimary"
             android:fitsSystemWindows="true"
@@ -21,10 +21,10 @@
             <ImageView
                 android:id="@+id/settings_profile_cover_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="200dp"
+                android:maxHeight="200dp"
                 android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax"
-                />
+                app:layout_collapseMode="parallax"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -39,8 +39,8 @@
 
     <com.pkmmte.view.CircularImageView
         android:id="@+id/settings_avatar"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
+        android:layout_width="@dimen/setting_avatar_size"
+        android:layout_height="@dimen/setting_avatar_size"
         app:border="true"
         app:shadow="true"
         app:layout_behavior="com.erminesoft.motionview.motionview.ui.AvatarBehavior"/>
