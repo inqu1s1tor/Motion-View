@@ -57,20 +57,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     private static final int SHARE_TYPE_GPLUS = 160;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,35 +71,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToTwitter = (Button) findViewById(R.id.share_to_twitter_button);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_for_share);
         mapFragment.getMapAsync(this);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     @Override
@@ -137,7 +94,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                     finish();
                     break;
             }
-
         }
     }
 
@@ -145,7 +101,7 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
         if (pointsOnMap.size() > 1) {
-            mGoogleClientFacade.drawRouteByPointsOnMap(pointsOnMap, googleMap);
+            mGoogleFitnessFacade.drawRouteByPointsOnMap(pointsOnMap, googleMap);
         } else {
             Log.d("!!!!", "No data from intent");
         }
@@ -165,18 +121,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToGooglePlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-              /*  if (!utils.isPackageInstalled("com.google.android.gms.plus", ShareMapActivity.this)) {
-                    showLongToast("Google Plus application is not installed");
-                    //Intent webIntent = new Intent(Intent.ACTION_INSTALL_PACKAGE, Uri.parse("play.google.com/store/apps/details?id=com.google.android.apps.plus"));
-                    //startActivity(webIntent);
-
-                    Intent goToMarket = new Intent(Intent.ACTION_VIEW)
-                            .setData(Uri.parse("market://details?id=com.google.android.apps.plus"));
-                    startActivityForResult(goToMarket,);
-                    return;
-                }*/
-
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
@@ -220,9 +164,7 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                 });
             }
         });
-
     }
-
 
 
     @Override
