@@ -5,9 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -29,11 +27,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.TweetUi;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -170,14 +166,14 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
 
-               /* if (!utils.isPackageInstalled("com.google.android.gms.plus", ShareMapActivity.this)) {
+              /*  if (!utils.isPackageInstalled("com.google.android.gms.plus", ShareMapActivity.this)) {
                     showLongToast("Google Plus application is not installed");
                     //Intent webIntent = new Intent(Intent.ACTION_INSTALL_PACKAGE, Uri.parse("play.google.com/store/apps/details?id=com.google.android.apps.plus"));
                     //startActivity(webIntent);
 
                     Intent goToMarket = new Intent(Intent.ACTION_VIEW)
                             .setData(Uri.parse("market://details?id=com.google.android.apps.plus"));
-                    startActivity(goToMarket);
+                    startActivityForResult(goToMarket,);
                     return;
                 }*/
 
@@ -201,12 +197,9 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
             public void onClick(View v) {
                 showLongToast("share to twitter");
 
-
-
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
-
                         TwitterAuthConfig authConfig =  new TwitterAuthConfig("oHn7BE22MILtYKAgjPvFgxA2k", "DxkB7exzqaR8sdvLFvBqPBew8vUkB81BY1fI1UiDfKO6VQiWtl");
                         Fabric.with(ShareMapActivity.this, new Twitter(authConfig));
                         TwitterCore core = Twitter.getInstance().core;
@@ -215,75 +208,22 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
 
                         TweetComposer.Builder builder = new TweetComposer.Builder(ShareMapActivity.this);
 
-
-
                         String additionalText = new String();
                         float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
                         String formattedText = String.format("I just done %.3f km\n"
                                 + additionalText + " with application Motion View ", distance);
 
-
-                        builder.image(getImageUri(ShareMapActivity.this,bitmap));
+                        builder.image(utils.getImageUri(ShareMapActivity.this, bitmap));
                         builder.text(formattedText);
                         builder.show();
-
-
-
-
-
-                        TwitterSession session = TwitterCore.getInstance().getSessionManager()
-                                .getActiveSession();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     }
                 });
-
-
-
             }
         });
 
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
+
 
     @Override
     public void onStart() {
