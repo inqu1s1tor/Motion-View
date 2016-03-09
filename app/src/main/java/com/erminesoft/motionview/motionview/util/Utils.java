@@ -1,8 +1,14 @@
 package com.erminesoft.motionview.motionview.util;
 
+
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,7 +20,9 @@ import com.facebook.share.Sharer;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.plus.PlusShare;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class Utils {
@@ -37,7 +45,7 @@ public class Utils {
         ShareApi.share(content, new FacebookCallback<Sharer.Result>() {
             @Override
             public void onSuccess(Sharer.Result result) {
-                Toast.makeText(context, "Successfully Shared", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Successfully Shared to Facebook", Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onCancel() {
@@ -51,6 +59,22 @@ public class Utils {
         });
     }
 
+    public Intent shareToGooglePlus(Bitmap bitmap, final Context context,String textContent){
+        Uri uri;
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ContentResolver contentResolver = context.getContentResolver();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(contentResolver, bitmap, "Title", null);
+        uri = Uri.parse(path);
+        String mime = contentResolver.getType(uri);
+
+        PlusShare.Builder shareBuild = new PlusShare.Builder(context);
+        shareBuild.setText(textContent);
+        shareBuild.addStream(uri);
+        shareBuild.setType(mime);
+        Intent newInt = shareBuild.getIntent();
+        return newInt;
+    }
 
     public float calculateDistanceBetweenPoints(List<LatLng> points){
         Location startLocation = new Location("");
@@ -66,5 +90,15 @@ public class Utils {
 
         float distance = startLocation.distanceTo(endPosition)/1000;
         return distance;
+    }
+
+    public boolean isPackageInstalled(String packagename, Context context) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 }

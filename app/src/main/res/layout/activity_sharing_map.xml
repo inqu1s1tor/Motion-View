@@ -16,7 +16,7 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:id="@+id/share_map_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -25,14 +25,31 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:id="@+id/share_google_button"
         android:layout_alignParentLeft="false"
         android:layout_alignParentBottom="false"
         android:layout_toRightOf="@+id/share_map_button"
         android:layout_alignBottom="@+id/map_for_share"
-        style="@style/com_facebook_button"
-        android:text="Share to G+" />
+        android:text="Share to G+"
+        android:background="#D34836"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:textSize="14sp"
+         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/share_to_twitter_button"
+        android:id="@+id/share_to_twitter_button"
+        android:layout_toRightOf="@+id/share_google_button"
+        android:layout_alignBottom="@+id/map_for_share"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="#397cf8" />
 
 </RelativeLayout>
 

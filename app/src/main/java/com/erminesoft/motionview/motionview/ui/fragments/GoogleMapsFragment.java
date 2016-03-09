@@ -126,7 +126,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     mGoogleClientFacade.setOnLocationChangeListener(new LocationListener() {
                         @Override
                         public void onLocationChanged(Location location) {
-                            if (location.getAccuracy() < 100) {
+                            if (location.getAccuracy() < 10) {
                                 mGoogleClientFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
                                 mGoogleClientFacade.startRouteOnMap();
                             }

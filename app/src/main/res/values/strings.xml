@@ -63,4 +63,5 @@
 
     <string name="facebook_app_id">166522683731423</string>
     <string name="share_this_map">Share now! </string>>
+    <string name="share_to_twitter_button" > Share to Twitter</string>
 </resources>
