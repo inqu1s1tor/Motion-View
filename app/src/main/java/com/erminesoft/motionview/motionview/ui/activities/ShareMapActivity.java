@@ -34,7 +34,6 @@ import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.TweetUi;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -218,18 +217,16 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
 
 
 
-                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                        Bitmap inImage = Bitmap.createBitmap(bitmap);
-                        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                        String path = MediaStore.Images.Media.insertImage(ShareMapActivity.this.getContentResolver(), inImage, "Title", null);
+                        String additionalText = new String();
+                        float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
+                        String formattedText = String.format("I just done %.3f km\n"
+                                + additionalText + " with application Motion View ", distance);
 
 
-                        builder.image(Uri.fromFile(new File(path)));
-                        builder.text(path);
-
+                        builder.image(getImageUri(ShareMapActivity.this,bitmap));
+                        builder.text(formattedText);
                         builder.show();
-                        //Intent intentt = builder.createIntent();
-                        //startActivity(intentt);
+
 
 
 
@@ -279,6 +276,13 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
             }
         });
 
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
     @Override
