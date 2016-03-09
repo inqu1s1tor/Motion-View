@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -27,9 +29,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.TweetUi;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -195,39 +200,44 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToTwitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showLongToast("share tot twitter");
+                showLongToast("share to twitter");
 
-                TwitterAuthConfig authConfig =  new TwitterAuthConfig("oHn7BE22MILtYKAgjPvFgxA2k", "DxkB7exzqaR8sdvLFvBqPBew8vUkB81BY1fI1UiDfKO6VQiWtl");
-                Fabric.with(ShareMapActivity.this, new Twitter(authConfig));
-                TwitterCore core = Twitter.getInstance().core;
-                TweetUi tweetUi = Twitter.getInstance().tweetUi;
-                TweetComposer composer = Twitter.getInstance().tweetComposer;
 
-                final TweetComposer.Builder builder = new TweetComposer.Builder(ShareMapActivity.this);
 
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
 
-                       /* ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                        TwitterAuthConfig authConfig =  new TwitterAuthConfig("oHn7BE22MILtYKAgjPvFgxA2k", "DxkB7exzqaR8sdvLFvBqPBew8vUkB81BY1fI1UiDfKO6VQiWtl");
+                        Fabric.with(ShareMapActivity.this, new Twitter(authConfig));
+                        TwitterCore core = Twitter.getInstance().core;
+                        TweetUi tweetUi = Twitter.getInstance().tweetUi;
+                        TweetComposer composer = Twitter.getInstance().tweetComposer;
+
+                        TweetComposer.Builder builder = new TweetComposer.Builder(ShareMapActivity.this);
+
+
+
+                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                         Bitmap inImage = Bitmap.createBitmap(bitmap);
                         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                         String path = MediaStore.Images.Media.insertImage(ShareMapActivity.this.getContentResolver(), inImage, "Title", null);
 
 
                         builder.image(Uri.fromFile(new File(path)));
-                        builder.text("NEW TEXT");
+                        builder.text(path);
+
                         builder.show();
-                        Intent intentt = builder.createIntent();
-                        startActivity(intentt);
+                        //Intent intentt = builder.createIntent();
+                        //startActivity(intentt);
 
 
 
 
-                        final TwitterSession session = TwitterCore.getInstance().getSessionManager()
+                        TwitterSession session = TwitterCore.getInstance().getSessionManager()
                                 .getActiveSession();
 
-                       */
+
 
 
 
