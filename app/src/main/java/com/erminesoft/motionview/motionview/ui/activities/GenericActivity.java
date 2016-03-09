@@ -63,7 +63,7 @@ public abstract class GenericActivity extends AppCompatActivity {
     }
 
     protected void onHomeButtonPressed() {
-        // Empty
+        finish();
     }
 
 

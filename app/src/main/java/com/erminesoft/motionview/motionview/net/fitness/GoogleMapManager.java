@@ -68,6 +68,10 @@ class GoogleMapManager {
         mLocationRequest.setSmallestDisplacement(displacement);
     }
 
+    List<LatLng> getTrackPoints(){
+        return mPoints;
+    }
+
     Location getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(mGoogleApiClient.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -103,6 +107,7 @@ class GoogleMapManager {
         loc.setLatitude(latLng.latitude);
         return loc;
     }
+
 
 
     void startLocationUpdates() {
@@ -148,7 +153,7 @@ class GoogleMapManager {
                 .anchor(0.5f, 1f)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_start_icon));
         mMap.addMarker(startMarkerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(startPoint,15f,0f,0f)));
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(startPoint, 15f, 0f, 0f)));
     }
 
     void startRouteOnMap() {
@@ -177,30 +182,27 @@ class GoogleMapManager {
         mMap.addMarker(endMarkerOptions);
     }
 
-    /*void stopRouteOnMap() {
-        LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
-        for (int i = 0; i < mPoints.size(); i++) {
-            if (i == 0) {
-                MarkerOptions startMarkerOptions = new MarkerOptions()
-                        .position(mPoints.get(i))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_start_icon));
-                mMap.addMarker(startMarkerOptions);
-            } else if (i == mPoints.size() - 1) {
-                MarkerOptions endMarkerOptions = new MarkerOptions()
-                        .position(mPoints.get(i))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_stop_icon)).visible(true);
-                mMap.addMarker(endMarkerOptions);
-            }
-            line.add(mPoints.get(i));
-            latLngBuilder.include(mPoints.get(i));
+    void drawRouteByPointsOnMap(List<LatLng> pointsOnMap, GoogleMap googleMap){
+        PolylineOptions lineOptions = new PolylineOptions().visible(true).color(R.color.greenRoute).geodesic(true).width(12f);
+        for(LatLng lt:pointsOnMap){
+            Log.d("!!!!", "" + lt.toString());
+            lineOptions.add(lt);
         }
 
-        mMap.addPolyline(line);
-        int size = mGoogleApiClient.getContext().getResources().getDisplayMetrics().widthPixels;
-        LatLngBounds latLngBounds = latLngBuilder.build();
-        CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 9);
-        mMap.moveCamera(track);
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
-    }*/
+        MarkerOptions startMarkerOptions = new MarkerOptions().position(pointsOnMap.get(0))
+                        .anchor(0.5f, 1f).icon(BitmapDescriptorFactory
+                        .fromResource(R.drawable.maps_start_icon));
 
+        googleMap.addMarker(startMarkerOptions);
+
+        googleMap.addPolyline(lineOptions).setGeodesic(true);
+        googleMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(pointsOnMap.get(pointsOnMap.size() - 1)));
+
+        MarkerOptions endMarkerOptions = new MarkerOptions()
+                .position(pointsOnMap.get(pointsOnMap.size()-1))
+                .anchor(0.5f, 1f)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.maps_stop_icon)).visible(true);
+        googleMap.addMarker(endMarkerOptions);
+    }
 }

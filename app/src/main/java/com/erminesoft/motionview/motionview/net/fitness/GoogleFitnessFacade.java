@@ -14,6 +14,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.List;
+
 public class GoogleFitnessFacade {
 
     private GoogleApiClient mClient;
@@ -94,6 +96,10 @@ public class GoogleFitnessFacade {
         mMapManager.createLocationRequest(updateInterval, fastestInterval, displacement);
     }
 
+    public List<LatLng> getTrackPoints(){
+        return mMapManager.getTrackPoints();
+    }
+
     public void startLocation() {
         mMapManager.startLocationUpdates();
     }
@@ -141,6 +147,8 @@ public class GoogleFitnessFacade {
     public void stopRouteOnMap() {
         mMapManager.stopRouteOnMap();
     }
+
+    public void drawRouteByPointsOnMap(List<LatLng> points,GoogleMap googleMap){ mMapManager.drawRouteByPointsOnMap(points,googleMap);}
 
     public void startBleScan() {
         mBluetoothManager.startBleScan();

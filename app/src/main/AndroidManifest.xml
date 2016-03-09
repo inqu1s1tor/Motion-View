@@ -38,8 +38,12 @@
             android:name=".ui.activities.MainFragmentActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
-        <activity android:name=".ui.activities.SettingsActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity
+            android:name=".ui.activities.SettingsActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:configChanges="keyboard|keyboardHidden"/>
+
+        <activity android:name=".ui.activities.ShareMapActivity"/>
 
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
@@ -47,7 +51,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:label="@string/app_name" />
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider1234"
+        <provider android:authorities="com.facebook.app.FacebookContentProvider166522683731423"
             android:name="com.facebook.FacebookContentProvider"
             android:exported="true" />
 

@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -25,18 +23,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.ui.activities.ShareMapActivity;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.erminesoft.motionview.motionview.util.DialogHelper;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.share.ShareApi;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,7 +35,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCallback, GpsStatus.Listener {
@@ -61,62 +50,25 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
 
     private List<LatLng> mPoints = new ArrayList<>();
     private ImageButton mStartWalkRouter;
+    private Button shareButton;
     private Button share;
     private ImageView gpsStatus;
     private DialogHelper dialogCreator;
     private LocationManager locationManager;
 
-    private CallbackManager callbackManager;
-    private LoginManager loginManager;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_map, container, false);
-
         mStartWalkRouter = (ImageButton) view.findViewById(R.id.activity_maps_steps_button);
-        share = (Button) view.findViewById(R.id.button);
+        shareButton = (Button) view.findViewById(R.id.map_share_dialog);
         gpsStatus = (ImageView) view.findViewById(R.id.gps_status);
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
-
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                FacebookSdk.sdkInitialize(getContext());
-
-                callbackManager = CallbackManager.Factory.create();
-
-                List<String> permissionNeeds = Arrays.asList("publish_actions");
-
-                loginManager = LoginManager.getInstance();
-
-                loginManager.logInWithPublishPermissions(getActivity(), permissionNeeds);
-
-                loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        sharePhotoToFacebook();
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Log.d("!!!!!!", "onCancel");
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        Log.d("!!!!!!", "onError");
-                    }
-                });
-
-
-            }
-        });
-
-
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             return null;
         }
         locationManager.addGpsStatusListener(this);
@@ -149,20 +101,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         return view;
     }
 
-    private void sharePhotoToFacebook(){
-        Bitmap image = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        SharePhoto photo = new SharePhoto.Builder()
-                .setBitmap(image)
-                .setCaption("Give me my codez or I will ... you know, do that thing you don't like!")
-                .build();
-
-        SharePhotoContent content = new SharePhotoContent.Builder()
-                .addPhoto(photo)
-                .build();
-
-        ShareApi.share(content, null);
-
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -171,11 +109,14 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mGoogleFitnessFacade.createLocationRequest(UPDATE_INTERVAL, FATEST_INTERVAL, DISPLACEMENT);
         mGoogleFitnessFacade.setMarkerAtFirstShow();
 
+
+
         mStartWalkRouter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!routerStarted) {
                     mStartWalkRouter.setBackgroundResource(R.drawable.run_icon_active);
+                    shareButton.setVisibility(View.GONE);
                     showShortToast("Router started");
                     routerStarted = true;
                     mGoogleFitnessFacade.clearPoints();
@@ -194,10 +135,22 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     mGoogleFitnessFacade.startLocation();
                 } else {
                     mStartWalkRouter.setBackgroundResource(R.drawable.run_icon);
+                    shareButton.setVisibility(View.VISIBLE);
                     showShortToast("Router stopped");
                     routerStarted = false;
                     mGoogleFitnessFacade.stopLocation();
                     mGoogleFitnessFacade.stopRouteOnMap();
+
+                    shareButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Bundle dataPoints = new Bundle();
+                            dataPoints.putParcelableArrayList("mapPoints", (ArrayList<LatLng>) mGoogleFitnessFacade.getTrackPoints());
+                            Intent shareIntent = new Intent(getContext(), ShareMapActivity.class);
+                            shareIntent.putExtra("mapPoints",dataPoints);
+                            startActivityForResult(shareIntent,100);
+                        }
+                    });
                 }
             }
         });
@@ -218,7 +171,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("!!!!!!", "" + requestCode + "  " + resultCode);
+        Log.d("!!!!!!", "req code: " + requestCode + " res code:  " + resultCode);
     }
 
     @Override
