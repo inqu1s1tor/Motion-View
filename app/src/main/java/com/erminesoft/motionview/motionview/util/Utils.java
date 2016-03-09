@@ -1,6 +1,5 @@
 package com.erminesoft.motionview.motionview.util;
 
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
