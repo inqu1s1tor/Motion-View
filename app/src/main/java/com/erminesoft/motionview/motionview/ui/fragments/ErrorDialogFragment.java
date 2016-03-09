@@ -35,6 +35,6 @@ public class ErrorDialogFragment extends android.support.v4.app.DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         GenericActivity activity = (GenericActivity) getActivity();
-        activity.getMVApplication().getGoogleClientFacade().onDialogDismissed();
+        activity.getMVApplication().getGoogleFitnessFacade().onDialogDismissed();
     }
 }

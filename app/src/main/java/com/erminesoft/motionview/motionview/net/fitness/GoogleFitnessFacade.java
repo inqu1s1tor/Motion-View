@@ -1,4 +1,4 @@
-package com.erminesoft.motionview.motionview.net;
+package com.erminesoft.motionview.motionview.net.fitness;
 
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
@@ -16,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
-public class GoogleClientFacade {
+public class GoogleFitnessFacade {
 
     private GoogleApiClient mClient;
     private BuildManager mBuildManager;
@@ -26,7 +26,7 @@ public class GoogleClientFacade {
     private GoogleMapManager mMapManager;
     private BluetoothManager mBluetoothManager;
 
-    public GoogleClientFacade() {
+    public GoogleFitnessFacade() {
         mBuildManager = new BuildManager();
         mOfflineStorageManager = new OfflineStorageManager();
         mSubscribingManager = new SubscribingManager();

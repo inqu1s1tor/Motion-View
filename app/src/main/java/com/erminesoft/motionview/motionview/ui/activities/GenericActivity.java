@@ -10,16 +10,16 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.erminesoft.motionview.motionview.core.MVApplication;
-import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
+import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
 public abstract class GenericActivity extends AppCompatActivity {
-    protected GoogleClientFacade mGoogleClientFacade;
+    protected GoogleFitnessFacade mGoogleFitnessFacade;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGoogleClientFacade = getMVApplication().getGoogleClientFacade();
+        mGoogleFitnessFacade = getMVApplication().getGoogleFitnessFacade();
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
@@ -32,7 +32,7 @@ public abstract class GenericActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ErrorDialogFragment.REQUEST_RESOLVE_ERROR) {
-            mGoogleClientFacade.tryConnectClient(resultCode);
+            mGoogleFitnessFacade.tryConnectClient(resultCode);
         }
     }
 

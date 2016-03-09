@@ -24,7 +24,7 @@ public class TodayFragment extends BaseDailyStatisticFragment {
     public void onStart() {
         super.onStart();
 
-        mGoogleClientFacade.registerListenerForStepCounter(new ResultCallback() {
+        mGoogleFitnessFacade.registerListenerForStepCounter(new ResultCallback() {
             @Override
             public void onSuccess(final Object dataSets) {
                 if (!(dataSets instanceof List<?>)){
@@ -52,6 +52,6 @@ public class TodayFragment extends BaseDailyStatisticFragment {
     public void onStop() {
         super.onStop();
 
-        mGoogleClientFacade.unregisterListener();
+        mGoogleFitnessFacade.unregisterListener();
     }
 }

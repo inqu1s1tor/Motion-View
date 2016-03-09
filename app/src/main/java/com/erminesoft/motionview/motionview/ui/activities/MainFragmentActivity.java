@@ -13,7 +13,6 @@ import android.view.View;
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.ActivityBridge;
 import com.erminesoft.motionview.motionview.ui.FragmentLauncher;
-import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
 public class MainFragmentActivity extends GenericActivity implements ActivityBridge {
     private TabLayout mTabLayout;
@@ -76,14 +75,6 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ErrorDialogFragment.REQUEST_RESOLVE_ERROR) {
-            mGoogleClientFacade.tryConnectClient(resultCode);
-        }
     }
 
     @Override

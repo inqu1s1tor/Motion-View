@@ -105,9 +105,9 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mGoogleClientFacade.setGoogleMap(mMap);
-        mGoogleClientFacade.createLocationRequest(UPDATE_INTERVAL, FATEST_INTERVAL, DISPLACEMENT);
-        mGoogleClientFacade.setMarkerAtFirstShow();
+        mGoogleFitnessFacade.setGoogleMap(mMap);
+        mGoogleFitnessFacade.createLocationRequest(UPDATE_INTERVAL, FATEST_INTERVAL, DISPLACEMENT);
+        mGoogleFitnessFacade.setMarkerAtFirstShow();
 
 
 
@@ -119,34 +119,33 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     shareButton.setVisibility(View.GONE);
                     showShortToast("Router started");
                     routerStarted = true;
-                    mGoogleClientFacade.clearPoints();
-                    mGoogleClientFacade.clearMap();
-                    mGoogleClientFacade.setStartMarker();
-                    mGoogleClientFacade.addPointsToLineForRoute(new LatLng(mGoogleClientFacade.getCurrentLocation().getLatitude(), mGoogleClientFacade.getCurrentLocation().getLongitude()));
-                    mGoogleClientFacade.setOnLocationChangeListener(new LocationListener() {
+                    mGoogleFitnessFacade.clearPoints();
+                    mGoogleFitnessFacade.clearMap();
+                    mGoogleFitnessFacade.setStartMarker();
+                    mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(mGoogleFitnessFacade.getCurrentLocation().getLatitude(), mGoogleFitnessFacade.getCurrentLocation().getLongitude()));
+                    mGoogleFitnessFacade.setOnLocationChangeListener(new LocationListener() {
                         @Override
                         public void onLocationChanged(Location location) {
                             if (location.getAccuracy() < 10) {
-                                mGoogleClientFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
-                                mGoogleClientFacade.startRouteOnMap();
+                                mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
+                                mGoogleFitnessFacade.startRouteOnMap();
                             }
                         }
                     });
-                    mGoogleClientFacade.startLocation();
+                    mGoogleFitnessFacade.startLocation();
                 } else {
                     mStartWalkRouter.setBackgroundResource(R.drawable.run_icon);
                     shareButton.setVisibility(View.VISIBLE);
                     showShortToast("Router stopped");
                     routerStarted = false;
-                    mGoogleClientFacade.stopLocation();
-                    mGoogleClientFacade.stopRouteOnMap();
-
+                    mGoogleFitnessFacade.stopLocation();
+                    mGoogleFitnessFacade.stopRouteOnMap();
 
                     shareButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Bundle dataPoints = new Bundle();
-                            dataPoints.putParcelableArrayList("mapPoints", (ArrayList<LatLng>) mGoogleClientFacade.getTrackPoints());
+                            dataPoints.putParcelableArrayList("mapPoints", (ArrayList<LatLng>) mGoogleFitnessFacade.getTrackPoints());
                             Intent shareIntent = new Intent(getContext(), ShareMapActivity.class);
                             shareIntent.putExtra("mapPoints",dataPoints);
                             startActivityForResult(shareIntent,100);

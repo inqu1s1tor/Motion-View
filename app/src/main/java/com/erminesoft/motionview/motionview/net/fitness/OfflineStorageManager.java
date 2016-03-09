@@ -1,4 +1,4 @@
-package com.erminesoft.motionview.motionview.net;
+package com.erminesoft.motionview.motionview.net.fitness;
 
 import android.os.Handler;
 import android.os.Looper;

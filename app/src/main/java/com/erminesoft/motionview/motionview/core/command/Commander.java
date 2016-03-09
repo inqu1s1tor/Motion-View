@@ -2,7 +2,8 @@ package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
 
-import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
+import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
+import com.erminesoft.motionview.motionview.net.plus.GooglePlusFacade;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -15,11 +16,11 @@ public class Commander {
     private final CommandFactory commandFactory;
     private Map<CommandType, Command> mCommandMap;
 
-    public Commander(GoogleClientFacade googleClientFacade) {
+    public Commander(GoogleFitnessFacade googleFitnessFacade, GooglePlusFacade googlePlusFacade) {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
         mCommandMap = new EnumMap<>(CommandType.class);
 
-        commandFactory = new CommandFactory(googleClientFacade);
+        commandFactory = new CommandFactory(googleFitnessFacade, googlePlusFacade);
     }
 
     public void execute(final Bundle bundle) {
@@ -51,10 +52,12 @@ public class Commander {
     }
 
     private static final class CommandFactory {
-        private GoogleClientFacade mGoogleClientFacade;
+        private GoogleFitnessFacade mGoogleFitnessFacade;
+        private GooglePlusFacade mGooglePlusFacade;
 
-        CommandFactory(GoogleClientFacade mGoogleClientFacade) {
-            this.mGoogleClientFacade = mGoogleClientFacade;
+        CommandFactory(GoogleFitnessFacade googleFitnessFacade, GooglePlusFacade googlePlusFacade) {
+            mGoogleFitnessFacade = googleFitnessFacade;
+            mGooglePlusFacade = googlePlusFacade;
         }
 
          GenericCommand getCommand(CommandType type) {
@@ -70,9 +73,12 @@ public class Commander {
                 case GENERATE_COMBINED_CHART_DATA:
                     command = new GenerateCombinedChartDataCommand();
                     break;
+                case GET_PERSON:
+                    command = new GetPersonCommand(mGooglePlusFacade);
+                    break;
             }
 
-            command.setGoogleClientFacade(mGoogleClientFacade);
+            command.setGoogleFitnessFacade(mGoogleFitnessFacade);
             return command;
         }
     }

@@ -2,7 +2,7 @@ package com.erminesoft.motionview.motionview.core.command;
 
 import android.os.Bundle;
 
-import com.erminesoft.motionview.motionview.net.GoogleClientFacade;
+import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 
 class GenericCommand implements Command {
     protected final String TAG = this.getClass().getSimpleName();
@@ -11,10 +11,10 @@ class GenericCommand implements Command {
     private boolean mRunning;
     private Bundle mBundle;
 
-    protected GoogleClientFacade mGoogleClientFacade;
+    protected GoogleFitnessFacade mGoogleFitnessFacade;
 
-    void setGoogleClientFacade(GoogleClientFacade googleClientFacade) {
-        mGoogleClientFacade = googleClientFacade;
+    void setGoogleFitnessFacade(GoogleFitnessFacade googleFitnessFacade) {
+        mGoogleFitnessFacade = googleFitnessFacade;
     }
 
     @Override
