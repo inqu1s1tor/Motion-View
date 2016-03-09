@@ -2,6 +2,7 @@ package com.erminesoft.motionview.motionview.ui.activities;
 
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,14 +13,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
+import com.erminesoft.motionview.motionview.core.command.ExecutorType;
 import com.erminesoft.motionview.motionview.core.command.GetPersonCommand;
 import com.erminesoft.motionview.motionview.net.plus.GooglePlusFacade;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
 
@@ -66,21 +68,21 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     }
 
     private void saveData() {
-        String weightStr = String.valueOf(mUserHeightText.getText());
-        int weight = Integer.parseInt(weightStr);
+        String heightStr = String.valueOf(mUserHeightText.getText());
+        int height = Integer.parseInt(heightStr);
 
-        if(TextUtils.isEmpty(weightStr)){
+        if (TextUtils.isEmpty(heightStr)) {
             mUserWeightTextIl.setError("Error");
             return;
         } else {
-            mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, Integer.parseInt(weightStr));
-            mGoogleFitnessFacade.saveUserWeight((float) weight);
+            mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(heightStr));
+            mGoogleFitnessFacade.saveUserWeight((float) height);
         }
 
-        int height = Integer.parseInt(String.valueOf(mUserWeightText.getText()));
+        int weight = Integer.parseInt(String.valueOf(mUserWeightText.getText()));
 
-        mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, height);
-        mGoogleFitnessFacade.saveUserHeight(height);
+        mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
+        mGoogleFitnessFacade.saveUserHeight(weight);
     }
 
     @Override
@@ -94,7 +96,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
         if (requestCode == 1) {
             Bundle bundle = GetPersonCommand.generateBundle(data);
-            getMVApplication().getCommander().execute(bundle);
+            getMVApplication().getCommander().execute(bundle, ExecutorType.SETTINGS_ACTIVITY);
         }
     }
 
@@ -136,8 +138,24 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         Log.i(TAG, "notified");
         Person person = (Person) data;
 
+        String coverPath;
+
+        if (person.getCover() == null) {
+            coverPath = ContentResolver.SCHEME_ANDROID_RESOURCE +
+                    "://" + getResources().getResourcePackageName(R.drawable.default_cover)
+                    + '/' + getResources().getResourceTypeName(R.drawable.default_cover)
+                    + '/' + getResources().getResourceEntryName(R.drawable.default_cover);
+        } else {
+            coverPath = person.getCover().getCoverPhoto().getUrl();
+        }
+
         Picasso.with(this).load(person.getImage().getUrl()).into((ImageView) findViewById(R.id.settings_avatar));
-        Picasso.with(this).load(person.getCover().getCoverPhoto().getUrl()).into((ImageView) findViewById(R.id.settings_profile_cover_image));
+        ImageView coverView = (ImageView) findViewById(R.id.settings_profile_cover_image);
+        Picasso.with(this)
+                .load(coverPath)
+                .centerCrop()
+                .resize(coverView.getWidth(), coverView.getHeight())
+                .into(coverView);
     }
 
     @Override
@@ -152,5 +170,6 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         super.onStop();
 
         DataBuffer.getInstance().unregister(this);
+        getMVApplication().getCommander().denyAll(ExecutorType.SETTINGS_ACTIVITY);
     }
 }

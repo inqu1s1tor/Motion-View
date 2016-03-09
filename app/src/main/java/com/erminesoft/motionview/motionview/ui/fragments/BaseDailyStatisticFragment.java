@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
+import com.erminesoft.motionview.motionview.core.command.ExecutorType;
 import com.erminesoft.motionview.motionview.core.command.GenerateCombinedChartDataCommand;
 import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
@@ -73,7 +74,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         super.onStart();
 
         Bundle bundle = ProcessDayDataCommand.generateBundle(mTimestamp);
-        mCommander.execute(bundle);
+        mCommander.execute(bundle, ExecutorType.MAIN_FRAGMENT_ACTIVITY);
 
         DataBuffer.getInstance().register(CommandType.PROCESS_DAY_DATA, this);
         DataBuffer.getInstance().register(CommandType.GENERATE_COMBINED_CHART_DATA, this);
@@ -168,7 +169,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         Bundle bundle = GenerateCombinedChartDataCommand
                 .generateBundle(mTimestamp);
 
-        mCommander.execute(bundle);
+        mCommander.execute(bundle, ExecutorType.MAIN_FRAGMENT_ACTIVITY);
     }
 
     @Override
