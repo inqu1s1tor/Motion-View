@@ -45,4 +45,17 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.pkmmte.view:circularimageview:1.1'
+    compile files('src/main/lib/twitter4j-core-4.0.4.jar')
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+        transitive = true;
+    }
+    compile('com.twitter.sdk.android:tweet-composer:0.9.0@aar') {
+
+        transitive = true;
+    }
+    compile('com.twitter.sdk.android:twitter:1.8.0@aar') {
+        transitive = true;
+    }
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+
 }
