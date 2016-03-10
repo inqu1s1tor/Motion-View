@@ -1,37 +1,25 @@
 package com.erminesoft.motionview.motionview.net.fitness;
 
-import android.os.Handler;
-import android.os.Looper;
-import com.erminesoft.motionview.motionview.core.callback.DataChangedListener;
-import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.*;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 class OfflineStorageManager {
-    private static final String NO_DATA_ERROR = "No data per day";
-
-    private final Executor mExecutor;
-    private final Handler mHandler;
     private GoogleApiClient mClient;
 
-    OfflineStorageManager() {
-        mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
-        mHandler = new Handler(Looper.getMainLooper());
-    }
-
-    void setClient(GoogleApiClient client) {
+    void setClient(final GoogleApiClient client) {
         mClient = client;
     }
 
@@ -41,7 +29,8 @@ class OfflineStorageManager {
         Fitness.HistoryApi.insertData(mClient, dataSet);
     }
 
-    DataReadResult getDataPerMonthFromHistory(final ChartDataWorker.Month month, final int year) {
+    DataReadResult getDataPerMonthFromHistory(final ChartDataWorker.Month month,
+                                              final int year) {
         DataReadRequest request = generateReadRequestForMonth(month, year);
 
         return Fitness.HistoryApi.readData(mClient, request).await();
@@ -57,23 +46,28 @@ class OfflineStorageManager {
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         long endTime = calendar.getTimeInMillis();
 
-        return Fitness.HistoryApi.readData(mClient, new DataReadRequest.Builder()
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .bucketByTime(3, TimeUnit.HOURS)
-                .build()).await();
+        return Fitness.HistoryApi.readData(mClient,
+                new DataReadRequest.Builder()
+                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                        .aggregate(DataType.TYPE_CALORIES_EXPENDED,
+                                DataType.AGGREGATE_CALORIES_EXPENDED)
+                        .aggregate(DataType.TYPE_STEP_COUNT_DELTA,
+                                DataType.AGGREGATE_STEP_COUNT_DELTA)
+                        .bucketByTime(3, TimeUnit.HOURS)
+                        .build()).await();
     }
 
-    DataReadResult getDataPerDay(int day, int month, int year) {
+    DataReadResult getDataPerDay(final int day,
+                                 final int month,
+                                 final int year) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, day);
 
-        if (TimeWorker.getCurrentDay() != day ||
-                TimeWorker.getCurrentMonth() != month ||
-                TimeWorker.getCurrentYear() != year) {
+        if (TimeWorker.getCurrentDay() != day
+                || TimeWorker.getCurrentMonth() != month
+                || TimeWorker.getCurrentYear() != year) {
             calendar.add(Calendar.DAY_OF_YEAR, 1);
             TimeWorker.setMidnight(calendar);
             calendar.add(Calendar.MILLISECOND, -1);
@@ -91,40 +85,7 @@ class OfflineStorageManager {
         return Fitness.HistoryApi.readData(mClient, request).await();
     }
 
-
-    void getDataForNow(final int day, final DataChangedListener listener) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.DAY_OF_MONTH, day);
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-                TimeWorker.setMidnight(calendar);
-                long endTime = calendar.getTimeInMillis();
-                calendar.set(Calendar.DAY_OF_MONTH, day);
-                TimeWorker.setMidnight(calendar);
-                long startTime = calendar.getTimeInMillis();
-
-                DataReadRequest request = buildReadRequest(startTime, endTime);
-
-                DataReadResult result = Fitness.HistoryApi.readData(mClient, request).await();
-
-                final List<Bucket> buckets = result.getBuckets();
-                if (buckets == null || buckets.size() == 0) {
-                    listener.onError(NO_DATA_ERROR);
-                    return;
-                }
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onSuccess(buckets.get(0).getDataSets());
-                    }
-                });
-            }
-        });
-    }
-
-    void saveUserWeight(float weight) {
+    void saveUserWeight(final float weight) {
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
         cal.setTime(now);
@@ -144,7 +105,7 @@ class OfflineStorageManager {
         Fitness.HistoryApi.insertData(mClient, weightDataSet);
     }
 
-    void saveUserHeight(int heightCentimeters) {
+    void saveUserHeight(final int heightCentimeters) {
         float height = ((float) heightCentimeters) / 100.0f;
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
@@ -165,7 +126,9 @@ class OfflineStorageManager {
         Fitness.HistoryApi.insertData(mClient, heightDataSet);
     }
 
-    private DataReadRequest generateReadRequestForMonth(ChartDataWorker.Month month, int year) {
+    private DataReadRequest generateReadRequestForMonth(
+            final ChartDataWorker.Month month,
+            final int year) {
         Calendar calendar = Calendar.getInstance();
         int currentMonth = TimeWorker.getCurrentMonth();
 
@@ -175,9 +138,9 @@ class OfflineStorageManager {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
 
-        long endTime = currentMonth == month.getIndex() ?
-                System.currentTimeMillis() :
-                calendar.getTimeInMillis();
+        long endTime = currentMonth == month.getIndex()
+                ? System.currentTimeMillis()
+                : calendar.getTimeInMillis();
 
         calendar.set(Calendar.MONTH, month.getIndex());
 
@@ -185,23 +148,28 @@ class OfflineStorageManager {
         return buildReadRequest(startTime, endTime);
     }
 
-    private DataReadRequest buildReadRequest(long startTime, long endTime) {
+    private DataReadRequest buildReadRequest(final long startTime,
+                                             final long endTime) {
         return new DataReadRequest.Builder()
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .aggregate(DataType.TYPE_ACTIVITY_SEGMENT, DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                .aggregate(DataType.TYPE_DISTANCE_DELTA, DataType.AGGREGATE_DISTANCE_DELTA)
-                .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
+                .aggregate(DataType.TYPE_STEP_COUNT_DELTA,
+                        DataType.AGGREGATE_STEP_COUNT_DELTA)
+                .aggregate(DataType.TYPE_ACTIVITY_SEGMENT,
+                        DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .aggregate(DataType.TYPE_DISTANCE_DELTA,
+                        DataType.AGGREGATE_DISTANCE_DELTA)
+                .aggregate(DataType.TYPE_CALORIES_EXPENDED,
+                        DataType.AGGREGATE_CALORIES_EXPENDED)
                 .bucketByTime(1, TimeUnit.DAYS)
                 .build();
     }
 
-    private DataSet createDataForRequest(DataType dataType,
-                                         int dataSourceType,
-                                         Object values,
-                                         long startTime,
-                                         long endTime,
-                                         TimeUnit timeUnit) {
+    private DataSet createDataForRequest(final DataType dataType,
+                                         final int dataSourceType,
+                                         final Object values,
+                                         final long startTime,
+                                         final long endTime,
+                                         final TimeUnit timeUnit) {
         DataSource dataSource = new DataSource.Builder()
                 .setAppPackageName(mClient.getContext())
                 .setDataType(dataType)
@@ -209,7 +177,9 @@ class OfflineStorageManager {
                 .build();
 
         DataSet dataSet = DataSet.create(dataSource);
-        DataPoint dataPoint = dataSet.createDataPoint().setTimeInterval(startTime, endTime, timeUnit);
+        DataPoint dataPoint = dataSet
+                .createDataPoint()
+                .setTimeInterval(startTime, endTime, timeUnit);
 
         if (values instanceof Integer) {
             dataPoint = dataPoint.setIntValues((Integer) values);
@@ -222,7 +192,7 @@ class OfflineStorageManager {
         return dataSet;
     }
 
-    private DataSet generateDataSet(DataPoint dataPoint) {
+    private DataSet generateDataSet(final DataPoint dataPoint) {
         DataSource dataSource = new DataSource.Builder()
                 .setType(DataSource.TYPE_RAW)
                 .setAppPackageName(mClient.getContext())
@@ -241,7 +211,8 @@ class OfflineStorageManager {
 
         long startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
         long endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
-        generatedDataPoint.setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
+        generatedDataPoint
+                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
 
         dataSet.add(generatedDataPoint);
 

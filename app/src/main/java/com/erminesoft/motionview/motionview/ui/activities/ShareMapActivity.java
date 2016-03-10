@@ -1,12 +1,11 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -27,51 +26,49 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
-import com.twitter.sdk.android.tweetui.TweetUi;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
 public class ShareMapActivity extends GenericActivity implements OnMapReadyCallback {
+    private static final int SHARE_TYPE_GPLUS = 160;
+    private static final int SHARE_TYPE_FACEBOOK = 64206;
 
-
-    public static void start(Activity activity) {
-        activity.startActivity(new Intent(activity, ShareMapActivity.class));
-    }
+    private static final String DATA_POINTS_EXTRA = "datapoints";
 
     private List<LatLng> pointsOnMap = new ArrayList<>();
-    private View view;
     private Button share;
     private Button shareToGooglePlus;
     private Button shareToTwitter;
     private CallbackManager callbackManager;
     private LoginManager loginManager;
-    private SupportMapFragment mapFragment;
     private GoogleMap mMap;
     private Utils utils;
-    private static final int SHARE_TYPE_FACEBOOK = 64206;
-    private static final int SHARE_TYPE_GPLUS = 160;
+
+    public static void start(Activity activity, List<LatLng> dataPoints) {
+        Intent intent = new Intent(activity, ShareMapActivity.class);
+        intent.putParcelableArrayListExtra(DATA_POINTS_EXTRA, (ArrayList<LatLng>) dataPoints);
+
+        activity.startActivityForResult(intent, 100);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHomeAsUpEnabled(true);
         utils = new Utils();
-        view = View.inflate(this, R.layout.activity_sharing_map, null);
+        View view = View.inflate(this, R.layout.activity_sharing_map, null);
         setContentView(view);
-        Bundle mapData = getIntent().getBundleExtra("mapPoints");
-        pointsOnMap = mapData.getParcelableArrayList("mapPoints");
+        pointsOnMap = getIntent().getParcelableArrayListExtra(DATA_POINTS_EXTRA);
         share = (Button) view.findViewById(R.id.share_map_button);
         shareToGooglePlus = (Button) findViewById(R.id.share_google_button);
         shareToTwitter = (Button) findViewById(R.id.share_to_twitter_button);
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_for_share);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_for_share);
         mapFragment.getMapAsync(this);
     }
 
@@ -83,7 +80,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         }
         if (requestCode != 0 && resultCode != 0) {
             Log.d("!!!!!", "result code: " + resultCode + " req code: " + requestCode);
-            //callbackManager.onActivityResult(requestCode, resultCode, data);
         }
         if (resultCode == -1) {
             switch (requestCode) {
@@ -96,23 +92,24 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                     finish();
                     break;
             }
-
         }
     }
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-    mMap = googleMap;
-        if(pointsOnMap.size() > 1) {
-            mGoogleFitnessFacade.drawRouteByPointsOnMap(pointsOnMap,googleMap);
-        } else { Log.d("!!!!", "No data from intent"); }
+        mMap = googleMap;
+        if (pointsOnMap.size() > 1) {
+            mGoogleFitnessFacade.drawRouteByPointsOnMap(pointsOnMap, googleMap);
+        } else {
+            Log.d("!!!!", "No data from intent");
+        }
 
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FacebookSdk.sdkInitialize(getApplicationContext());
                 callbackManager = CallbackManager.Factory.create();
-                List<String> permissionNeeds = Arrays.asList("publish_actions");
+                List<String> permissionNeeds = Collections.singletonList("publish_actions");
                 loginManager = LoginManager.getInstance();
                 loginManager.logInWithPublishPermissions(ShareMapActivity.this, permissionNeeds);
                 loginManager.registerCallback(callbackManager, new FacebookLoginPostCallback(ShareMapActivity.this, googleMap, pointsOnMap));
@@ -122,22 +119,10 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToGooglePlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-               /* if (!utils.isPackageInstalled("com.google.android.gms.plus", ShareMapActivity.this)) {
-                    showLongToast("Google Plus application is not installed");
-                    //Intent webIntent = new Intent(Intent.ACTION_INSTALL_PACKAGE, Uri.parse("play.google.com/store/apps/details?id=com.google.android.apps.plus"));
-                    //startActivity(webIntent);
-
-                    Intent goToMarket = new Intent(Intent.ACTION_VIEW)
-                            .setData(Uri.parse("market://details?id=com.google.android.apps.plus"));
-                    startActivity(goToMarket);
-                    return;
-                }*/
-
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
-                        String additionalText = new String();
+                        String additionalText = "";
                         float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
                         String formattedText = String.format("I just done %.3f km\n"
                                 + additionalText + " with application Motion View ", distance);
@@ -148,50 +133,31 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
             }
         });
 
-
         shareToTwitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showLongToast("share to twitter");
 
-
-
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
-
-                        TwitterAuthConfig authConfig =  new TwitterAuthConfig("oHn7BE22MILtYKAgjPvFgxA2k", "DxkB7exzqaR8sdvLFvBqPBew8vUkB81BY1fI1UiDfKO6VQiWtl");
+                        TwitterAuthConfig authConfig = new TwitterAuthConfig("oHn7BE22MILtYKAgjPvFgxA2k", "DxkB7exzqaR8sdvLFvBqPBew8vUkB81BY1fI1UiDfKO6VQiWtl");
                         Fabric.with(ShareMapActivity.this, new Twitter(authConfig));
-                        TwitterCore core = Twitter.getInstance().core;
-                        TweetUi tweetUi = Twitter.getInstance().tweetUi;
-                        TweetComposer composer = Twitter.getInstance().tweetComposer;
 
                         TweetComposer.Builder builder = new TweetComposer.Builder(ShareMapActivity.this);
 
-                        String additionalText = new String();
+                        String additionalText = "";
                         float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
                         String formattedText = String.format("I just done %.3f km\n"
                                 + additionalText + " with application Motion View ", distance);
 
-                        builder.image(getImageUri(ShareMapActivity.this,bitmap));
+                        builder.image(utils.getImageUri(ShareMapActivity.this, bitmap));
                         builder.text(formattedText);
                         builder.show();
-
-
-                        TwitterSession session = TwitterCore.getInstance().getSessionManager()
-                                .getActiveSession();
                     }
                 });
             }
         });
-
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
     }
 
     @Override
@@ -205,50 +171,48 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         super.onPause();
         AppEventsLogger.deactivateApp(this);
     }
-}
 
-class FacebookLoginPostCallback implements FacebookCallback<LoginResult> {
-    private Utils utils;
-    private Context context;
-    private GoogleMap mMap;
-    private List<LatLng> pointsOnMap;
+    private class FacebookLoginPostCallback implements FacebookCallback<LoginResult> {
+        private final Utils utils;
+        private final Context context;
+        private final GoogleMap mMap;
+        private final List<LatLng> pointsOnMap;
 
-    public FacebookLoginPostCallback(Context ctx, GoogleMap map, List<LatLng> points) {
-        utils = new Utils();
-        mMap = map;
-        context = ctx;
-        pointsOnMap = points;
+        FacebookLoginPostCallback(Context ctx, GoogleMap map, List<LatLng> points) {
+            utils = new Utils();
+            mMap = map;
+            context = ctx;
+            pointsOnMap = points;
+        }
+
+        @Override
+        public void onSuccess(LoginResult loginResult) {
+            makeMapSnapShot(mMap);
+            Log.d("!!!!!!", "Login Success");
+        }
+
+        @Override
+        public void onCancel() {
+            Log.d("!!!!!!", "Login Canceled");
+        }
+
+        @Override
+        public void onError(FacebookException error) {
+            Log.d("!!!!!!", "Login Error - " + error.toString());
+        }
+
+        void makeMapSnapShot(GoogleMap mMap) {
+            mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
+                @Override
+                public void onSnapshotReady(Bitmap bitmap) {
+                    String additionalText = "";
+                    float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
+                    String formattedText = String.format("I just done %.3f km\n"
+                            + additionalText + " with application Motion View ", distance);
+
+                    utils.sharePhotoToFacebook(bitmap, context, formattedText);
+                }
+            });
+        }
     }
-
-    @Override
-    public void onSuccess(LoginResult loginResult) {
-        makeMapSnapShot(mMap);
-        Log.d("!!!!!!", "Login Success");
-    }
-
-    @Override
-    public void onCancel() {
-        Log.d("!!!!!!", "Login Canceled");
-    }
-
-    @Override
-    public void onError(FacebookException error) {
-        Log.d("!!!!!!", "Login Error - " + error.toString());
-    }
-
-    public void makeMapSnapShot(GoogleMap mMap) {
-        mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
-            @Override
-            public void onSnapshotReady(Bitmap bitmap) {
-
-                String additionalText = new String();
-                float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
-                String formattedText = String.format("I just done %.3f km\n"
-                        + additionalText + " with application Motion View ", distance);
-
-                utils.sharePhotoToFacebook(bitmap, context, formattedText.toString());
-            }
-        });
-    }
-
 }

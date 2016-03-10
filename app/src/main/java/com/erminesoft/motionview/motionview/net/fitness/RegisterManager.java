@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 class RegisterManager {
     private GoogleApiClient mClient;
 
-    private OfflineStorageManager mOfflineStorageManager;
+    private final OfflineStorageManager mOfflineStorageManager;
     private OnDataPointListener mSensorResultListener;
 
     RegisterManager(OfflineStorageManager manager) {

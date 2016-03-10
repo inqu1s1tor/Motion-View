@@ -14,22 +14,29 @@ public class Commander {
 
     private final ExecutorService mExecutor;
     private final CommandFactory commandFactory;
-    private Map<CommandType, Command> mCommandMap;
+    private final Map<ExecutorType, EnumMap<CommandType, Command>> mExexutorsMap;
 
     public Commander(GoogleFitnessFacade googleFitnessFacade, GooglePlusFacade googlePlusFacade) {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
-        mCommandMap = new EnumMap<>(CommandType.class);
+        mExexutorsMap = new EnumMap<>(ExecutorType.class);
 
         commandFactory = new CommandFactory(googleFitnessFacade, googlePlusFacade);
     }
 
-    public void execute(final Bundle bundle) {
-        CommandType type = (CommandType) bundle.getSerializable(Command.TRANSPORT_KEY);
-        Command command = mCommandMap.get(type);
+    public void execute(final Bundle bundle, ExecutorType executorType) {
+        EnumMap<CommandType, Command> commandMap = mExexutorsMap.get(executorType);
+
+        if (commandMap == null) {
+            commandMap = new EnumMap<>(CommandType.class);
+            mExexutorsMap.put(executorType, commandMap);
+        }
+
+        CommandType commandType = (CommandType) bundle.getSerializable(Command.TRANSPORT_KEY);
+        Command command = commandMap.get(commandType);
 
         if (command == null) {
-            command = commandFactory.getCommand(type);
-            mCommandMap.put(type, command);
+            command = commandFactory.getCommand(commandType);
+            commandMap.put(commandType, command);
         }
 
         if (command.isRunning()) {
@@ -45,15 +52,21 @@ public class Commander {
         });
     }
 
-    public void denyAll() {
-        for (Command command : mCommandMap.values()) {
+    public void denyAll(ExecutorType type) {
+        EnumMap<CommandType, Command> commandMap = mExexutorsMap.get(type);
+
+        if (commandMap == null) {
+            return;
+        }
+
+        for (Command command : commandMap.values()) {
             command.deny();
         }
     }
 
     private static final class CommandFactory {
-        private GoogleFitnessFacade mGoogleFitnessFacade;
-        private GooglePlusFacade mGooglePlusFacade;
+        private final GoogleFitnessFacade mGoogleFitnessFacade;
+        private final GooglePlusFacade mGooglePlusFacade;
 
         CommandFactory(GoogleFitnessFacade googleFitnessFacade, GooglePlusFacade googlePlusFacade) {
             mGoogleFitnessFacade = googleFitnessFacade;

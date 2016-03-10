@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
+import com.erminesoft.motionview.motionview.core.command.ExecutorType;
 import com.erminesoft.motionview.motionview.core.command.GenerateHistoryChartDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
@@ -170,7 +171,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         Bundle bundle =
                 GenerateHistoryChartDataCommand.generateBundle(currentMonth, year);
 
-        mCommander.execute(bundle);
+        mCommander.execute(bundle, ExecutorType.MAIN_FRAGMENT_ACTIVITY);
     }
 
     private int getYearBySpinnerPosition(int position) {

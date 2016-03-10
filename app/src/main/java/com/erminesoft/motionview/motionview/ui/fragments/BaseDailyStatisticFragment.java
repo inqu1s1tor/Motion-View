@@ -13,9 +13,11 @@ import android.widget.TextView;
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
 import com.erminesoft.motionview.motionview.core.command.CommandType;
+import com.erminesoft.motionview.motionview.core.command.ExecutorType;
 import com.erminesoft.motionview.motionview.core.command.GenerateCombinedChartDataCommand;
 import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
+import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.animation.Easing;
@@ -33,9 +35,8 @@ import java.util.List;
 
 import static com.github.mikephil.charting.charts.CombinedChart.DrawOrder;
 
+@SuppressWarnings("WeakerAccess")
 abstract class BaseDailyStatisticFragment extends GenericFragment implements Receiver {
-    private static final int DAILY_GOAL = 10000;
-
     private TextView mStepsTextView;
     private TextView mCaloriesTextView;
     private TextView mTimeTextView;
@@ -62,7 +63,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         mDistanceTextView = (TextView) view.findViewById(R.id.distance_text_view);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.daily_progress_bar);
-        mProgressBar.setMax(DAILY_GOAL);
+        mProgressBar.setMax(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
 
         mCombinedChart = (CombinedChart) view.findViewById(R.id.fragment_today_hours_chart);
         mActivitiesChart = (PieChart) view.findViewById(R.id.fragment_today_activities_chart);
@@ -73,7 +74,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         super.onStart();
 
         Bundle bundle = ProcessDayDataCommand.generateBundle(mTimestamp);
-        mCommander.execute(bundle);
+        mCommander.execute(bundle, ExecutorType.MAIN_FRAGMENT_ACTIVITY);
 
         DataBuffer.getInstance().register(CommandType.PROCESS_DAY_DATA, this);
         DataBuffer.getInstance().register(CommandType.GENERATE_COMBINED_CHART_DATA, this);
@@ -168,7 +169,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         Bundle bundle = GenerateCombinedChartDataCommand
                 .generateBundle(mTimestamp);
 
-        mCommander.execute(bundle);
+        mCommander.execute(bundle, ExecutorType.MAIN_FRAGMENT_ACTIVITY);
     }
 
     @Override

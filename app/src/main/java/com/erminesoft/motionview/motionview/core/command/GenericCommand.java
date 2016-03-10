@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 
+@SuppressWarnings("WeakerAccess")
 class GenericCommand implements Command {
     protected final String TAG = this.getClass().getSimpleName();
 

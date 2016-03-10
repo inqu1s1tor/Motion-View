@@ -32,35 +32,24 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCallback, GpsStatus.Listener {
+    private static final int UPDATE_INTERVAL = 10000;
+    private static final int FATEST_INTERVAL = 5000;
+    private static final int DISPLACEMENT = 10;
 
-    private GoogleMap mMap;
-    private PolylineOptions polyLine;
-    private static int UPDATE_INTERVAL = 10000;
-    private static int FATEST_INTERVAL = 5000;
-    private static int DISPLACEMENT = 10;
     private boolean routerStarted = false;
 
-    private View view;
-
-    private List<LatLng> mPoints = new ArrayList<>();
     private ImageButton mStartWalkRouter;
     private Button shareButton;
-    private Button share;
     private ImageView gpsStatus;
-    private DialogHelper dialogCreator;
     private LocationManager locationManager;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_map, container, false);
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
         mStartWalkRouter = (ImageButton) view.findViewById(R.id.activity_maps_steps_button);
         shareButton = (Button) view.findViewById(R.id.map_share_dialog);
         gpsStatus = (ImageView) view.findViewById(R.id.gps_status);
@@ -76,6 +65,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        DialogHelper dialogCreator;
         if(!ConnectivityChecker.isNetworkAvailable(getContext())){
             dialogCreator = new DialogHelper(getContext(),"Wi-Fi/Internet is not active. \n Wi-Fi/Internet connection gives you faster location");
             dialogCreator.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -104,12 +94,9 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mGoogleFitnessFacade.setGoogleMap(mMap);
+        mGoogleFitnessFacade.setGoogleMap(googleMap);
         mGoogleFitnessFacade.createLocationRequest(UPDATE_INTERVAL, FATEST_INTERVAL, DISPLACEMENT);
         mGoogleFitnessFacade.setMarkerAtFirstShow();
-
-
 
         mStartWalkRouter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,11 +131,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     shareButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Bundle dataPoints = new Bundle();
-                            dataPoints.putParcelableArrayList("mapPoints", (ArrayList<LatLng>) mGoogleFitnessFacade.getTrackPoints());
-                            Intent shareIntent = new Intent(getContext(), ShareMapActivity.class);
-                            shareIntent.putExtra("mapPoints",dataPoints);
-                            startActivityForResult(shareIntent,100);
+                            ShareMapActivity.start(getActivity(), mGoogleFitnessFacade.getTrackPoints());
                         }
                     });
                 }
@@ -177,22 +160,16 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     @Override
     public void onGpsStatusChanged(int event) {
         if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
-            int satellites = 0;
             int satellitesInFix = 0;
-            int timetofix = locationManager.getGpsStatus(null).getTimeToFirstFix();
-            //showShortToast("Time to first fix = " + timetofix);
             for (GpsSatellite sat : locationManager.getGpsStatus(null).getSatellites()) {
                 if (sat.usedInFix()) {
                     satellitesInFix++;
                 }
-                satellites++;
             }
             if (satellitesInFix > 0) {
                 gpsStatus.setImageResource(R.drawable.gps_on);
-                //showShortToast(satellites + " Used In Last Fix (" + satellitesInFix + ")");
             } else {
                 gpsStatus.setImageResource(R.drawable.gps_off);
-                //showShortToast(satellites + "(NO SATTEL.) Used In Last Fix (" + satellitesInFix + ")");
             }
         }
     }

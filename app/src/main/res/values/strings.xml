@@ -3,9 +3,6 @@
     <string name="today_date_text">Today</string>
     <string name="total_steps_text_format">Total steps: %d</string>
     <string name="settings">Settings</string>
-    <string name="history">History</string>
-    <string name="history_activity_title">History</string>
-    <string name="chart_steps">Steps</string>
 
     <string-array name="month_array">
         <item>January</item>
@@ -22,20 +19,13 @@
         <item>December</item>
     </string-array>
 
-    <string name="activity_map_text_run">Runned Steps</string>
     <string name="activity_map_text_steps">Track my walk</string>
-    <string name="activity_map_text_biking">Biking</string>
-    <string name="map">Map</string>
-    <string name="daily_statistic_activity_name">Daily Statistic</string>
-    <string name="delete">DELETE</string>
     <string name="empty_string" />
 
     <string name="total_calories_format">Total calories: %d</string>
     <string name="total_distance_format">Distance: %d</string>
-    <string name="avg_speed_format">Average speed: %f</string>
     <string name="total_activity_time_format">%1$dh %2$dm</string>
 
-    <string name="settings_user_weight_height_header">Your Weight And Height</string>
     <string name="settings_user_weight_hint">Type Your Weight:</string>
     <string name="settings_user_height_hint">Type Your Height:</string>
 
@@ -43,14 +33,7 @@
     <string name="settings_delete_history_button_text">Clean</string>
     <string name="bluetooth_list_header_text">Bluetooth devices:</string>
     <string name="bt_scan_button">Start Scan</string>
-    <string name="bt_available_devices">Scan Results</string>
 
-    <string name="weight_unit">Kg</string>
-    <string name="height_unit">Sm</string>
-
-    <string name="user_male_radiobutton">Male</string>
-    <string name="user_female_radiobutton">Female</string>
-    <string name="user_male_female_header">Choose your gender</string>
     <string name="no_data_for_this_day">No data for this day.</string>
 
     <string-array name="tabs_name">
@@ -64,4 +47,10 @@
     <string name="facebook_app_id">166522683731423</string>
     <string name="share_this_map">Share now! </string>>
     <string name="share_to_twitter_button" > Share to Twitter</string>
+    <string name="settings_save_button_text">Save</string>
+    <string name="saved_data_toast">Data saved!</string>
+    <string name="share_to_google_plus">Share to G+</string>
+    <string name="share_map">Share the map</string>
+    <string name="settings_daily_goal_string">Type your daily goal:</string>
+    <string name="settings_empty_error">This field can\'t be empty!</string>
 </resources>

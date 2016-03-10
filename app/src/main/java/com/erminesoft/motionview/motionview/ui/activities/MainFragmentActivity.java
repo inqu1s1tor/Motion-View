@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.ActivityBridge;
+import com.erminesoft.motionview.motionview.core.command.ExecutorType;
 import com.erminesoft.motionview.motionview.ui.FragmentLauncher;
 
 public class MainFragmentActivity extends GenericActivity implements ActivityBridge {
@@ -105,7 +106,7 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
     @Override
     protected void onStop() {
         super.onStop();
-        getMVApplication().getCommander().denyAll();
+        getMVApplication().getCommander().denyAll(ExecutorType.MAIN_FRAGMENT_ACTIVITY);
     }
 
     private final class OnTabSelectedListenerImpl implements TabLayout.OnTabSelectedListener {

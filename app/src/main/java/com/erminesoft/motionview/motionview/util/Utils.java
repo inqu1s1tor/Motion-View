@@ -3,7 +3,6 @@ package com.erminesoft.motionview.motionview.util;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -71,8 +70,7 @@ public class Utils {
         shareBuild.setText(textContent);
         shareBuild.addStream(uri);
         shareBuild.setType(mime);
-        Intent newInt = shareBuild.getIntent();
-        return newInt;
+        return shareBuild.getIntent();
     }
 
     public float calculateDistanceBetweenPoints(List<LatLng> points){
@@ -87,17 +85,13 @@ public class Utils {
         Log.d("!!!!!!", "" + startLocation.getLatitude() + " " + startLocation.getLongitude());
         Log.d("!!!!!!", "" + endPosition.getLatitude() + " " + endPosition.getLongitude());
 
-        float distance = startLocation.distanceTo(endPosition)/1000;
-        return distance;
+        return startLocation.distanceTo(endPosition)/1000;
     }
 
-    public boolean isPackageInstalled(String packagename, Context context) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 }

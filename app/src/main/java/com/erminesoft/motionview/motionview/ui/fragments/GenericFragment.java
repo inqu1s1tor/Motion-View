@@ -9,6 +9,7 @@ import com.erminesoft.motionview.motionview.core.command.Commander;
 import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class GenericFragment extends Fragment {
 
     public static final String HISTORY = "history";
@@ -32,16 +33,7 @@ public abstract class GenericFragment extends Fragment {
         mCommander = mActivity.getMVApplication().getCommander();
     }
 
-    public void showShortToast(int resId) {
-        showShortToast(getString(resId));
-    }
-
     public void showShortToast(String content) {
         Toast.makeText(getContext(), content, Toast.LENGTH_SHORT).show();
     }
-
-    public void showLongToast(String content) {
-        Toast.makeText(getContext(), content, Toast.LENGTH_LONG).show();
-    }
-
 }

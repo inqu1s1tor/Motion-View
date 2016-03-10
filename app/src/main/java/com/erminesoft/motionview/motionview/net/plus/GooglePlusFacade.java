@@ -7,8 +7,8 @@ import com.google.android.gms.plus.model.people.Person;
 
 public class GooglePlusFacade {
     private GoogleApiClient mClient;
-    private BuildManager mBuildManager;
-    private AuthManager mAuthManager;
+    private final BuildManager mBuildManager;
+    private final AuthManager mAuthManager;
 
     public GooglePlusFacade() {
         mBuildManager = new BuildManager();

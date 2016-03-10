@@ -1,7 +1,6 @@
 package com.erminesoft.motionview.motionview.util;
 
 import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -13,11 +12,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 public class ConnectivityChecker {
-
-    public static boolean bluetoothCheckConnection(BluetoothAdapter mBluetoothAdapter) {
-        return BluetoothAdapter.STATE_ON == mBluetoothAdapter.getState();
-    }
-
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {
@@ -25,15 +19,7 @@ public class ConnectivityChecker {
         }
 
         NetworkInfo info = connectivity.getActiveNetworkInfo();
-        if (info == null) {
-            return false;
-        }
-
-        if (info.getState() == NetworkInfo.State.CONNECTED) {
-            return true;
-        }
-
-        return false;
+        return info != null && info.getState() == NetworkInfo.State.CONNECTED;
     }
 
     public static boolean isPlayServiceArePresents(Context context) {
@@ -43,10 +29,7 @@ public class ConnectivityChecker {
 
     public static boolean isLocationActive(final Context context) {
         final LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
 }

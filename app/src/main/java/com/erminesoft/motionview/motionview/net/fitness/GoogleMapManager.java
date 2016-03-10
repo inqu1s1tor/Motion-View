@@ -30,11 +30,10 @@ class GoogleMapManager {
     private static final String TAG = RegisterManager.class.getSimpleName();
 
     private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
     private LocationRequest mLocationRequest;
     private LocationListener listener;
     private GoogleMap mMap;
-    private List<LatLng> mPoints = new ArrayList<>();
+    private final List<LatLng> mPoints = new ArrayList<>();
 
     public void setClient(GoogleApiClient client) {
         mGoogleApiClient = client;
@@ -81,20 +80,20 @@ class GoogleMapManager {
 
             return null;
         }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            Log.d("!!!!! - all good - ", "" + mLastLocation);
-            return mLastLocation;
+        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (lastLocation != null) {
+            Log.d("!!!!! - all good - ", "" + lastLocation);
+            return lastLocation;
         } else {
-            mLastLocation = new Location(LocationManager.GPS_PROVIDER);
-            Log.d("!!!!! - error - ", "" + mLastLocation);
-            mLastLocation.setLatitude(2.0);
-            mLastLocation.setLongitude(1.0);
-            return mLastLocation;
+            lastLocation = new Location(LocationManager.GPS_PROVIDER);
+            Log.d("!!!!! - error - ", "" + lastLocation);
+            lastLocation.setLatitude(2.0);
+            lastLocation.setLongitude(1.0);
+            return lastLocation;
         }
     }
 
-    Location getPreLastLocation() {
+    private Location getPreLastLocation() {
         Location loc = new Location(LocationManager.GPS_PROVIDER);
         loc.reset();
         LatLng latLng;

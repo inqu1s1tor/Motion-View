@@ -41,7 +41,7 @@
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:configChanges="keyboard|keyboardHidden"/>
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity android:name=".ui.activities.ShareMapActivity"/>
 

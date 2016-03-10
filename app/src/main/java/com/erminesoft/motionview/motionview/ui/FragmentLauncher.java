@@ -23,7 +23,7 @@ public class FragmentLauncher {
         launch(fragment, tag, 0, 0);
     }
 
-    private void launch(GenericFragment fragment, String tag, int animationIn, int AnimationOut) {
+    private void launch(GenericFragment fragment, String tag, int animationIn, int animationOut) {
         FragmentTransaction transaction = manager.beginTransaction();
 
         Fragment f = manager.findFragmentByTag(tag);
@@ -85,7 +85,7 @@ public class FragmentLauncher {
         launchWithoutAnimation(fragment, GenericFragment.HISTORY);
     }
 
-    public void launchMapFragment() {
+    private void launchMapFragment() {
         GenericFragment fragment = new GoogleMapsFragment();
         launchWithoutAnimation(fragment, GenericFragment.MAP);
     }
