@@ -37,6 +37,9 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     private TextInputLayout mUserHeightTextIl;
     private EditText mUserHeightText;
 
+    private TextInputLayout mUserDailyGoalTextIl;
+    private EditText mUserDailyGoalText;
+
     private GooglePlusFacade mGooglePlusFacade;
 
     public static void start(Activity activity) {
@@ -57,6 +60,12 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
         findViewById(R.id.settings_save_weight_height_button).setOnClickListener(new OnSaveButtonClick());
 
+        mUserDailyGoalText = (EditText) findViewById(R.id.settings_daily_goal);
+        mUserDailyGoalText.setText(
+                String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL)));
+
+        mUserDailyGoalTextIl = (TextInputLayout) findViewById(R.id.settings_daily_goal_il);
+
         setTitle(getString(R.string.settings));
         initSettings();
         setHomeAsUpEnabled(true);
@@ -74,10 +83,11 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         String weightStr = String.valueOf(mUserWeightText.getText());
 
         if (TextUtils.isEmpty(weightStr)) {
-            mUserWeightTextIl.setError("Error");
+            mUserWeightTextIl.setError(getString(R.string.settings_empty_error));
         } else {
-            int weight = Integer.parseInt(weightStr);
             mUserWeightTextIl.setErrorEnabled(false);
+
+            int weight = Integer.parseInt(weightStr);
             mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
             mGoogleFitnessFacade.saveUserHeight(weight);
         }
@@ -85,11 +95,24 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         String heightStr = String.valueOf(mUserHeightText.getText());
 
         if (TextUtils.isEmpty(heightStr)) {
-            mUserHeightTextIl.setError("Error");
+            mUserHeightTextIl.setError(getString(R.string.settings_empty_error));
         } else {
+            mUserHeightTextIl.setErrorEnabled(false);
+
             int height = Integer.parseInt(heightStr);
             mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(heightStr));
             mGoogleFitnessFacade.saveUserWeight((float) height);
+        }
+
+        String dailyGoalStr = String.valueOf(mUserDailyGoalText.getText());
+
+        if (TextUtils.isEmpty(dailyGoalStr)) {
+            mUserDailyGoalTextIl.setError(getString(R.string.settings_empty_error));
+        } else {
+            mUserDailyGoalTextIl.setErrorEnabled(false);
+
+            int dailyGoal = Integer.parseInt(dailyGoalStr);
+            mSharedDataManager.writeInt(SharedDataManager.USER_DAILY_GOAL,dailyGoal);
         }
     }
 

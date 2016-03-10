@@ -51,4 +51,6 @@
     <string name="saved_data_toast">Data saved!</string>
     <string name="share_to_google_plus">Share to G+</string>
     <string name="share_map">Share the map</string>
+    <string name="settings_daily_goal_string">Type your daily goal:</string>
+    <string name="settings_empty_error">This field can\'t be empty!</string>
 </resources>
