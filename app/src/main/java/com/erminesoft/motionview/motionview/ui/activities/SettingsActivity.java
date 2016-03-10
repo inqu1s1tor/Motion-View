@@ -1,6 +1,5 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -11,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -34,6 +34,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     private TextInputLayout mUserWeightTextIl;
     private EditText mUserWeightText;
 
+    private TextInputLayout mUserHeightTextIl;
     private EditText mUserHeightText;
 
     private GooglePlusFacade mGooglePlusFacade;
@@ -47,12 +48,14 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         mSharedDataManager = getMVApplication().getSharedDataManager();
         mGooglePlusFacade = getMVApplication().getGooglePlusFacade();
         mGooglePlusFacade.buildGoogleApiClient(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        findViewById(R.id.settings_save_weight_height_button).setOnClickListener(new OnSaveButtonClick());
 
         setTitle(getString(R.string.settings));
         initSettings();
@@ -68,21 +71,26 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     }
 
     private void saveData() {
+        String weightStr = String.valueOf(mUserWeightText.getText());
+
+        if (TextUtils.isEmpty(weightStr)) {
+            mUserWeightTextIl.setError("Error");
+        } else {
+            int weight = Integer.parseInt(weightStr);
+            mUserWeightTextIl.setErrorEnabled(false);
+            mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
+            mGoogleFitnessFacade.saveUserHeight(weight);
+        }
+
         String heightStr = String.valueOf(mUserHeightText.getText());
-        int height = Integer.parseInt(heightStr);
 
         if (TextUtils.isEmpty(heightStr)) {
-            mUserWeightTextIl.setError("Error");
-            return;
+            mUserHeightTextIl.setError("Error");
         } else {
+            int height = Integer.parseInt(heightStr);
             mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(heightStr));
             mGoogleFitnessFacade.saveUserWeight((float) height);
         }
-
-        int weight = Integer.parseInt(String.valueOf(mUserWeightText.getText()));
-
-        mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
-        mGoogleFitnessFacade.saveUserHeight(weight);
     }
 
     @Override
@@ -116,6 +124,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     private void initHeight() {
         mUserHeightText = (EditText) findViewById(R.id.settings_user_height);
         mUserHeightText.setText(String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT)));
+        mUserHeightTextIl = (TextInputLayout) findViewById(R.id.settings_user_height_il);
         mUserHeightText.clearFocus();
     }
 
@@ -135,7 +144,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
             Log.e(TAG, "WRONG DATA");
             return;
         }
-        Log.i(TAG, "notified");
+
         Person person = (Person) data;
 
         String coverPath;
@@ -148,21 +157,21 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         } else {
             coverPath = person.getCover().getCoverPhoto().getUrl();
         }
-
-        Picasso.with(this).load(person.getImage().getUrl()).into((ImageView) findViewById(R.id.settings_avatar));
         ImageView coverView = (ImageView) findViewById(R.id.settings_profile_cover_image);
+
         Picasso.with(this)
                 .load(coverPath)
                 .centerCrop()
                 .resize(coverView.getWidth(), coverView.getHeight())
                 .into(coverView);
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+        String avatarURL = person.getImage().getUrl();
+        StringBuilder builder = new StringBuilder(avatarURL);
+        builder.replace(avatarURL.length() - 2, avatarURL.length() - 1, "100");
 
-        saveData();
+        Picasso.with(this)
+                .load(builder.toString())
+                .into((ImageView) findViewById(R.id.settings_avatar));
     }
 
     @Override
@@ -171,5 +180,21 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
         DataBuffer.getInstance().unregister(this);
         getMVApplication().getCommander().denyAll(ExecutorType.SETTINGS_ACTIVITY);
+    }
+
+    private class OnSaveButtonClick implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            saveData();
+
+            InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+            View view = getCurrentFocus();
+            if (view != null) {
+                manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
+            showShortToast(getString(R.string.saved_data_toast));
+        }
     }
 }

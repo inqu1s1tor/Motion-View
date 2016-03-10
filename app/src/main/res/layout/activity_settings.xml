@@ -68,11 +68,13 @@
                     android:id="@+id/settings_user_weight"
                     android:layout_marginBottom="@dimen/edit_text_user_info_margin_bottom"
                     android:inputType="numberDecimal"
+                    android:imeOptions="actionNext"
                     android:hint="@string/settings_user_weight_hint"
                     android:textSize="@dimen/edit_text_user_info_text_size"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/settings_user_height_il"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent">
 
@@ -82,9 +84,18 @@
                     android:id="@+id/settings_user_height"
                     android:layout_marginBottom="@dimen/edit_text_user_info_margin_bottom"
                     android:inputType="numberDecimal"
+                    android:imeOptions="actionDone"
                     android:hint="@string/settings_user_height_hint"
                     android:textSize="@dimen/edit_text_user_info_text_size"/>
             </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/settings_save_weight_height_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_save_button_text"
+                android:layout_gravity="center_horizontal|end"
+                android:minHeight="@dimen/settings_save_button_min_height"/>
 
             <LinearLayout
                 android:orientation="horizontal"
