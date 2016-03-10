@@ -144,11 +144,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     shareButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Bundle dataPoints = new Bundle();
-                            dataPoints.putParcelableArrayList("mapPoints", (ArrayList<LatLng>) mGoogleFitnessFacade.getTrackPoints());
-                            Intent shareIntent = new Intent(getContext(), ShareMapActivity.class);
-                            shareIntent.putExtra("mapPoints",dataPoints);
-                            startActivityForResult(shareIntent,100);
+                            ShareMapActivity.start(getActivity(), mGoogleFitnessFacade.getTrackPoints());
                         }
                     });
                 }
