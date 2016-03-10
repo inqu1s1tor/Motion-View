@@ -10,7 +10,7 @@ import com.google.android.gms.plus.model.people.Person;
 public class GetPersonCommand extends GenericCommand {
     private static final String DATA_KEY = "intent";
 
-    private GooglePlusFacade mGooglePlusFacade;
+    private final GooglePlusFacade mGooglePlusFacade;
 
     public static Bundle generateBundle(Intent data) {
         Bundle bundle = new Bundle();
@@ -20,7 +20,7 @@ public class GetPersonCommand extends GenericCommand {
         return bundle;
     }
 
-    public GetPersonCommand(GooglePlusFacade googlePlusFacade) {
+    GetPersonCommand(GooglePlusFacade googlePlusFacade) {
         mGooglePlusFacade = googlePlusFacade;
     }
 

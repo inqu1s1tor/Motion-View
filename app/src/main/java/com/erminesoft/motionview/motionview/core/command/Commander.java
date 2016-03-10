@@ -14,7 +14,7 @@ public class Commander {
 
     private final ExecutorService mExecutor;
     private final CommandFactory commandFactory;
-    private Map<ExecutorType, EnumMap<CommandType, Command>> mExexutorsMap;
+    private final Map<ExecutorType, EnumMap<CommandType, Command>> mExexutorsMap;
 
     public Commander(GoogleFitnessFacade googleFitnessFacade, GooglePlusFacade googlePlusFacade) {
         mExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() - 1);
@@ -65,8 +65,8 @@ public class Commander {
     }
 
     private static final class CommandFactory {
-        private GoogleFitnessFacade mGoogleFitnessFacade;
-        private GooglePlusFacade mGooglePlusFacade;
+        private final GoogleFitnessFacade mGoogleFitnessFacade;
+        private final GooglePlusFacade mGooglePlusFacade;
 
         CommandFactory(GoogleFitnessFacade googleFitnessFacade, GooglePlusFacade googlePlusFacade) {
             mGoogleFitnessFacade = googleFitnessFacade;

@@ -6,9 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import com.erminesoft.motionview.motionview.core.callback.ResultCallback;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.request.BleScanCallback;
 import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,12 +17,12 @@ import java.util.List;
 public class GoogleFitnessFacade {
 
     private GoogleApiClient mClient;
-    private BuildManager mBuildManager;
-    private RegisterManager mRegisterManager;
-    private OfflineStorageManager mOfflineStorageManager;
-    private SubscribingManager mSubscribingManager;
-    private GoogleMapManager mMapManager;
-    private BluetoothManager mBluetoothManager;
+    private final BuildManager mBuildManager;
+    private final RegisterManager mRegisterManager;
+    private final OfflineStorageManager mOfflineStorageManager;
+    private final SubscribingManager mSubscribingManager;
+    private final GoogleMapManager mMapManager;
+    private final BluetoothManager mBluetoothManager;
 
     public GoogleFitnessFacade() {
         mBuildManager = new BuildManager();
@@ -149,20 +147,4 @@ public class GoogleFitnessFacade {
     }
 
     public void drawRouteByPointsOnMap(List<LatLng> points,GoogleMap googleMap){ mMapManager.drawRouteByPointsOnMap(points,googleMap);}
-
-    public void startBleScan() {
-        mBluetoothManager.startBleScan();
-    }
-
-    public void setRequest(int timeout) {
-        mBluetoothManager.setRequest(timeout);
-    }
-
-    public void setResultCallback(com.google.android.gms.common.api.ResultCallback<Status> callback) {
-        mBluetoothManager.setResultCallback(callback);
-    }
-
-    public void setBleScanCallback(BleScanCallback callback) {
-        mBluetoothManager.setBleScanCallback(callback);
-    }
 }

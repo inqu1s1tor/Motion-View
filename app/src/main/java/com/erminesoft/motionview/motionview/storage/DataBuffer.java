@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class DataBuffer {
     private static volatile DataBuffer mInstance;
-    private Map<CommandType, List<Receiver>> mReceiversMap;
-    private Handler mHandler;
+    private final Map<CommandType, List<Receiver>> mReceiversMap;
+    private final Handler mHandler;
 
     private DataBuffer(){
         mReceiversMap = new EnumMap<>(CommandType.class);

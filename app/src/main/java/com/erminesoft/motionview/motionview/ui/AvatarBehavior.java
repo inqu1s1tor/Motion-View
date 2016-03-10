@@ -6,8 +6,10 @@ import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.pkmmte.view.CircularImageView;
 
+@SuppressWarnings("unused")
 public class AvatarBehavior extends CoordinatorLayout.Behavior<CircularImageView> {
 
     private float mStartBottomPos;

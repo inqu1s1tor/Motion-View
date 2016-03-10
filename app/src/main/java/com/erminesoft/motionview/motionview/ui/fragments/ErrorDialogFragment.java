@@ -11,7 +11,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 public class ErrorDialogFragment extends android.support.v4.app.DialogFragment {
     public static final int REQUEST_RESOLVE_ERROR = 1001;
-    public static final String DIALOG_ERROR = "dialog_error";
+    private static final String DIALOG_ERROR = "dialog_error";
 
     public ErrorDialogFragment() {
     }

@@ -122,46 +122,6 @@
                     android:textSize="12sp"/>
 
             </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/bluetooth_list_header_text"
-                android:id="@+id/bluetooth_list_header_text"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:weightSum="1">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/bt_scan_button"
-                    android:id="@+id/bt_scan_button"
-                    android:layout_marginRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    style="?android:attr/buttonStyleSmall"
-                    android:textSize="12dp"/>
-
-                <ListView
-                    android:layout_width="wrap_content"
-                    android:layout_height="100dp"
-                    android:id="@+id/bt_available_devices"/>
-
-                <ProgressBar
-                    android:layout_width="58dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/bt_scan_progress"
-                    android:max="100"
-                    android:visibility="visible"/>
-
-            </LinearLayout>
-
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

@@ -34,6 +34,7 @@ import java.util.List;
 
 import static com.github.mikephil.charting.charts.CombinedChart.DrawOrder;
 
+@SuppressWarnings("WeakerAccess")
 abstract class BaseDailyStatisticFragment extends GenericFragment implements Receiver {
     private static final int DAILY_GOAL = 10000;
 

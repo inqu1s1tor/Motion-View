@@ -70,8 +70,7 @@ public class Utils {
         shareBuild.setText(textContent);
         shareBuild.addStream(uri);
         shareBuild.setType(mime);
-        Intent newInt = shareBuild.getIntent();
-        return newInt;
+        return shareBuild.getIntent();
     }
 
     public float calculateDistanceBetweenPoints(List<LatLng> points){
@@ -86,8 +85,7 @@ public class Utils {
         Log.d("!!!!!!", "" + startLocation.getLatitude() + " " + startLocation.getLongitude());
         Log.d("!!!!!!", "" + endPosition.getLatitude() + " " + endPosition.getLongitude());
 
-        float distance = startLocation.distanceTo(endPosition)/1000;
-        return distance;
+        return startLocation.distanceTo(endPosition)/1000;
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {

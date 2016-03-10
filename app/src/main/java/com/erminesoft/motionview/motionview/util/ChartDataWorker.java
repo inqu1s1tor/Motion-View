@@ -77,8 +77,8 @@ public class ChartDataWorker {
     }
 
     public static class Month implements Serializable {
-        private int mIndex;
-        private String mName;
+        private final int mIndex;
+        private final String mName;
 
         Month(int index, String name) {
             mIndex = index;

@@ -173,10 +173,10 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     }
 
     private class FacebookLoginPostCallback implements FacebookCallback<LoginResult> {
-        private Utils utils;
-        private Context context;
-        private GoogleMap mMap;
-        private List<LatLng> pointsOnMap;
+        private final Utils utils;
+        private final Context context;
+        private final GoogleMap mMap;
+        private final List<LatLng> pointsOnMap;
 
         FacebookLoginPostCallback(Context ctx, GoogleMap map, List<LatLng> points) {
             utils = new Utils();

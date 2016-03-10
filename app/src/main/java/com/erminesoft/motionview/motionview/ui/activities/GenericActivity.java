@@ -13,6 +13,7 @@ import com.erminesoft.motionview.motionview.core.MVApplication;
 import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 import com.erminesoft.motionview.motionview.ui.fragments.ErrorDialogFragment;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class GenericActivity extends AppCompatActivity {
     protected GoogleFitnessFacade mGoogleFitnessFacade;
 
