@@ -37,6 +37,7 @@ import io.fabric.sdk.android.Fabric;
 public class ShareMapActivity extends GenericActivity implements OnMapReadyCallback {
     private static final int SHARE_TYPE_GPLUS = 160;
     private static final int SHARE_TYPE_FACEBOOK = 64206;
+    private static final int SHARE_TYPE_TWITTER = 170;
 
     private static final String DATA_POINTS_EXTRA = "datapoints";
 
@@ -52,7 +53,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     public static void start(Activity activity, List<LatLng> dataPoints) {
         Intent intent = new Intent(activity, ShareMapActivity.class);
         intent.putParcelableArrayListExtra(DATA_POINTS_EXTRA, (ArrayList<LatLng>) dataPoints);
-
         activity.startActivityForResult(intent, 100);
     }
 
@@ -91,6 +91,9 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                     showShortToast("Successfully Shared to G+");
                     finish();
                     break;
+                case SHARE_TYPE_TWITTER:
+                    showShortToast("Successfully Shared to Twitter");
+                    finish();
             }
         }
     }
@@ -119,6 +122,10 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToGooglePlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!utils.isPackageInstalled("com.google.android.apps.plus",ShareMapActivity.this)) {
+                    showShortToast("Google Plus Application must be installed");
+                    return;
+                }
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
@@ -126,6 +133,7 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                         float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
                         String formattedText = String.format("I just done %.3f km\n"
                                 + additionalText + " with application Motion View ", distance);
+
                         Intent shareIntent = utils.shareToGooglePlus(bitmap, ShareMapActivity.this, formattedText);
                         startActivityForResult(shareIntent, SHARE_TYPE_GPLUS);
                     }
@@ -136,8 +144,10 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToTwitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showLongToast("share to twitter");
-
+                if(!utils.isPackageInstalled("com.twitter.android",ShareMapActivity.this)) {
+                    showShortToast("Twitter Application must be installed");
+                    return;
+                }
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
@@ -153,7 +163,9 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
 
                         builder.image(utils.getImageUri(ShareMapActivity.this, bitmap));
                         builder.text(formattedText);
-                        builder.show();
+                        //builder.show();
+                        startActivityForResult(builder.createIntent(),SHARE_TYPE_TWITTER);
+
                     }
                 });
             }

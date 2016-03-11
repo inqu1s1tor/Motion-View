@@ -113,7 +113,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     mGoogleFitnessFacade.setOnLocationChangeListener(new LocationListener() {
                         @Override
                         public void onLocationChanged(Location location) {
-                            if (location.getAccuracy() < 10) {
+                            if (location.getAccuracy() < 100) {
                                 mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
                                 mGoogleFitnessFacade.startRouteOnMap();
                             }
