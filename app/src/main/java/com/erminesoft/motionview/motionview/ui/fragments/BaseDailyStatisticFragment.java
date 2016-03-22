@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
@@ -18,6 +17,7 @@ import com.erminesoft.motionview.motionview.core.command.GenerateCombinedChartDa
 import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
+import com.erminesoft.motionview.motionview.ui.view.CircularProgress;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.animation.Easing;
@@ -41,10 +41,10 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
     private TextView mCaloriesTextView;
     private TextView mTimeTextView;
     private TextView mDistanceTextView;
-    private ProgressBar mProgressBar;
 
     private CombinedChart mCombinedChart;
     private PieChart mActivitiesChart;
+    private CircularProgress mProgress;
 
     protected long mTimestamp;
 
@@ -62,8 +62,8 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         mTimeTextView = (TextView) view.findViewById(R.id.total_time_text_view);
         mDistanceTextView = (TextView) view.findViewById(R.id.distance_text_view);
 
-        mProgressBar = (ProgressBar) view.findViewById(R.id.daily_progress_bar);
-        mProgressBar.setMax(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
+        mProgress = (CircularProgress) view.findViewById(R.id.circular_progress);
+        mProgress.setMaxProgress(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
 
         mCombinedChart = (CombinedChart) view.findViewById(R.id.fragment_today_hours_chart);
         mActivitiesChart = (PieChart) view.findViewById(R.id.fragment_today_activities_chart);
@@ -106,6 +106,8 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                 onStepsChanged(dataPoints);
             }
         }
+
+        mProgress.invalidate();
     }
 
     private void initCharts() {
@@ -215,15 +217,39 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
         setDataForActivitiesChart(dataPoints);
 
+        mProgress.clear();
+
         for (DataPoint dataPoint : dataPoints) {
             int activityType = dataPoint.getValue(Field.FIELD_ACTIVITY).asInt();
+            int color;
 
-            if (activityType != 3) {
-                totalActivityTime += dataPoint.getValue(Field.FIELD_DURATION).asInt();
+
+            switch (activityType) {
+                case 7:
+                    color = Color.GREEN;
+
+                    int time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
+                    totalActivityTime += time;
+
+                    addProgressPart(time, color);
+                    break;
+                case 8:
+                    color = Color.YELLOW;
+
+                    time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
+                    totalActivityTime += time;
+
+                    addProgressPart(time, color);
+                    break;
             }
+
         }
 
         mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
+    }
+
+    protected void addProgressPart(int time, int color) {
+        mProgress.addPart(new CircularProgress.Part(time, color));
     }
 
     private void onDistanceChanged(List<DataPoint> dataPoints) {
@@ -259,7 +285,8 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
             steps = datapoint.getValue(Field.FIELD_STEPS).asInt();
         }
 
-        mProgressBar.setProgress(steps);
+        mProgress.setCurrentProgress(steps);
+
         mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
     }
 

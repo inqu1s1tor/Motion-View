@@ -8,13 +8,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
 
-        <ProgressBar
-            android:id="@+id/daily_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/progress_bar_height"/>
+        <com.erminesoft.motionview.motionview.ui.view.CircularProgress
+            android:id="@+id/circular_progress"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="275dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/steps_text_view"
@@ -66,4 +68,5 @@
         </LinearLayout>
 
     </LinearLayout>
+
 </ScrollView>
