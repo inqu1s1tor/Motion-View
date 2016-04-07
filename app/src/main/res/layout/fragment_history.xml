@@ -7,14 +7,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="30dp">
 
         <Spinner
             android:id="@+id/fragment_history_month_spinner"
             android:layout_width="match_parent"
             android:layout_height="@dimen/spinner_height"
             android:layout_margin="@dimen/spinner_margin"
-            android:layout_weight="1"/>
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1" />
 
         <Spinner
             android:id="@+id/fragment_history_year_spinner"

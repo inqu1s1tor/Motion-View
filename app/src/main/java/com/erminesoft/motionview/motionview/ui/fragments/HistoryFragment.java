@@ -49,6 +49,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     private Spinner mYearSpinner;
     private ProgressBar mProgressBar;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

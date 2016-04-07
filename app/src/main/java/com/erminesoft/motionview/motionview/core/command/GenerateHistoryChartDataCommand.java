@@ -1,8 +1,10 @@
 package com.erminesoft.motionview.motionview.core.command;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.github.mikephil.charting.data.BarData;
@@ -82,6 +84,7 @@ public class GenerateHistoryChartDataCommand extends GenericCommand {
 
         BarDataSet dataSet = new BarDataSet(
                 entries, "");
+        dataSet.setColor(Color.YELLOW);
         return new BarData(xVals, dataSet);
     }
 }
