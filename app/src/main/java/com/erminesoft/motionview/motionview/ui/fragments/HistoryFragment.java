@@ -1,6 +1,7 @@
 package com.erminesoft.motionview.motionview.ui.fragments;
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
@@ -22,6 +24,7 @@ import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -112,34 +115,35 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     }
 
     private void initAdapters() {
-        mYearAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item);
-        mMonthAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item);
+        mYearAdapter = new ArrayAdapter<>(getContext(), R.layout.year_spinner_item, R.id.spinner_year_content_id);
+        mMonthAdapter = new ArrayAdapter<>(getContext(), R.layout.month_spinner_item, R.id.spinner_month_content_id);
 
         for (Integer year : mAvailableHistory.keySet()) {
             mYearAdapter.add(year);
         }
 
-        mYearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mMonthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mYearAdapter.setDropDownViewResource(R.layout.year_spinner_item);
+        mMonthAdapter.setDropDownViewResource(R.layout.month_spinner_item);
     }
 
     private void initChart() {
-
-        mBarChart.setBorderColor(R.color.colorPrimary);
-
 
         mBarChart.setDescription(EMPTY_STRING);
         mBarChart.getLegend().setEnabled(false);
 
         mBarChart.setDrawGridBackground(false);
         mBarChart.getXAxis().setDrawGridLines(false);
+        mBarChart.getXAxis().setTextColor(Color.GRAY);
 
+        mBarChart.getAxis(YAxis.AxisDependency.LEFT).setTextColor(Color.GRAY);
+        mBarChart.getAxis(YAxis.AxisDependency.RIGHT).setTextColor(Color.GRAY);
         mBarChart.setDrawMarkerViews(true);
         mBarChart.setScaleEnabled(false);
         mBarChart.setHardwareAccelerationEnabled(true);
         mBarChart.setDrawBarShadow(true);
         mBarChart.setDragDecelerationEnabled(true);
         mBarChart.setAutoScaleMinMaxEnabled(true);
+
         mBarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListenerImpl());
     }
 
@@ -206,8 +210,6 @@ public class HistoryFragment extends GenericFragment implements Receiver {
 
     private void setChartData(BarData data) {
         mProgressBar.setVisibility(View.GONE);
-
-        mBarChart.setBackgroundColor(getResources().getColor(R.color.tw__transparent));
 
         mBarChart.clear();
         mBarChart.setData(data);

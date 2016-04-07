@@ -85,6 +85,7 @@ public class GenerateHistoryChartDataCommand extends GenericCommand {
         BarDataSet dataSet = new BarDataSet(
                 entries, "");
         dataSet.setColor(Color.YELLOW);
+        dataSet.setValueTextSize(20);
         return new BarData(xVals, dataSet);
     }
 }
