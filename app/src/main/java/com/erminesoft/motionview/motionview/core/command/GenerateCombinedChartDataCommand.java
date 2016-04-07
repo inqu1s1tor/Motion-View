@@ -5,10 +5,6 @@ import android.os.Bundle;
 
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -25,9 +21,9 @@ import java.util.List;
 public class GenerateCombinedChartDataCommand extends GenericCommand {
 
     private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String[] HOURS_IN_DAY = new String[]{"3", "6", "9", "12", "15", "18", "21", "24"};
+    private static final String[] HOURS_IN_DAY = new String[]{"3", "6", "9", "12", "15", "18", "21"};
 
-    private CombinedData mCombinedData;
+    private LineData lineData;
 
     public static Bundle generateBundle(long timestamp) {
         Bundle bundle = new Bundle();
@@ -51,44 +47,16 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
             return;
         }
 
-        mCombinedData = new CombinedData(HOURS_IN_DAY);
+        lineData = new LineData(HOURS_IN_DAY);
 
         DataReadResult result = mGoogleFitnessFacade.getHoursDataPerDay(timeStamp);
         List<Bucket> buckets = result.getBuckets();
 
-        processStepsData(buckets);
         processCaloriesData(buckets);
 
         if (!isDenied()) {
-            DataBuffer.getInstance().putData(mCombinedData, CommandType.GENERATE_COMBINED_CHART_DATA);
+            DataBuffer.getInstance().putData(lineData, CommandType.GENERATE_COMBINED_CHART_DATA);
         }
-    }
-
-    private void processStepsData(List<Bucket> buckets) {
-        List<BarEntry> entries = new ArrayList<>();
-
-        for (int i = 0; i < buckets.size(); i++) {
-            Bucket bucket = buckets.get(i);
-            DataSet dataSet = bucket.getDataSet(DataType.TYPE_STEP_COUNT_DELTA);
-
-            float steps;
-            if (dataSet.getDataPoints().size() > 0) {
-                DataPoint dataPoint = dataSet.getDataPoints().get(0);
-                steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
-            } else {
-                steps = 0f;
-            }
-
-            entries.add(new BarEntry(steps, i, bucket.getDataSets()));
-        }
-
-        BarDataSet dataSet = new BarDataSet(
-                entries, "steps");
-        BarData barData = new BarData();
-
-        barData.addDataSet(dataSet);
-
-        mCombinedData.setData(barData);
     }
 
     private void processCaloriesData(List<Bucket> buckets) {
@@ -108,7 +76,7 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
             entries.add(new Entry(calories, i, bucket.getDataSets()));
         }
 
-        LineDataSet set = new LineDataSet(entries, "Line DataSet");
+        LineDataSet set = new LineDataSet(entries, "");
 
         set.setColor(Color.rgb(240, 238, 70));
         set.setLineWidth(2.5f);
@@ -116,14 +84,17 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
         set.setCircleRadius(5f);
         set.setFillColor(Color.rgb(240, 238, 70));
         set.setDrawCubic(true);
-        set.setDrawValues(true);
+        set.setDrawValues(false);
+        set.setDrawCircles(false);
+        set.setDrawFilled(true);
+        set.setCircleColorHole(Color.WHITE);
+        set.setCircleColor(Color.argb(120, 255, 255, 255));
+        set.setColor(Color.rgb(236, 124, 42));
+        set.setFillColor(Color.argb(160, 236, 124, 42));
         set.setValueTextSize(10f);
         set.setValueTextColor(Color.rgb(240, 238, 70));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
 
-        LineData lineData = new LineData();
         lineData.addDataSet(set);
-
-        mCombinedData.setData(lineData);
     }
 }

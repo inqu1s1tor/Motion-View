@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_activity_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.MainFragmentActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,53 +20,15 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/steps_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/text_view_default_margin"
-            android:textSize="@dimen/steps_text_size"/>
-
-        <TextView
-            android:id="@+id/calories_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/text_view_default_margin"
-            android:textSize="@dimen/steps_text_size"/>
-
-        <TextView
-            android:id="@+id/distance_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/text_view_default_margin"
-            android:textSize="@dimen/steps_text_size"/>
-
-        <TextView
-            android:id="@+id/total_time_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/text_view_default_margin"
-            android:textSize="@dimen/steps_text_size"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.github.mikephil.charting.charts.CombinedChart
+            <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/fragment_today_hours_chart"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"/>
-
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/fragment_today_activities_chart"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"/>
-
         </LinearLayout>
 
     </LinearLayout>

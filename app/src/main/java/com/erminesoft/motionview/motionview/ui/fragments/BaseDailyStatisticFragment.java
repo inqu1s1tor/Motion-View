@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
@@ -18,14 +17,10 @@ import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.ui.view.CircularProgress;
-import com.erminesoft.motionview.motionview.util.ChartDataWorker;
-import com.erminesoft.motionview.motionview.util.TimeWorker;
-import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.CombinedData;
+import com.github.mikephil.charting.data.LineData;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
@@ -33,17 +28,9 @@ import com.google.android.gms.fitness.data.Field;
 
 import java.util.List;
 
-import static com.github.mikephil.charting.charts.CombinedChart.DrawOrder;
-
 @SuppressWarnings("WeakerAccess")
 abstract class BaseDailyStatisticFragment extends GenericFragment implements Receiver {
-    private TextView mStepsTextView;
-    private TextView mCaloriesTextView;
-    private TextView mTimeTextView;
-    private TextView mDistanceTextView;
-
-    private CombinedChart mCombinedChart;
-    private PieChart mActivitiesChart;
+    private LineChart lineChart;
     private CircularProgress mProgress;
 
     protected long mTimestamp;
@@ -57,16 +44,11 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mStepsTextView = (TextView) view.findViewById(R.id.steps_text_view);
-        mCaloriesTextView = (TextView) view.findViewById(R.id.calories_text_view);
-        mTimeTextView = (TextView) view.findViewById(R.id.total_time_text_view);
-        mDistanceTextView = (TextView) view.findViewById(R.id.distance_text_view);
 
         mProgress = (CircularProgress) view.findViewById(R.id.circular_progress);
         mProgress.setMaxProgress(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
 
-        mCombinedChart = (CombinedChart) view.findViewById(R.id.fragment_today_hours_chart);
-        mActivitiesChart = (PieChart) view.findViewById(R.id.fragment_today_activities_chart);
+        lineChart = (LineChart) view.findViewById(R.id.fragment_today_hours_chart);
     }
 
     @Override
@@ -92,16 +74,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                 continue;
             }
 
-            if (dataType.equals(DataType.AGGREGATE_CALORIES_EXPENDED)) {
-                onCaloriesChanged(dataPoints);
-                continue;
-            }
-
-            if (dataType.equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
-                onDistanceChanged(dataPoints);
-                continue;
-            }
-
             if (dataType.equals(DataType.AGGREGATE_STEP_COUNT_DELTA)) {
                 onStepsChanged(dataPoints);
             }
@@ -112,59 +84,39 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
     private void initCharts() {
         initCombinedChart();
-        initActivitiesPieChart();
 
         setDataForCombinedChart();
     }
 
     private void initCombinedChart() {
-        mCombinedChart.setDescription("");
-        mCombinedChart.setDrawGridBackground(false);
-        mCombinedChart.setDrawBarShadow(false);
+        lineChart.setDescription("");
+        lineChart.setDrawGridBackground(false);
+        lineChart.setHighlightPerDragEnabled(true);
 
-        mCombinedChart.setAutoScaleMinMaxEnabled(false);
-        mCombinedChart.setDoubleTapToZoomEnabled(false);
+        lineChart.setAutoScaleMinMaxEnabled(false);
+        lineChart.setDoubleTapToZoomEnabled(false);
 
-        mCombinedChart.setDrawOrder(new DrawOrder[]{
-                DrawOrder.BAR,
-                DrawOrder.BUBBLE,
-                DrawOrder.CANDLE,
-                DrawOrder.LINE,
-                DrawOrder.SCATTER
-        });
+        lineChart.getLegend().setEnabled(false);
 
-        YAxis rightAxis = mCombinedChart.getAxisRight();
-        rightAxis.setDrawGridLines(false);
+        YAxis rightAxis = lineChart.getAxisRight();
+        rightAxis.setDrawGridLines(true);
         rightAxis.setAxisMinValue(0f);
+        rightAxis.setStartAtZero(true);
+        rightAxis.setDrawLabels(false);
+        rightAxis.setDrawAxisLine(false);
 
-        YAxis leftAxis = mCombinedChart.getAxisLeft();
-        leftAxis.setDrawGridLines(false);
+        YAxis leftAxis = lineChart.getAxisLeft();
+        leftAxis.setDrawGridLines(true);
         leftAxis.setAxisMinValue(0f);
+        leftAxis.setDrawLabels(false);
+        leftAxis.setDrawAxisLine(false);
 
-        XAxis xAxis = mCombinedChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTH_SIDED);
-    }
 
-    private void initActivitiesPieChart() {
-        mActivitiesChart.setUsePercentValues(true);
-        mActivitiesChart.setDescription("");
-
-        mActivitiesChart.setDrawHoleEnabled(true);
-        mActivitiesChart.setHoleColor(Color.TRANSPARENT);
-
-        mActivitiesChart.setTransparentCircleColor(Color.WHITE);
-        mActivitiesChart.setTransparentCircleAlpha(110);
-
-        mActivitiesChart.setHoleRadius(58f);
-        mActivitiesChart.setTransparentCircleRadius(61f);
-
-        mActivitiesChart.setDrawCenterText(true);
-
-        mActivitiesChart.setRotationAngle(0);
-        mActivitiesChart.setRotationEnabled(true);
-        mActivitiesChart.setHighlightPerTapEnabled(true);
-
-        mActivitiesChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setDrawGridLines(false);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAvoidFirstLastClipping(true);
+        xAxis.setAxisLineColor(Color.rgb(226, 138, 73));
     }
 
     private void setDataForCombinedChart() {
@@ -190,7 +142,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mCombinedChart.setData((CombinedData) data);
+                        lineChart.setData((LineData) data);
                         onCombinedChartDataSet();
                     }
                 });
@@ -203,20 +155,11 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
     }
 
     private void onCombinedChartDataSet() {
-        mCombinedChart.invalidate();
-        mCombinedChart.animateXY(1000, 1000);
-    }
-
-    private void setDataForActivitiesChart(List<DataPoint> dataPoints) {
-        mActivitiesChart.setData(ChartDataWorker.processActivitiesData(dataPoints));
-        mActivitiesChart.invalidate();
+        lineChart.invalidate();
+        lineChart.animateXY(1000, 1000);
     }
 
     private void onTotalTimeChanged(List<DataPoint> dataPoints) {
-        int totalActivityTime = 0;
-
-        setDataForActivitiesChart(dataPoints);
-
         mProgress.clear();
 
         for (DataPoint dataPoint : dataPoints) {
@@ -229,7 +172,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                     color = Color.GREEN;
 
                     int time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
-                    totalActivityTime += time;
 
                     addProgressPart(time, color);
                     break;
@@ -237,43 +179,16 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                     color = Color.YELLOW;
 
                     time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
-                    totalActivityTime += time;
 
                     addProgressPart(time, color);
                     break;
             }
 
         }
-
-        mTimeTextView.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
     }
 
     protected void addProgressPart(int time, int color) {
         mProgress.addPart(new CircularProgress.Part(time, color));
-    }
-
-    private void onDistanceChanged(List<DataPoint> dataPoints) {
-        int distance = 0;
-
-        if (dataPoints.size() > 0) {
-            DataPoint dataPoint = dataPoints.get(0);
-
-            distance = (int) dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
-        }
-
-        mDistanceTextView.setText(getString(R.string.total_distance_format, distance));
-    }
-
-    private void onCaloriesChanged(List<DataPoint> dataPoints) {
-        int calories = 0;
-
-        if (dataPoints.size() > 0) {
-            DataPoint dataPoint = dataPoints.get(0);
-
-            calories = (int) dataPoint.getValue(Field.FIELD_CALORIES).asFloat();
-        }
-
-        mCaloriesTextView.setText(getString(R.string.total_calories_format, calories));
     }
 
     private void onStepsChanged(List<DataPoint> dataPoints) {
@@ -286,8 +201,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         }
 
         mProgress.setCurrentProgress(steps);
-
-        mStepsTextView.setText(getString(R.string.total_steps_text_format, steps));
     }
 
     @Override
