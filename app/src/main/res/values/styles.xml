@@ -1,15 +1,43 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:actionBarStyle">@style/MotionViewActionBar</item>
     </style>
 
-    <style name="MotionViewActionBar" parent="ThemeOverlay.AppCompat">
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+
+
+
+
+    <style name="MotionViewActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">#CBCD54</item>
     </style>
-    
+
+    <style name="MainPageContentPart">
+        <item name="android:background">#eeeeee</item>
+    </style>
+
+
+
+
+
+
+    <!--                    Tabs under action bar                -->
+    <style name="MainPageTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/MainPageTabs</item>
+        <item name="tabSelectedTextColor">#FFF</item>
+    </style>
+
+    <style name="MainPageTabs" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+
+
+
+
+
 </resources>
