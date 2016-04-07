@@ -1,5 +1,6 @@
 package com.erminesoft.motionview.motionview.ui.fragments;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -123,6 +124,10 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     }
 
     private void initChart() {
+
+        mBarChart.setBorderColor(R.color.colorPrimary);
+
+
         mBarChart.setDescription(EMPTY_STRING);
         mBarChart.getLegend().setEnabled(false);
 
@@ -202,6 +207,8 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     private void setChartData(BarData data) {
         mProgressBar.setVisibility(View.GONE);
 
+        mBarChart.setBackgroundColor(getResources().getColor(R.color.tw__transparent));
+
         mBarChart.clear();
         mBarChart.setData(data);
 
@@ -279,3 +286,5 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         }
     }
 }
+
+

@@ -59,7 +59,7 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHomeAsUpEnabled(true);
+        //setHomeAsUpEnabled(true);
         utils = new Utils();
         View view = View.inflate(this, R.layout.activity_sharing_map, null);
         setContentView(view);

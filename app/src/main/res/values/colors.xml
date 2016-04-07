@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#04a531</color>
+    <color name="colorPrimaryDark">#0C7D14</color>
     <color name="colorAccent">#FF4081</color>
     <color name="greenRoute">#FF01F937</color>
+
+    <!--             BarChartStyles               -->
+    <color name="barChartHistoryBorder">#FFF</color>
 </resources>
