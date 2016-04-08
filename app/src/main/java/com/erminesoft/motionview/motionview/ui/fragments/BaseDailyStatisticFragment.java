@@ -1,6 +1,7 @@
 package com.erminesoft.motionview.motionview.ui.fragments;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -51,15 +52,20 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Typeface robotoMediumFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/ROBOTO-MEDIUM_0.TTF");
+        Typeface robotoRegularFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/ROBOTO-REGULAR_0.TTF");
+
         mProgress = (CircularProgress) view.findViewById(R.id.circular_progress);
         mProgress.setMaxProgress(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
 
         lineChart = (LineChart) view.findViewById(R.id.fragment_today_hours_chart);
 
         distanceText = (TextView) view.findViewById(R.id.main_fragment_distance);
+        distanceText.setTypeface(robotoMediumFont);
         activityTimeText = (TextView) view.findViewById(R.id.main_fragment_time);
+        activityTimeText.setTypeface(robotoMediumFont);
         caloriesInfoText = (TextView) view.findViewById(R.id.main_fragment_calories);
-        caloriesInfoText.setText("!!!!");
+        activityTimeText.setTypeface(robotoMediumFont);
     }
 
     @Override
