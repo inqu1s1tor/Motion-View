@@ -2,11 +2,11 @@ package com.erminesoft.motionview.motionview.core;
 
 import android.app.Application;
 
-
 import com.erminesoft.motionview.motionview.core.command.Commander;
 import com.erminesoft.motionview.motionview.net.fitness.GoogleFitnessFacade;
 import com.erminesoft.motionview.motionview.net.plus.GooglePlusFacade;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
+import com.erminesoft.motionview.motionview.util.TypeFaceHelper;
 
 public class MVApplication extends Application{
     private GoogleFitnessFacade mGoogleFitnessFacade;
@@ -22,6 +22,8 @@ public class MVApplication extends Application{
         mGooglePlusFacade = new GooglePlusFacade();
         mSharedDataManager = new SharedDataManager(this);
         mCommander = new Commander(mGoogleFitnessFacade, mGooglePlusFacade);
+
+        TypeFaceHelper.getInstance().setContext(getApplicationContext());
     }
 
     public GoogleFitnessFacade getGoogleFitnessFacade() {
