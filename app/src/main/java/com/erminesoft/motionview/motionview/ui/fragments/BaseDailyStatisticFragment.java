@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
@@ -32,6 +33,9 @@ import java.util.List;
 abstract class BaseDailyStatisticFragment extends GenericFragment implements Receiver {
     private LineChart lineChart;
     private CircularProgress mProgress;
+    private TextView distanceText;
+    private TextView activityTimeText;
+    private TextView caloriesInfoText;
 
     protected long mTimestamp;
 
@@ -49,6 +53,11 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         mProgress.setMaxProgress(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
 
         lineChart = (LineChart) view.findViewById(R.id.fragment_today_hours_chart);
+
+        distanceText = (TextView) view.findViewById(R.id.main_fragment_distance);
+        activityTimeText = (TextView) view.findViewById(R.id.main_fragment_time);
+        caloriesInfoText = (TextView) view.findViewById(R.id.main_fragment_calories);
+        caloriesInfoText.setText("!!!!");
     }
 
     @Override

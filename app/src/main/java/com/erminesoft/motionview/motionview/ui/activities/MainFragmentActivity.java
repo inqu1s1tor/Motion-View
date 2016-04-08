@@ -109,6 +109,7 @@ public class MainFragmentActivity extends GenericActivity implements ActivityBri
         getMVApplication().getCommander().denyAll(ExecutorType.MAIN_FRAGMENT_ACTIVITY);
     }
 
+
     private final class OnTabSelectedListenerImpl implements TabLayout.OnTabSelectedListener {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {

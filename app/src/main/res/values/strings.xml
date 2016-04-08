@@ -53,4 +53,7 @@
     <string name="share_map">Share the map</string>
     <string name="settings_daily_goal_string">Type your daily goal:</string>
     <string name="settings_empty_error">This field can\'t be empty!</string>
+    <string name="main_fragment_distance_text">Distance:</string>
+    <string name="main_fragment_time_text">Time:</string>
+    <string name="main_fragment_calories_text">Calories:</string>
 </resources>
