@@ -39,6 +39,9 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
     private TextView distanceText;
     private TextView activityTimeText;
     private TextView caloriesInfoText;
+    private TextView distanceTitle;
+    private TextView timeTitle;
+    private TextView caloriesTitle;
 
     protected long mTimestamp;
 
@@ -55,17 +58,37 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         Typeface robotoMediumFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/ROBOTO-MEDIUM_0.TTF");
         Typeface robotoRegularFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/ROBOTO-REGULAR_0.TTF");
 
+
         mProgress = (CircularProgress) view.findViewById(R.id.circular_progress);
         mProgress.setMaxProgress(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
 
         lineChart = (LineChart) view.findViewById(R.id.fragment_today_hours_chart);
 
+        distanceTitle = (TextView) view.findViewById(R.id.main_fragment_distance_text);
+        distanceTitle.setTypeface(robotoMediumFont);
+        //distanceTitle.setTextSize(Utils.pixelsToSp(getContext(), 30));
+
+        timeTitle = (TextView) view.findViewById(R.id.main_fragment_time_text);
+        timeTitle.setTypeface(robotoMediumFont);
+        //timeTitle.setTextSize(Utils.pixelsToSp(getContext(), 30));
+
+        caloriesTitle = (TextView) view.findViewById(R.id.main_fragment_calories_text);
+        caloriesTitle.setTypeface(robotoMediumFont);
+        //caloriesTitle.setTextSize(Utils.pixelsToSp(getContext(), 30));
+
         distanceText = (TextView) view.findViewById(R.id.main_fragment_distance);
         distanceText.setTypeface(robotoMediumFont);
+        //distanceText.setTextSize(Utils.pixelsToSp(getContext(), 40));
+
         activityTimeText = (TextView) view.findViewById(R.id.main_fragment_time);
         activityTimeText.setTypeface(robotoMediumFont);
+        //activityTimeText.setTextSize(Utils.pixelsToSp(getContext(), 40));
+
         caloriesInfoText = (TextView) view.findViewById(R.id.main_fragment_calories);
-        activityTimeText.setTypeface(robotoMediumFont);
+        caloriesInfoText.setTypeface(robotoMediumFont);
+        //caloriesInfoText.setTextSize(Utils.pixelsToSp(getContext(), 40));
+
+
     }
 
     @Override

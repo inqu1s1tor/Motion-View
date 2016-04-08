@@ -107,4 +107,10 @@ public class Utils {
             return false;
         }
     }
+
+    public static int pixelsToSp(Context context, int px) {
+       /* float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (px/3);*/
+        return (int) Math.round(px/2.5);
+    }
 }

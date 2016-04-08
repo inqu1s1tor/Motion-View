@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:paddingBottom="35dp"
         android:paddingTop="35dp">
 
@@ -26,74 +26,103 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:baselineAligned="false"
+            android:paddingLeft="25dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_gravity="top"
                 android:layout_weight="1">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/pin" />
+                    android:src="@drawable/pin"
+                    android:layout_weight="1" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_gravity="top"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
 
                     <TextView
+                        android:id="@+id/main_fragment_distance_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/main_fragment_distance_text"
-                        android:textColor="#797979"/>
+                        android:textSize="11sp"
+                        android:textColor="#797979"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/main_fragment_distance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#000"
-                        />
+                        android:textSize="15sp"
+                        android:layout_weight="1" />
 
                 </LinearLayout>
+                <ImageView
+                    android:src="@drawable/line"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical" />
             </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_weight="1">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/clock"/>
+                    android:src="@drawable/clock"
+                    android:layout_weight="1" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_weight="1">
                     <TextView
+                        android:id="@+id/main_fragment_time_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textSize="11sp"
                         android:text="@string/main_fragment_time_text"
+                        android:layout_weight="1"
                         android:textColor="#797979"/>
 
                     <TextView
                         android:id="@+id/main_fragment_time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#000"/>
+                        android:textSize="15sp"
+                        android:layout_weight="1"
+                        />
                 </LinearLayout>
+                <ImageView
+                    android:src="@drawable/line"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical" />
             </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_weight="1">
 
@@ -108,19 +137,26 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/main_fragment_calories_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
                         android:text="@string/main_fragment_calories_text"
+                        android:textSize="11sp"
                         android:textColor="#797979"/>
 
                     <TextView
                         android:id="@+id/main_fragment_calories"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#000"
+                        android:textSize="15sp"
+                        android:layout_weight="1"
                         />
                 </LinearLayout>
+                <ImageView
+                    android:src="@drawable/line"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
             </LinearLayout>
         </LinearLayout>
 
