@@ -36,16 +36,13 @@
 
         <activity
             android:name=".ui.activities.MainFragmentActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             />
 
         <activity
             android:name=".ui.activities.SettingsActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:windowSoftInputMode="stateHidden"/>
 
-        <activity android:name=".ui.activities.ShareMapActivity"
-                  android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".ui.activities.ShareMapActivity"/>
 
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
