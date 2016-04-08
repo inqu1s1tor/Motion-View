@@ -80,6 +80,11 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
 
         set.setColor(Color.rgb(240, 238, 70));
         set.setLineWidth(2.5f);
+
+
+//      set.setHighlightLineWidth(3f); acrossing lines after tap
+//      set.enableDashedLine(3f,5f,2f); progress line type dashed
+
         set.setCircleColor(Color.rgb(240, 238, 70));
         set.setCircleRadius(5f);
         set.setFillColor(Color.rgb(240, 238, 70));

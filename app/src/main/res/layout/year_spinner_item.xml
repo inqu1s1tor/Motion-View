@@ -9,6 +9,10 @@
         android:layout_height="wrap_content"
         android:textSize="18dp"
         android:background="#4A4949"
-        android:textColor="#b8b8b8" />
+        android:textColor="#b8b8b8"
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"/>
 
 </LinearLayout>

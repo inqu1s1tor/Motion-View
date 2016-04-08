@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
+        <shape
+            android:shape="rectangle" android:thickness="3dp">
+            <solid android:color="#09000000"/>
+            <corners android:radius="3dp"/>
+            <stroke
+                android:dashGap="1dp"
+                android:dashWidth="1dp"
+                android:color="#09ffffff">
+            </stroke>
+        </shape>
+    </item>
+
+    <item android:top="1dp" android:right="2dp" android:left="2dp" android:bottom="3dp">
         <shape android:shape="rectangle">
             <solid android:color="#ffffff" />
-            <corners
-                android:bottomLeftRadius="3dp"
-                android:bottomRightRadius="3dp"
-                android:topLeftRadius="3dp"
-                android:topRightRadius="3dp" />
+            <corners android:radius="3dp"/>
         </shape>
     </item>
-    <item android:right="1dp" android:left="1dp" android:bottom="2dp">
-        <shape
-            android:shape="rectangle">
-            <solid android:color="#fff"/>
-        </shape>
-    </item>
-</selector>
+</layer-list>
