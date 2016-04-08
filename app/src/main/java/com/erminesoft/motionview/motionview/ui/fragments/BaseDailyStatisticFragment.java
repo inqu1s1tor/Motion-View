@@ -3,6 +3,7 @@ package com.erminesoft.motionview.motionview.ui.fragments;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -147,9 +148,14 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
     @Override
     public void notify(final Object data, CommandType type) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+
         switch (type) {
             case PROCESS_DAY_DATA: {
-                getActivity().runOnUiThread(new Runnable() {
+                activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         processData((List<DataSet>) data);
@@ -158,7 +164,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                 break;
             }
             case GENERATE_COMBINED_CHART_DATA: {
-                getActivity().runOnUiThread(new Runnable() {
+                activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         lineChart.setData((LineData) data);

@@ -15,14 +15,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class CircularProgress extends View {
-
-    private static final String TAG = "CUSTOM_VIEW";
-    private static final float UNUSED_PART_START = 45;
-    private static final float UNUSED_PART_SWEEP = 90;
-
-    private static final float AVAILABLE_ANGLE = 360 - UNUSED_PART_SWEEP;
-
+    private static final float AVAILABLE_ANGLE = 360;
     private static final float DIVIDER_PART_SWEEP = 2;
+    private static final float START_ANGLE = 90;
 
     private RectF oval;
     private float diameter;
@@ -30,7 +25,6 @@ public class CircularProgress extends View {
     private Paint unusedPart;
     private Paint emptyPart;
 
-    private float unusedEndAngel;
     private int strokeWidth;
 
     private List<Part> parts;
@@ -83,7 +77,11 @@ public class CircularProgress extends View {
                 h = Math.min(heightSize, desiredHeight);
                 break;
             case MeasureSpec.UNSPECIFIED:
-                h = desiredHeight;
+                if (w > h) {
+                    h = w;
+                } else {
+                    h = desiredHeight;
+                }
                 break;
         }
 
@@ -123,8 +121,6 @@ public class CircularProgress extends View {
 
         oval = new RectF(getPaddingLeft(), getPaddingTop(), getMeasuredWidth(), getMeasuredHeight());
 
-        unusedEndAngel = UNUSED_PART_START + UNUSED_PART_SWEEP;
-
         unusedPart = new Paint(Paint.ANTI_ALIAS_FLAG);
         unusedPart.setColor(Color.WHITE);
         unusedPart.setStyle(Paint.Style.STROKE);
@@ -146,18 +142,14 @@ public class CircularProgress extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawArc(oval,
-                UNUSED_PART_START, UNUSED_PART_SWEEP, false, unusedPart);
-
         float availableAngle = (AVAILABLE_ANGLE - parts.size() * DIVIDER_PART_SWEEP) * percentageProgress;
 
         if (availableAngle == 0) {
-            canvas.drawArc(oval, unusedEndAngel, AVAILABLE_ANGLE, false, emptyPart);
+            canvas.drawArc(oval, START_ANGLE, AVAILABLE_ANGLE, false, emptyPart);
         } else {
-
             float startAngle;
             float sweep;
-            float endAngle = unusedEndAngel;
+            float endAngle = START_ANGLE;
 
             float partPercentage;
             Paint paint;
@@ -170,15 +162,31 @@ public class CircularProgress extends View {
 
                 paint = part.getPaint();
                 paint.setStrokeWidth(strokeWidth);
-                canvas.drawArc(oval, startAngle, sweep, false, paint);
-
                 endAngle = startAngle + sweep;
+
+                if (endAngle > 360) {
+                    float delta = endAngle - 360;
+
+                    canvas.drawArc(oval, startAngle, sweep - delta, false, paint);
+                    canvas.drawArc(oval, 0, delta, false, paint);
+                } else {
+                    canvas.drawArc(oval, startAngle, sweep, false, paint);
+                }
+
                 canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
 
                 endAngle += DIVIDER_PART_SWEEP;
             }
 
-            canvas.drawArc(oval, endAngle, 360 + UNUSED_PART_START - endAngle, false, emptyPart);
+
+            if (endAngle > 360) {
+                endAngle -= 360;
+                sweep = START_ANGLE - endAngle;
+            } else {
+                sweep = 360 + START_ANGLE - endAngle;
+            }
+
+            canvas.drawArc(oval, endAngle, sweep, false, emptyPart);
         }
 
         float percentageTextX = diameter / 2 + diameter * 0.06f;
