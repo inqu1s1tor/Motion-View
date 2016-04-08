@@ -18,6 +18,7 @@ import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.ui.view.CircularProgress;
+import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -83,6 +84,16 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                 continue;
             }
 
+            if (dataType.equals(DataType.AGGREGATE_CALORIES_EXPENDED)) {
+                onCaloriesChanged(dataPoints);
+                continue;
+            }
+
+            if (dataType.equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
+                onDistanceChanged(dataPoints);
+                continue;
+            }
+
             if (dataType.equals(DataType.AGGREGATE_STEP_COUNT_DELTA)) {
                 onStepsChanged(dataPoints);
             }
@@ -119,7 +130,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         leftAxis.setAxisMinValue(0f);
         leftAxis.setDrawLabels(false);
         leftAxis.setDrawAxisLine(false);
-
 
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setDrawGridLines(false);
@@ -171,6 +181,8 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
     private void onTotalTimeChanged(List<DataPoint> dataPoints) {
         mProgress.clear();
 
+        int totalActivityTime = 0;
+
         for (DataPoint dataPoint : dataPoints) {
             int activityType = dataPoint.getValue(Field.FIELD_ACTIVITY).asInt();
             int color;
@@ -181,6 +193,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                     color = Color.GREEN;
 
                     int time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
+                    totalActivityTime += time;
 
                     addProgressPart(time, color);
                     break;
@@ -188,16 +201,43 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                     color = Color.YELLOW;
 
                     time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
+                    totalActivityTime += time;
 
                     addProgressPart(time, color);
                     break;
             }
 
         }
+
+        activityTimeText.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
     }
 
     protected void addProgressPart(int time, int color) {
         mProgress.addPart(new CircularProgress.Part(time, color));
+    }
+
+    private void onDistanceChanged(List<DataPoint> dataPoints) {
+        int distance = 0;
+
+        if (dataPoints.size() > 0) {
+            DataPoint dataPoint = dataPoints.get(0);
+
+            distance = (int) dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
+        }
+
+        distanceText.setText(String.valueOf(distance));
+    }
+
+    private void onCaloriesChanged(List<DataPoint> dataPoints) {
+        int calories = 0;
+
+        if (dataPoints.size() > 0) {
+            DataPoint dataPoint = dataPoints.get(0);
+
+            calories = (int) dataPoint.getValue(Field.FIELD_CALORIES).asFloat();
+        }
+
+        caloriesInfoText.setText(String.valueOf(calories));
     }
 
     private void onStepsChanged(List<DataPoint> dataPoints) {
