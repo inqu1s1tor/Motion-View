@@ -19,6 +19,8 @@ import com.erminesoft.motionview.motionview.core.command.ExecutorType;
 import com.erminesoft.motionview.motionview.core.command.GenerateHistoryChartDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
+import com.erminesoft.motionview.motionview.ui.adapters.SpinnerMonthAdapter;
+import com.erminesoft.motionview.motionview.ui.adapters.SpinnerYearsAdapter;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.BarChart;
@@ -30,6 +32,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +48,8 @@ public class HistoryFragment extends GenericFragment implements Receiver {
 
     private ArrayAdapter<Integer> mYearAdapter;
     private ArrayAdapter<ChartDataWorker.Month> mMonthAdapter;
+
+    List<ChartDataWorker.Month> monthsForAdapter;
 
     private BarChart mBarChart;
     private Spinner mMonthSpinner;
@@ -67,6 +72,8 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         mYearSpinner = (Spinner) view.findViewById(R.id.fragment_history_year_spinner);
         mMonthSpinner = (Spinner) view.findViewById(R.id.fragment_history_month_spinner);
         mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_history_progress_bar);
+
+        monthsForAdapter = new ArrayList<>();
     }
 
     @Override
@@ -110,18 +117,21 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         mMonthSpinner.setOnItemSelectedListener(new OnMonthSpinnerItemSelectedListener());
 
         mYearSpinner.setSelection(mYearAdapter.getCount() - 1, true);
+
     }
 
     private void initAdapters() {
-        mYearAdapter = new ArrayAdapter<>(getContext(), R.layout.year_spinner_item, R.id.spinner_year_content_id);
-        mMonthAdapter = new ArrayAdapter<>(getContext(), R.layout.month_spinner_item, R.id.spinner_month_content_id);
 
+        List<Integer> years = new ArrayList<>();
         for (Integer year : mAvailableHistory.keySet()) {
-            mYearAdapter.add(year);
+            years.add(year);
         }
 
-        mYearAdapter.setDropDownViewResource(R.layout.year_spinner_item);
-        mMonthAdapter.setDropDownViewResource(R.layout.month_spinner_item);
+        mYearAdapter = new SpinnerYearsAdapter(getContext(), R.layout.history_spinner_item,years);
+        mMonthAdapter = new SpinnerMonthAdapter(getContext(),R.layout.history_spinner_item,monthsForAdapter);
+
+        //mYearAdapter.setDropDownViewResource(R.layout.history_spinner_item);
+        //mMonthAdapter.setDropDownViewResource(R.layout.history_spinner_item);
     }
 
     private void initChart() {
@@ -148,6 +158,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     private void updateMonthAndChart(int position) {
         int year = getYearBySpinnerPosition(position);
         List<ChartDataWorker.Month> months = mAvailableHistory.get(year);
+        monthsForAdapter = mAvailableHistory.get(year);
 
         mMonthAdapter.clear();
         mMonthAdapter.addAll(months);

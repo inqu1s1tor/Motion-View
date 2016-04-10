@@ -6,15 +6,17 @@
    >
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/spinner_month_content_id"
+        android:id="@+id/history_spinner_text_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
+        android:text="QQWEQWEWE"
+        android:textSize="14dp"
         android:background="#4A4949"
         android:textColor="#b8b8b8"
         android:paddingTop="5dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="5dp"
         android:paddingLeft="15dp"
+        android:textAllCaps="true"
         android:paddingRight="15dp"/>
 
 </LinearLayout>
