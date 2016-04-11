@@ -148,7 +148,6 @@ public class CircularProgress extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         float availableAngle = (AVAILABLE_ANGLE - parts.size() * DIVIDER_PART_SWEEP) * percentageProgress;
 
         if (availableAngle == 0) {
@@ -174,28 +173,14 @@ public class CircularProgress extends View {
                 paint.setStrokeWidth(strokeWidth);
                 endAngle = startAngle + sweep;
 
-                if (endAngle > 360) {
-                    float delta = endAngle - 360;
-
-                    canvas.drawArc(oval, startAngle, sweep - delta, false, paint);
-                    canvas.drawArc(oval, 0, delta, false, paint);
-                } else {
-                    canvas.drawArc(oval, startAngle, sweep, false, paint);
-                }
-
-                canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
-
-                endAngle += DIVIDER_PART_SWEEP;
+                canvas.drawArc(oval, startAngle, sweep, false, paint);
             }
 
-            if (endAngle > 360) {
-                endAngle -= 360;
-                sweep = START_ANGLE - endAngle;
-            } else {
-                sweep = 360 + START_ANGLE - endAngle;
-            }
+            canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
 
-            canvas.drawArc(oval, endAngle, sweep, false, emptyPart);
+            endAngle += DIVIDER_PART_SWEEP;
+
+            canvas.drawArc(oval, endAngle, AVAILABLE_ANGLE + START_ANGLE - endAngle, false, emptyPart);
         }
 
         canvas.drawCircle(oval.centerX(), oval.centerY(), diameter / 2, outerShadow);

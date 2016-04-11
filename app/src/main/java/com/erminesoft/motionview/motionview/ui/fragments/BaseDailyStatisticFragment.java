@@ -238,10 +238,15 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
         int totalActivityTime = 0;
 
+        addProgressPart(10, Color.parseColor("#c6c754"));
+        addProgressPart(7, Color.parseColor("#e08a4a"));
+        addProgressPart(4, Color.parseColor("#47a74e"));
+
         for (DataPoint dataPoint : dataPoints) {
             int activityType = dataPoint.getValue(Field.FIELD_ACTIVITY).asInt();
             int color;
 
+/*
 
             switch (activityType) {
                 case 7:
@@ -261,6 +266,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
                     addProgressPart(time, color);
                     break;
             }
+*/
 
         }
 
