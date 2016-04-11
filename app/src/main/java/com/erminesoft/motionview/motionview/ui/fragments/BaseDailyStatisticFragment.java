@@ -314,7 +314,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         DataBuffer.getInstance().unregister(this);
     }
 
-    private final class MainChartMarker extends MarkerView {
+    private static final class MainChartMarker extends MarkerView {
 
         private TextView textView;
         private ImageView imageView;
