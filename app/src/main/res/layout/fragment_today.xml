@@ -168,6 +168,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textColor="#44a64b"
                         android:textSize="15sp" />
 
                 </LinearLayout>
@@ -213,6 +214,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textColor="#c6c754"
                         android:textSize="15sp" />
                 </LinearLayout>
 
@@ -254,6 +256,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textColor="#ec7c2a"
                         android:textSize="15sp" />
                 </LinearLayout>
 

@@ -1,60 +1,231 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#494949"
     android:orientation="vertical"
     android:paddingLeft="5dp"
     android:paddingRight="5dp">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:id="@+id/map"
-        tools:context=".ui.activities.GoogleMapActivityMapsActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        tools:context=".ui.activities.GoogleMapActivityMapsActivity" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-        android:gravity="center_vertical|center">
+        android:padding="15dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:paddingRight="5dp"
+                android:src="@drawable/people" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="START TRACK" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/pin" />
+
+
+            <TextView
+                android:id="@+id/main_fragment_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="12"
+                android:textColor="#44a64b"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/main_fragment_time_text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/map_fragment_distance_value"
+                android:textColor="#44a64b"
+                android:textSize="11sp" />
+
+        </LinearLayout>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/gps_status"
-            android:src="@drawable/gps_off"
-            android:background="#FFF"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp" />
+            android:src="@drawable/line" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/clock" />
+
+            <TextView
+                android:id="@+id/main_fragment_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="06:20:05"
+                android:textColor="#c6c754"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/main_fragment_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/map_fragment_time_value"
+                android:textColor="#c6c754"
+                android:textSize="11sp" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/line" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/fire" />
+
+            <TextView
+                android:id="@+id/main_fragment_calories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1024"
+                android:textColor="#ec7c2a"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/main_fragment_calories_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/map_fragment_calories_value"
+                android:textColor="#ec7c2a"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageButton
-             android:layout_width="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical|center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/gps_status"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/activity_maps_steps_button"
-            android:background="#00ffffff"
-             android:layout_marginEnd="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="10dp"
+            android:layout_marginStart="5dp"
+            android:background="#FFF"
+            android:src="@drawable/gps_off" />
+
+        <ImageButton
+            android:id="@+id/activity_maps_steps_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#00ffffff"
             android:src="@drawable/run_icon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/activity_map_text_steps"
             android:layout_marginEnd="25dp"
-            android:layout_marginRight="25dp" />
+            android:layout_marginRight="25dp"
+            android:text="start" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/share_map"
             android:id="@+id/map_share_dialog"
             style="@style/com_facebook_loginview_default_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:text="@string/share_map"
             android:visibility="gone" />
 
     </LinearLayout>

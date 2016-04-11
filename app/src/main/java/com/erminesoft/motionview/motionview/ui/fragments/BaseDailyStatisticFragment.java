@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,6 @@ import com.erminesoft.motionview.motionview.core.command.ProcessDayDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.ui.view.CircularProgress;
-import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.MarkerView;
@@ -270,7 +270,9 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
         }
 
-        activityTimeText.setText(TimeWorker.processMillisecondsToString(totalActivityTime, getContext()));
+        String format = DateFormat.format("h:mm", totalActivityTime).toString();
+        activityTimeText.setText(format+" h");
+
     }
 
     protected void addProgressPart(int time, int color) {

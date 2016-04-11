@@ -85,9 +85,6 @@ public class Utils {
         endPosition.setLatitude(points.get(points.size() - 1).latitude);
         endPosition.setLongitude(points.get(points.size() - 1).longitude);
 
-        Log.d("!!!!!!", "" + startLocation.getLatitude() + " " + startLocation.getLongitude());
-        Log.d("!!!!!!", "" + endPosition.getLatitude() + " " + endPosition.getLongitude());
-
         return startLocation.distanceTo(endPosition)/1000;
     }
 

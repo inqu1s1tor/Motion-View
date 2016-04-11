@@ -19,7 +19,6 @@
         <item>December</item>
     </string-array>
 
-    <string name="activity_map_text_steps">Track my walk</string>
     <string name="empty_string" />
 
     <string name="total_calories_format">Total calories: %d</string>
@@ -57,4 +56,7 @@
     <string name="main_fragment_time_text">Time:</string>
     <string name="main_fragment_calories_text">Calories:</string>
     <string name="t">t</string>
+    <string name="map_fragment_distance_value">km</string>
+    <string name="map_fragment_time_value">hours</string>
+    <string name="map_fragment_calories_value">kcal</string>
 </resources>
