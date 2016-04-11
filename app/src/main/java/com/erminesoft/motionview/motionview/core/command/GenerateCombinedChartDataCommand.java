@@ -3,7 +3,9 @@ package com.erminesoft.motionview.motionview.core.command;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
+import com.erminesoft.motionview.motionview.util.TypeFaceHelper;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -21,7 +23,7 @@ import java.util.List;
 public class GenerateCombinedChartDataCommand extends GenericCommand {
 
     private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String[] HOURS_IN_DAY = new String[]{"3", "6", "9", "12", "15", "18", "21"};
+    private static final String[] HOURS_IN_DAY = new String[]{"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"};
 
     private LineData lineData;
 
@@ -81,10 +83,6 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
         set.setColor(Color.rgb(240, 238, 70));
         set.setLineWidth(2.5f);
 
-
-//      set.setHighlightLineWidth(3f); acrossing lines after tap
-//      set.enableDashedLine(3f,5f,2f); progress line type dashed
-
         set.setCircleColor(Color.rgb(240, 238, 70));
         set.setCircleRadius(5f);
         set.setFillColor(Color.rgb(240, 238, 70));
@@ -92,10 +90,11 @@ public class GenerateCombinedChartDataCommand extends GenericCommand {
         set.setDrawValues(false);
         set.setDrawCircles(false);
         set.setDrawFilled(true);
-        set.setCircleColorHole(Color.WHITE);
-        set.setCircleColor(Color.argb(120, 255, 255, 255));
+        set.setDrawHorizontalHighlightIndicator(false);
+        set.setHighlightLineWidth(2f);
+        set.setHighLightColor(Color.rgb(168, 68, 68));
         set.setColor(Color.rgb(236, 124, 42));
-        set.setFillColor(Color.argb(160, 236, 124, 42));
+        set.setFillDrawable(TypeFaceHelper.getInstance().getContext().getResources().getDrawable(R.drawable.chart_grad));
         set.setValueTextSize(10f);
         set.setValueTextColor(Color.rgb(240, 238, 70));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);

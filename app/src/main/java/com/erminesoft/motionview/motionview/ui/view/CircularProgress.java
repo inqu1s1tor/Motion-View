@@ -155,6 +155,9 @@ public class CircularProgress extends View {
             Paint paint;
 
             for (Part part : parts) {
+                canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
+                endAngle += DIVIDER_PART_SWEEP;
+
                 partPercentage = (float) part.getTime() / totalTime;
 
                 startAngle = endAngle;

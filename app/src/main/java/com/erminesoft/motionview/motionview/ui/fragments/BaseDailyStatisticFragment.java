@@ -1,5 +1,6 @@
 package com.erminesoft.motionview.motionview.ui.fragments;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
@@ -22,14 +24,20 @@ import com.erminesoft.motionview.motionview.storage.SharedDataManager;
 import com.erminesoft.motionview.motionview.ui.view.CircularProgress;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
@@ -56,7 +64,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         super.onViewCreated(view, savedInstanceState);
 
         Typeface robotoMediumFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/ROBOTO-MEDIUM_0.TTF");
-        Typeface robotoRegularFont = Typeface.createFromAsset(getActivity().getAssets(),"fonts/ROBOTO-REGULAR_0.TTF");
 
 
         mProgress = (CircularProgress) view.findViewById(R.id.circular_progress);
@@ -141,31 +148,43 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
     private void initCombinedChart() {
         lineChart.setDescription("");
         lineChart.setDrawGridBackground(false);
-        lineChart.setHighlightPerDragEnabled(true);
+        lineChart.setHighlightPerDragEnabled(false);
+        lineChart.setHighlightPerTapEnabled(true);
+
+        lineChart.setPinchZoom(false);
+        lineChart.setDoubleTapToZoomEnabled(false);
+
+        lineChart.setScaleYEnabled(false);
+        lineChart.setScaleXEnabled(false);
 
         lineChart.setAutoScaleMinMaxEnabled(false);
         lineChart.setDoubleTapToZoomEnabled(false);
+        lineChart.setDrawMarkerViews(true);
+        lineChart.setMarkerView(new MainChartMarker(getContext(), R.layout.main_chart_marker));
 
-        lineChart.getLegend().setEnabled(false);
+        Legend legend = lineChart.getLegend();
+        legend.setCustom(Collections.singletonList(ColorTemplate.COLOR_NONE), Collections.singletonList("t"));
+        legend.setFormToTextSpace(0f);
+        legend.setTextColor(Color.GRAY);
+        legend.setYOffset(18);
+        legend.setXOffset(0);
 
-        YAxis rightAxis = lineChart.getAxisRight();
-        rightAxis.setDrawGridLines(true);
-        rightAxis.setAxisMinValue(0f);
-        rightAxis.setStartAtZero(true);
-        rightAxis.setDrawLabels(false);
-        rightAxis.setDrawAxisLine(false);
+        lineChart.getAxisRight().setEnabled(false);
 
         YAxis leftAxis = lineChart.getAxisLeft();
         leftAxis.setDrawGridLines(true);
+        leftAxis.setAxisLineWidth(0);
         leftAxis.setAxisMinValue(0f);
         leftAxis.setDrawLabels(false);
         leftAxis.setDrawAxisLine(false);
-
+        leftAxis.setAxisMaxValue(300);
+        leftAxis.setLabelCount(3, true);
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setDrawGridLines(false);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setAvoidFirstLastClipping(true);
         xAxis.setAxisLineColor(Color.rgb(226, 138, 73));
+        xAxis.setLabelsToSkip(2);
     }
 
     private void setDataForCombinedChart() {
@@ -210,6 +229,7 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
     private void onCombinedChartDataSet() {
         lineChart.invalidate();
+
         lineChart.animateXY(1000, 1000);
     }
 
@@ -292,5 +312,33 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         super.onStop();
 
         DataBuffer.getInstance().unregister(this);
+    }
+
+    private final class MainChartMarker extends MarkerView {
+
+        private TextView textView;
+        private ImageView imageView;
+
+        public MainChartMarker(Context context, int marker) {
+            super(context, marker);
+
+            textView = (TextView) findViewById(R.id.marker_cal_text);
+            imageView = (ImageView) findViewById(R.id.marker_image);
+        }
+
+        @Override
+        public void refreshContent(Entry e, Highlight highlight) {
+            textView.setText(String.valueOf((int) e.getVal()));
+        }
+
+        @Override
+        public int getXOffset(float xpos) {
+            return -(imageView.getWidth() / 2);
+        }
+
+        @Override
+        public int getYOffset(float ypos) {
+            return -getHeight() + (imageView.getHeight() / 2);
+        }
     }
 }

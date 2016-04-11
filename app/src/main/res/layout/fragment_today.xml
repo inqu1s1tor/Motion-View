@@ -160,18 +160,18 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="5dp"
-            android:background="@drawable/line_chart_container">
+            android:padding="5dp">
 
             <com.github.mikephil.charting.charts.LineChart
+                android:background="@drawable/line_chart_container"
                 android:id="@+id/fragment_today_hours_chart"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"/>
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

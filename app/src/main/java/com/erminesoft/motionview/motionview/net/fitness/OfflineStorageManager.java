@@ -53,7 +53,7 @@ class OfflineStorageManager {
                                 DataType.AGGREGATE_CALORIES_EXPENDED)
                         .aggregate(DataType.TYPE_STEP_COUNT_DELTA,
                                 DataType.AGGREGATE_STEP_COUNT_DELTA)
-                        .bucketByTime(3, TimeUnit.HOURS)
+                        .bucketByTime(1, TimeUnit.HOURS)
                         .build()).await();
     }
 

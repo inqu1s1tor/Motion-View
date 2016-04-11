@@ -30,6 +30,10 @@ public class TypeFaceHelper {
         this.context = context;
     }
 
+    public Context getContext() {
+        return context;
+    }
+
     public Typeface getTypeFace(String fontPath) {
         return Typeface.createFromAsset(context.getAssets(), fontPath);
     }

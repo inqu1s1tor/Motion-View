@@ -56,4 +56,5 @@
     <string name="main_fragment_distance_text">Distance:</string>
     <string name="main_fragment_time_text">Time:</string>
     <string name="main_fragment_calories_text">Calories:</string>
+    <string name="t">t</string>
 </resources>
