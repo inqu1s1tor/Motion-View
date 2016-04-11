@@ -22,6 +22,8 @@ public class CircularProgress extends View {
     private RectF oval;
     private float diameter;
 
+    private Paint outerShadow;
+
     private Paint unusedPart;
     private Paint emptyPart;
 
@@ -125,6 +127,11 @@ public class CircularProgress extends View {
         unusedPart.setColor(Color.WHITE);
         unusedPart.setStyle(Paint.Style.STROKE);
 
+        outerShadow = new Paint();
+        outerShadow.setColor(Color.LTGRAY);
+        outerShadow.setStrokeWidth(2.5f);
+        outerShadow.setStyle(Paint.Style.STROKE);
+
         emptyPart = new Paint(Paint.ANTI_ALIAS_FLAG);
         emptyPart.setColor(Color.GRAY);
         emptyPart.setStyle(Paint.Style.STROKE);
@@ -181,7 +188,6 @@ public class CircularProgress extends View {
                 endAngle += DIVIDER_PART_SWEEP;
             }
 
-
             if (endAngle > 360) {
                 endAngle -= 360;
                 sweep = START_ANGLE - endAngle;
@@ -192,11 +198,12 @@ public class CircularProgress extends View {
             canvas.drawArc(oval, endAngle, sweep, false, emptyPart);
         }
 
+        canvas.drawCircle(oval.centerX(), oval.centerY(), diameter / 2, outerShadow);
+
         float percentageTextX = diameter / 2 + diameter * 0.06f;
         float percentageTextY = diameter / 2;
 
         percentageText.setTextSize(textSize);
-
 
         canvas.drawText(String.format(Locale.getDefault(), "%.1f%%", percentageProgress * 100),
                 percentageTextX, percentageTextY,
