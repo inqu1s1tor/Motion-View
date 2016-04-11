@@ -1,6 +1,7 @@
 package com.erminesoft.motionview.motionview.ui.fragments;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -142,9 +143,13 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         mBarChart.setDrawGridBackground(false);
         mBarChart.getXAxis().setDrawGridLines(false);
         mBarChart.getXAxis().setTextColor(Color.GRAY);
+        mBarChart.getXAxis().setTextSize(12);
+        mBarChart.getXAxis().setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/ROBOTO-REGULAR_0.TTF"));
 
         mBarChart.getAxis(YAxis.AxisDependency.LEFT).setTextColor(Color.GRAY);
         mBarChart.getAxis(YAxis.AxisDependency.RIGHT).setTextColor(Color.GRAY);
+        mBarChart.getAxis(YAxis.AxisDependency.LEFT).setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/ROBOTO-REGULAR_0.TTF"));
+        mBarChart.getAxis(YAxis.AxisDependency.RIGHT).setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/ROBOTO-REGULAR_0.TTF"));
         mBarChart.setDrawMarkerViews(true);
         mBarChart.setScaleEnabled(false);
         mBarChart.setHardwareAccelerationEnabled(true);

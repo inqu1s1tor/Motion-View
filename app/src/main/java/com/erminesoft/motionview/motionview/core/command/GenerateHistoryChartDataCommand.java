@@ -1,12 +1,16 @@
 package com.erminesoft.motionview.motionview.core.command;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
+import com.erminesoft.motionview.motionview.util.TypeFaceHelper;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -85,7 +89,8 @@ public class GenerateHistoryChartDataCommand extends GenericCommand {
         BarDataSet dataSet = new BarDataSet(
                 entries, "");
         dataSet.setColor(Color.YELLOW);
-        dataSet.setValueTextSize(20);
+        dataSet.setValueTextSize(10);
+        TypeFaceHelper.getInstance().getTypeFace("fonts/ROBOTO-MEDIUM_0.TTF");
         return new BarData(xVals, dataSet);
     }
 }
