@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
@@ -18,6 +19,7 @@ public class CircularProgress extends View {
     private static final float AVAILABLE_ANGLE = 360;
     private static final float DIVIDER_PART_SWEEP = 2;
     private static final float START_ANGLE = 90;
+    private static final float ANIMATION_TIME = 100;
 
     private RectF oval;
     private float diameter;
@@ -39,6 +41,15 @@ public class CircularProgress extends View {
     private Paint percentageText;
 
     private float textSize;
+
+    private boolean isAnimating;
+    private int lastPartIndex;
+    private float animationStartAngle;
+    private float animationSweep;
+    private float animationTime;
+    private float delta = -1f;
+
+
 
     public CircularProgress(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -150,40 +161,11 @@ public class CircularProgress extends View {
         super.onDraw(canvas);
         float availableAngle = (AVAILABLE_ANGLE - parts.size() * DIVIDER_PART_SWEEP) * percentageProgress;
 
-        if (availableAngle == 0) {
-            canvas.drawArc(oval, START_ANGLE, AVAILABLE_ANGLE, false, emptyPart);
-        } else {
-            float startAngle;
-            float sweep;
-            float endAngle = START_ANGLE;
+        float startAngle;
+        float sweep;
+        float endAngle = START_ANGLE;
 
-            float partPercentage;
-            Paint paint;
-
-            for (Part part : parts) {
-                canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
-                endAngle += DIVIDER_PART_SWEEP;
-
-                partPercentage = (float) part.getTime() / totalTime;
-
-                startAngle = endAngle;
-                sweep = availableAngle * partPercentage;
-
-                paint = part.getPaint();
-                paint.setStrokeWidth(strokeWidth);
-                endAngle = startAngle + sweep;
-
-                canvas.drawArc(oval, startAngle, sweep, false, paint);
-            }
-
-            canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
-
-            endAngle += DIVIDER_PART_SWEEP;
-
-            canvas.drawArc(oval, endAngle, AVAILABLE_ANGLE + START_ANGLE - endAngle, false, emptyPart);
-        }
-
-        canvas.drawCircle(oval.centerX(), oval.centerY(), diameter / 2, outerShadow);
+        canvas.drawArc(oval, endAngle, AVAILABLE_ANGLE + START_ANGLE - endAngle, false, emptyPart);
 
         float percentageTextX = diameter / 2 + diameter * 0.06f;
         float percentageTextY = diameter / 2;
@@ -196,6 +178,82 @@ public class CircularProgress extends View {
 
         canvas.drawText(currentProgress + "/" + maxProgress, percentageTextX,
                 percentageTextY + percentageText.getTextSize(), percentageText);
+
+        if (availableAngle == 0) {
+            canvas.drawArc(oval, START_ANGLE, AVAILABLE_ANGLE, false, emptyPart);
+        } else {
+
+            float partPercentage;
+            Paint paint;
+
+            for (int i = 0; i < parts.size(); i++) {
+                canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
+                endAngle += DIVIDER_PART_SWEEP;
+
+                if (isAnimating && lastPartIndex == i) {
+                    break;
+                }
+
+                Part part = parts.get(i);
+
+                partPercentage = (float) part.getTime() / totalTime;
+
+                startAngle = endAngle;
+                sweep = availableAngle * partPercentage;
+
+                paint = part.getPaint();
+                paint.setStrokeWidth(strokeWidth);
+                endAngle = startAngle + sweep;
+
+                if (!isAnimating && lastPartIndex == i) {
+                    animatePart(startAngle, sweep, endAngle, i);
+                    break;
+                } else {
+                    canvas.drawArc(oval, startAngle, sweep, false, paint);
+                }
+            }
+
+            if (!isAnimating) {
+                canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
+            }
+        }
+
+        canvas.drawCircle(oval.centerX(), oval.centerY(), diameter / 2, outerShadow);
+
+        if (isAnimating) {
+            canvas.drawArc(oval, animationStartAngle, animationSweep, false, parts.get(lastPartIndex).getPaint());
+        }
+
+    }
+
+    private void animatePart(final float startAngle, final float sweep, final float endAngle, final int index) {
+        isAnimating = true;
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                animationTime += 1;
+                lastPartIndex = index;
+                animationStartAngle = startAngle;
+
+                if (delta == -1) {
+                    delta = sweep / ANIMATION_TIME;
+                }
+
+                animationSweep += delta;
+
+                invalidate();
+                if (animationTime < ANIMATION_TIME && startAngle < endAngle) {
+                    animatePart(startAngle, animationSweep, endAngle, index);
+                } else {
+                    isAnimating = false;
+                    animationTime = 0;
+                    animationSweep = 0;
+                    animationStartAngle = 0;
+                    lastPartIndex++;
+                    delta = -1f;
+                }
+            }
+        });
     }
 
     public void addPart(@NonNull Part part) {
