@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/history_spinner_text_field"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-   >
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/history_spinner_text_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="QQWEQWEWE"
-        android:textSize="14dp"
-        android:background="#4A4949"
-        android:textColor="#b8b8b8"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="15dp"
-        android:textAllCaps="true"
-        android:paddingRight="15dp"/>
-
-</LinearLayout>
+    android:layout_height="wrap_content"
+    android:background="#4A4949"
+    android:gravity="start|center_horizontal"
+    android:paddingBottom="5dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="5dp"
+    android:textAllCaps="true"
+    android:textColor="#b8b8b8"
+    android:textSize="15sp" />

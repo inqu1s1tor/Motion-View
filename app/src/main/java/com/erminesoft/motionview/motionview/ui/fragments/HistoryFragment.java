@@ -20,8 +20,7 @@ import com.erminesoft.motionview.motionview.core.command.ExecutorType;
 import com.erminesoft.motionview.motionview.core.command.GenerateHistoryChartDataCommand;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
-import com.erminesoft.motionview.motionview.ui.adapters.SpinnerMonthAdapter;
-import com.erminesoft.motionview.motionview.ui.adapters.SpinnerYearsAdapter;
+import com.erminesoft.motionview.motionview.ui.adapters.SpinnerAdapter;
 import com.erminesoft.motionview.motionview.util.ChartDataWorker;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.github.mikephil.charting.charts.BarChart;
@@ -128,11 +127,9 @@ public class HistoryFragment extends GenericFragment implements Receiver {
             years.add(year);
         }
 
-        mYearAdapter = new SpinnerYearsAdapter(getContext(), R.layout.history_spinner_item,years);
-        mMonthAdapter = new SpinnerMonthAdapter(getContext(),R.layout.history_spinner_item,monthsForAdapter);
+        mYearAdapter = new SpinnerAdapter(getContext(), R.layout.history_spinner_item,years);
+        mMonthAdapter = new SpinnerAdapter(getContext(),R.layout.history_spinner_item, monthsForAdapter);
 
-        //mYearAdapter.setDropDownViewResource(R.layout.history_spinner_item);
-        //mMonthAdapter.setDropDownViewResource(R.layout.history_spinner_item);
     }
 
     private void initChart() {
