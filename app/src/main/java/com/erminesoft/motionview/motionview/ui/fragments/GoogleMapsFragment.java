@@ -19,13 +19,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
-import com.erminesoft.motionview.motionview.ui.activities.ShareMapActivity;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.erminesoft.motionview.motionview.util.DialogHelper;
 import com.facebook.appevents.AppEventsLogger;
@@ -43,8 +41,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private boolean routerStarted = false;
 
     private ImageButton mStartWalkRouter;
-    private Button shareButton;
-    private ImageView gpsStatus;
     private LocationManager locationManager;
     private TextView startStopTracking;
     private ImageView gpsIcon;
@@ -58,8 +54,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         mStartWalkRouter = (ImageButton) view.findViewById(R.id.activity_maps_steps_button);
 
-        /*shareButton = (Button) view.findViewById(R.id.map_share_dialog);
-        gpsStatus = (ImageView) view.findViewById(R.id.gps_status);*/
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         startStopTracking = (TextView) view.findViewById(R.id.map_fragment_start_tracking_text);
         gpsIcon = (ImageView) view.findViewById(R.id.map_fragment_gps_icon);
@@ -114,7 +108,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
             public void onClick(View v) {
                 if (!routerStarted) {
                     mStartWalkRouter.setImageResource(R.drawable.stop);
-                    shareButton.setVisibility(View.GONE);
+
                     startStopTracking.setText(R.string.map_fragment_stop_tracking_text);
                     routerStarted = true;
                     mGoogleFitnessFacade.clearPoints();
@@ -133,18 +127,12 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     mGoogleFitnessFacade.startLocation();
                 } else {
                     mStartWalkRouter.setImageResource(R.drawable.play);
-                    shareButton.setVisibility(View.VISIBLE);
                     startStopTracking.setText(R.string.map_fragment_start_tracking_text);
                     routerStarted = false;
                     mGoogleFitnessFacade.stopLocation();
                     mGoogleFitnessFacade.stopRouteOnMap();
 
-                    shareButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ShareMapActivity.start(getActivity(), mGoogleFitnessFacade.getTrackPoints());
-                        }
-                    });
+
                 }
             }
         });
@@ -182,7 +170,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                 gpsTextTop.setTextColor(Color.parseColor("#199BAE"));
                 gpsTextBottom.setTextColor(Color.parseColor("#199BAE"));
             } else {
-                gpsStatus.setImageResource(R.drawable.gps);
+                gpsIcon.setImageResource(R.drawable.gps);
                 gpsTextTop.setTextColor(Color.parseColor("#B8B8B8"));
                 gpsTextBottom.setTextColor(Color.parseColor("#B8B8B8"));
             }
