@@ -3,6 +3,7 @@ package com.erminesoft.motionview.motionview.ui.activities;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.core.bridge.Receiver;
@@ -40,6 +42,8 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     private TextInputLayout mUserDailyGoalTextIl;
     private EditText mUserDailyGoalText;
 
+    private TextView cleanActivityHistory;
+
     private GooglePlusFacade mGooglePlusFacade;
 
     public static void start(Activity activity) {
@@ -58,13 +62,20 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         mGooglePlusFacade = getMVApplication().getGooglePlusFacade();
         mGooglePlusFacade.buildGoogleApiClient(this);
 
-        findViewById(R.id.settings_save_weight_height_button).setOnClickListener(new OnSaveButtonClick());
+        findViewById(R.id.settings_save_weight_height_button).setOnClickListener(new Clicker());
 
         mUserDailyGoalText = (EditText) findViewById(R.id.settings_daily_goal);
         mUserDailyGoalText.setText(
                 String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL)));
 
         mUserDailyGoalTextIl = (TextInputLayout) findViewById(R.id.settings_daily_goal_il);
+
+        cleanActivityHistory = (TextView) findViewById(R.id.settings_delete_history_header);
+        cleanActivityHistory.setOnClickListener(new Clicker());
+
+        findViewById(R.id.settings_clean_history_button).setOnClickListener(new Clicker());
+
+        cleanActivityHistory.setPaintFlags(cleanActivityHistory.getPaintFlags() |   Paint.UNDERLINE_TEXT_FLAG);
 
         setTitle(getString(R.string.settings));
         initSettings();
@@ -134,7 +145,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     private void initSettings() {
         initWeight();
         initHeight();
-        initCleanHistory();
+//        initCleanHistory();
     }
 
     private void initWeight() {
@@ -152,13 +163,8 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     }
 
     private void initCleanHistory() {
-        findViewById(R.id.settings_clean_history_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 Intent fitnessSettings = new Intent(FITNESS_HISTORY_INTENT);
                 startActivity(fitnessSettings);
-            }
-        });
     }
 
     @Override
@@ -205,19 +211,39 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         getMVApplication().getCommander().denyAll(ExecutorType.SETTINGS_ACTIVITY);
     }
 
-    private class OnSaveButtonClick implements View.OnClickListener {
+    private void buttonSavePressed() {
+        saveData();
+
+        InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        View view = getCurrentFocus();
+        if (view != null) {
+            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
+        showShortToast(getString(R.string.saved_data_toast));
+    }
+
+    private void buttonClearPressed() {
+        mUserWeightText.setText("");
+        mUserHeightText.setText("");
+        mUserDailyGoalText.setText("");
+    }
+
+    private class Clicker implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            saveData();
-
-            InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-
-            View view = getCurrentFocus();
-            if (view != null) {
-                manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            switch(v.getId()) {
+                case R.id.settings_delete_history_header:
+                    initCleanHistory();
+                    break;
+                case R.id.settings_save_weight_height_button:
+                    buttonSavePressed();
+                    break;
+                case R.id.settings_clean_history_button:
+                    buttonClearPressed();
             }
 
-            showShortToast(getString(R.string.saved_data_toast));
         }
     }
 }
