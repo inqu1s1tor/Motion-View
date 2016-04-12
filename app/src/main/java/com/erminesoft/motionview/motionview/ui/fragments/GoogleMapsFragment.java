@@ -19,11 +19,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.ui.activities.ShareMapActivity;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.erminesoft.motionview.motionview.util.DialogHelper;
 import com.facebook.appevents.AppEventsLogger;
@@ -40,7 +42,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
 
     private boolean routerStarted = false;
 
-    private ImageButton mStartWalkRouter;
+    private CheckBox mStartWalkRouter;
     private LocationManager locationManager;
     private TextView startStopTracking;
     private ImageView gpsIcon;
@@ -52,7 +54,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        mStartWalkRouter = (ImageButton) view.findViewById(R.id.activity_maps_steps_button);
+        mStartWalkRouter = (CheckBox) view.findViewById(R.id.activity_maps_steps_button);
 
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         startStopTracking = (TextView) view.findViewById(R.id.map_fragment_start_tracking_text);
@@ -103,39 +105,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mGoogleFitnessFacade.createLocationRequest(UPDATE_INTERVAL, FATEST_INTERVAL, DISPLACEMENT);
         mGoogleFitnessFacade.setMarkerAtFirstShow();
 
-        mStartWalkRouter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!routerStarted) {
-                    mStartWalkRouter.setImageResource(R.drawable.stop);
-
-                    startStopTracking.setText(R.string.map_fragment_stop_tracking_text);
-                    routerStarted = true;
-                    mGoogleFitnessFacade.clearPoints();
-                    mGoogleFitnessFacade.clearMap();
-                    mGoogleFitnessFacade.setStartMarker();
-                    mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(mGoogleFitnessFacade.getCurrentLocation().getLatitude(), mGoogleFitnessFacade.getCurrentLocation().getLongitude()));
-                    mGoogleFitnessFacade.setOnLocationChangeListener(new LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
-                            if (location.getAccuracy() < 100) {
-                                mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
-                                mGoogleFitnessFacade.startRouteOnMap();
-                            }
-                        }
-                    });
-                    mGoogleFitnessFacade.startLocation();
-                } else {
-                    mStartWalkRouter.setImageResource(R.drawable.play);
-                    startStopTracking.setText(R.string.map_fragment_start_tracking_text);
-                    routerStarted = false;
-                    mGoogleFitnessFacade.stopLocation();
-                    mGoogleFitnessFacade.stopRouteOnMap();
-
-
-                }
-            }
-        });
+        mStartWalkRouter.setOnCheckedChangeListener(new CheckedListener());
     }
 
     @Override
@@ -173,6 +143,45 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                 gpsIcon.setImageResource(R.drawable.gps);
                 gpsTextTop.setTextColor(Color.parseColor("#B8B8B8"));
                 gpsTextBottom.setTextColor(Color.parseColor("#B8B8B8"));
+            }
+        }
+    }
+
+    private void startWaking() {
+        startStopTracking.setText(R.string.map_fragment_stop_tracking_text);
+        routerStarted = true;
+        mGoogleFitnessFacade.clearPoints();
+        mGoogleFitnessFacade.clearMap();
+        mGoogleFitnessFacade.setStartMarker();
+        mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(mGoogleFitnessFacade.getCurrentLocation().getLatitude(), mGoogleFitnessFacade.getCurrentLocation().getLongitude()));
+        mGoogleFitnessFacade.setOnLocationChangeListener(new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                if (location.getAccuracy() < 100) {
+                    mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
+                    mGoogleFitnessFacade.startRouteOnMap();
+                }
+            }
+        });
+        mGoogleFitnessFacade.startLocation();
+    }
+
+    private void stopWalking() {
+        startStopTracking.setText(R.string.map_fragment_start_tracking_text);
+        routerStarted = false;
+        mGoogleFitnessFacade.stopLocation();
+        mGoogleFitnessFacade.stopRouteOnMap();
+
+        ShareMapActivity.start(getActivity(), mGoogleFitnessFacade.getTrackPoints());
+    }
+
+    private final class CheckedListener implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                startWaking();
+            } else {
+                stopWalking();
             }
         }
     }

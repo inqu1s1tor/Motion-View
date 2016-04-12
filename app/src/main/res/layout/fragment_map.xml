@@ -7,12 +7,13 @@
     android:paddingRight="5dp">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        tools:context=".ui.activities.GoogleMapActivityMapsActivity" />
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/map"
+              android:name="com.google.android.gms.maps.SupportMapFragment"
+              android:layout_width="match_parent"
+              android:layout_height="0dp"
+              android:layout_weight="1"
+              tools:context=".ui.activities.GoogleMapActivityMapsActivity" />
 
 
     <LinearLayout
@@ -160,12 +161,12 @@
         android:paddingLeft="45dp"
         android:paddingRight="45dp">
 
-        <ImageButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:id="@+id/activity_maps_steps_button"
-            android:src="@drawable/play"/>
+            android:button="@drawable/startstopselector"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -203,9 +204,6 @@
         </LinearLayout>
 
     </RelativeLayout>
-
-
-
 </LinearLayout>
 
 
