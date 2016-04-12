@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.erminesoft.motionview.motionview.util.TypeFaceHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,12 +21,12 @@ public class CircularProgress extends View {
     private static final float AVAILABLE_ANGLE = 360;
     private static final float DIVIDER_PART_SWEEP = 2;
     private static final float START_ANGLE = 90;
-    private static final float ANIMATION_TIME = 100;
+    private static final float ANIMATION_TIME = 15;
+    private static final String HELVETICA_ROMAN = "fonts/HELVETICANEUECYR-ROMAN.OTF";
+    private static final String ROBOTO_REGULAR = "fonts/ROBOTO-REGULAR_0.TTF";
 
     private RectF oval;
     private float diameter;
-
-    private Paint outerShadow;
 
     private Paint unusedPart;
     private Paint emptyPart;
@@ -38,7 +40,10 @@ public class CircularProgress extends View {
     private int maxProgress;
     private float percentageProgress;
     private Paint dividerPaint;
+
     private Paint percentageText;
+    private Paint grayText;
+    private Paint blackText;
 
     private float textSize;
 
@@ -48,7 +53,6 @@ public class CircularProgress extends View {
     private float animationSweep;
     private float animationTime;
     private float delta = -1f;
-
 
 
     public CircularProgress(Context context, AttributeSet attributeSet) {
@@ -121,7 +125,7 @@ public class CircularProgress extends View {
 
         diameter = Math.min(ww, hh);
 
-        textSize = (diameter / 2) * 0.25f;
+        textSize = (diameter / 2) * 0.52f;
 
         oval.set(getPaddingLeft(), getPaddingTop(), diameter, diameter);
         unusedPart.setStrokeWidth(strokeWidth);
@@ -138,87 +142,98 @@ public class CircularProgress extends View {
         unusedPart.setColor(Color.WHITE);
         unusedPart.setStyle(Paint.Style.STROKE);
 
-        outerShadow = new Paint();
-        outerShadow.setColor(Color.LTGRAY);
-        outerShadow.setStrokeWidth(2.5f);
-        outerShadow.setStyle(Paint.Style.STROKE);
-
         emptyPart = new Paint(Paint.ANTI_ALIAS_FLAG);
-        emptyPart.setColor(Color.GRAY);
+        emptyPart.setColor(Color.parseColor("#a9a9a9"));
         emptyPart.setStyle(Paint.Style.STROKE);
+        emptyPart.setShadowLayer(7f, -3f, -3f, Color.DKGRAY);
+
+        setLayerType(LAYER_TYPE_SOFTWARE, emptyPart);
 
         dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         dividerPaint.setColor(Color.WHITE);
         dividerPaint.setStyle(Paint.Style.STROKE);
 
         percentageText = new Paint(Paint.LINEAR_TEXT_FLAG);
-        percentageText.setColor(Color.DKGRAY);
+        percentageText.setColor(Color.parseColor("#ABABAB"));
         percentageText.setTextAlign(Paint.Align.CENTER);
+        percentageText.setShadowLayer(2f, -1f, -1f, Color.BLACK);
+        percentageText.setTypeface(TypeFaceHelper.getInstance().getTypeFace(HELVETICA_ROMAN));
+
+        setLayerType(LAYER_TYPE_SOFTWARE, percentageText);
+
+        grayText = new Paint(Paint.LINEAR_TEXT_FLAG);
+        grayText.setColor(Color.parseColor("#999999"));
+        grayText.setTextAlign(Paint.Align.CENTER);
+        grayText.setTypeface(TypeFaceHelper.getInstance().getTypeFace(ROBOTO_REGULAR));
+
+        blackText = new Paint(grayText);
+        blackText.setColor(Color.BLACK);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float availableAngle = (AVAILABLE_ANGLE - parts.size() * DIVIDER_PART_SWEEP) * percentageProgress;
 
         float startAngle;
         float sweep;
         float endAngle = START_ANGLE;
 
-        canvas.drawArc(oval, endAngle, AVAILABLE_ANGLE + START_ANGLE - endAngle, false, emptyPart);
+        canvas.drawArc(oval, START_ANGLE, AVAILABLE_ANGLE, false, emptyPart);
 
-        float percentageTextX = diameter / 2 + diameter * 0.06f;
+        float percentageTextX = diameter / 2 + diameter * 0.055f;
         float percentageTextY = diameter / 2;
 
         percentageText.setTextSize(textSize);
+        grayText.setTextSize(textSize / 3.5f);
+        blackText.setTextSize(textSize / 3.5f);
 
-        canvas.drawText(String.format(Locale.getDefault(), "%.1f%%", percentageProgress * 100),
-                percentageTextX, percentageTextY,
+        canvas.drawText(String.format(Locale.getDefault(), "%.0f%%", percentageProgress * 100),
+                percentageTextX, percentageTextY * 1.25f,
                 percentageText);
 
+        canvas.drawText("ACTIVITY SCORE",
+                percentageTextX,
+                percentageTextY + percentageText.getTextSize(),
+                blackText);
+
         canvas.drawText(currentProgress + "/" + maxProgress, percentageTextX,
-                percentageTextY + percentageText.getTextSize(), percentageText);
+                percentageTextY + percentageText.getTextSize() + blackText.getTextSize(), blackText);
 
-        if (availableAngle == 0) {
-            canvas.drawArc(oval, START_ANGLE, AVAILABLE_ANGLE, false, emptyPart);
-        } else {
+        float availableAngle = (AVAILABLE_ANGLE - parts.size() * DIVIDER_PART_SWEEP) * percentageProgress;
 
-            float partPercentage;
-            Paint paint;
+        float partPercentage;
+        Paint paint;
 
-            for (int i = 0; i < parts.size(); i++) {
-                canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
-                endAngle += DIVIDER_PART_SWEEP;
+        for (int i = 0; i < parts.size(); i++) {
+            canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
+            endAngle += DIVIDER_PART_SWEEP;
 
-                if (isAnimating && lastPartIndex == i) {
-                    break;
-                }
-
-                Part part = parts.get(i);
-
-                partPercentage = (float) part.getTime() / totalTime;
-
-                startAngle = endAngle;
-                sweep = availableAngle * partPercentage;
-
-                paint = part.getPaint();
-                paint.setStrokeWidth(strokeWidth);
-                endAngle = startAngle + sweep;
-
-                if (!isAnimating && lastPartIndex == i) {
-                    animatePart(startAngle, sweep, endAngle, i);
-                    break;
-                } else {
-                    canvas.drawArc(oval, startAngle, sweep, false, paint);
-                }
+            if (isAnimating && lastPartIndex == i) {
+                break;
             }
 
-            if (!isAnimating) {
-                canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
+            Part part = parts.get(i);
+
+            partPercentage = (float) part.getTime() / totalTime;
+
+            startAngle = endAngle;
+            sweep = availableAngle * partPercentage;
+
+            paint = part.getPaint();
+            paint.setStrokeWidth(strokeWidth);
+            endAngle = startAngle + sweep;
+
+            if (!isAnimating && lastPartIndex == i) {
+                animatePart(startAngle, sweep, endAngle, i);
+                break;
+            } else {
+                canvas.drawArc(oval, startAngle, sweep, false, paint);
             }
         }
 
-        canvas.drawCircle(oval.centerX(), oval.centerY(), diameter / 2, outerShadow);
+        if (!isAnimating) {
+            canvas.drawArc(oval, endAngle, DIVIDER_PART_SWEEP, false, dividerPaint);
+        }
 
         if (isAnimating) {
             canvas.drawArc(oval, animationStartAngle, animationSweep, false, parts.get(lastPartIndex).getPaint());

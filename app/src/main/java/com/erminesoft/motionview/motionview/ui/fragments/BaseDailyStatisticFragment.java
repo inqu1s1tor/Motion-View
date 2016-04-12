@@ -177,8 +177,9 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         leftAxis.setAxisMinValue(0f);
         leftAxis.setDrawLabels(false);
         leftAxis.setDrawAxisLine(false);
-        leftAxis.setAxisMaxValue(300);
-        leftAxis.setLabelCount(3, true);
+        leftAxis.setAxisMaxValue(400);
+        leftAxis.setLabelCount(5, true);
+
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setDrawGridLines(false);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
