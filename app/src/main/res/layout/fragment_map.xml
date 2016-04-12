@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="12"
+                android:text="0"
                 android:textColor="#44a64b"
                 android:textSize="15sp" />
 
@@ -103,7 +103,7 @@
                 android:id="@+id/main_fragment_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="06:20:05"
+                android:text="00:00:00"
                 android:textColor="#c6c754"
                 android:textSize="15sp" />
 
@@ -139,7 +139,7 @@
                 android:id="@+id/main_fragment_calories"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1024"
+                android:text="0"
                 android:textColor="#ec7c2a"
                 android:textSize="15sp" />
 

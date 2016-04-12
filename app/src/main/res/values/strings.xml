@@ -23,7 +23,6 @@
 
     <string name="total_calories_format">Total calories: %d</string>
     <string name="total_distance_format">Distance: %d</string>
-    <string name="total_activity_time_format">%1$dh %2$dm</string>
 
     <string name="settings_user_weight_hint">TYPE YOUR WEIGHT:</string>
     <string name="settings_user_height_hint">TYPE YOUR HEIGHT:</string>

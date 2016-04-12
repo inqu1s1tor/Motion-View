@@ -1,10 +1,7 @@
 package com.erminesoft.motionview.motionview.util;
 
-import android.content.Context;
-
-import com.erminesoft.motionview.motionview.R;
-
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TimeWorker {
@@ -30,11 +27,12 @@ public class TimeWorker {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    public static String processMillisecondsToString(int milliseconds, Context context) {
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) % MINUTES_IN_HOUR;
-        long hours = TimeUnit.MILLISECONDS.toHours(milliseconds);
+    public static String processSecondsToString(int milliseconds) {
+        long minutes = TimeUnit.SECONDS.toMinutes(milliseconds) % MINUTES_IN_HOUR;
+        long hours = TimeUnit.SECONDS.toHours(milliseconds);
+        long seconds = TimeUnit.SECONDS.toSeconds(milliseconds) % MINUTES_IN_HOUR;
 
-        return String.format(context.getString(R.string.total_activity_time_format), hours, minutes);
+        return String.format(Locale.getDefault(), "%1$d:%2$d:%3$d", hours, minutes, seconds);
     }
 
     public static int getDay(long timestamp) {
