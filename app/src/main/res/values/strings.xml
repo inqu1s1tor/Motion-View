@@ -61,4 +61,6 @@
     <string name="map_fragment_calories_value">kcal</string>
     <string name="map_fragment_start_tracking_text">START TRACK</string>
     <string name="map_fragment_stop_tracking_text">STOP TRACK</string>
+    <string name="share_activity_tracking_text">TRACK INFORMATION</string>
+    <string name="share_activity_title">Map</string>
 </resources>
