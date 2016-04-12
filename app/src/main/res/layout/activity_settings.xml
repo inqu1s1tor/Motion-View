@@ -49,34 +49,43 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusableInTouchMode="true"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:paddingTop="20dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:padding="15dp">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/settings_user_weight_il"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent">
+                android:layout_width="match_parent"
+                android:textColorHint="#FFFFFF"
+                app:hintTextAppearance="@style/Base.TextAppearance.AppCompat">
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/settings_user_weight"
+                    style="TextLabel"
                     android:layout_marginBottom="@dimen/edit_text_user_info_margin_bottom"
                     android:inputType="numberDecimal"
                     android:imeOptions="actionNext"
                     android:hint="@string/settings_user_weight_hint"
-                    android:textSize="@dimen/edit_text_user_info_text_size"/>
+                    android:textStyle="bold"
+                    android:textSize="@dimen/edit_text_user_info_text_size" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/settings_user_height_il"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent">
+                android:layout_width="match_parent"
+                android:textColorHint="#FFFFFF"
+                app:hintTextAppearance="@style/Base.TextAppearance.AppCompat">
 
                 <EditText
                     android:layout_width="match_parent"
@@ -86,13 +95,16 @@
                     android:inputType="numberDecimal"
                     android:imeOptions="actionNext"
                     android:hint="@string/settings_user_height_hint"
+                    android:textStyle="bold"
                     android:textSize="@dimen/edit_text_user_info_text_size"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/settings_daily_goal_il"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent">
+                android:layout_width="match_parent"
+                android:textColorHint="#FFFFFF"
+                app:hintTextAppearance="@style/Base.TextAppearance.AppCompat">
 
                 <EditText
                     android:id="@+id/settings_daily_goal"
@@ -100,45 +112,68 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
                     android:imeOptions="actionDone"
+                    android:textStyle="bold"
                     android:hint="@string/settings_daily_goal_string"
                     android:textSize="@dimen/edit_text_user_info_text_size"/>
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/settings_save_weight_height_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_save_button_text"
-                android:layout_gravity="center_horizontal|end"
-                android:minHeight="@dimen/settings_save_button_min_height"/>
+
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_delete_history_header"
-                    android:id="@+id/settings_delete_history_header"
-                    android:layout_weight="1"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="35dp">
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:id="@+id/settings_save_weight_height_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_save_button_text"
+                    android:layout_gravity="center_horizontal|end"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_button_save"
+                    android:layout_marginRight="8dp"
+                    android:textSize="@dimen/settings_button_save_text_size"
+                    android:minHeight="@dimen/settings_save_button_min_height"/>
+
+
+                <Button
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_delete_history_button_text"
                     android:id="@+id/settings_clean_history_button"
                     android:layout_weight="1"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/rounded_button_clean_settings"
                     style="?android:attr/buttonStyleSmall"
-                    android:textSize="12sp"/>
+                    android:textSize="@dimen/settings_button_clean_text_size"
+                    android:minHeight="@dimen/settings_save_button_min_height"/>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_delete_history_header"
+                    android:id="@+id/settings_delete_history_header"
+                    android:textSize="15sp"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>
+
