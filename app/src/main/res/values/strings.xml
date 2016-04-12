@@ -25,8 +25,8 @@
     <string name="total_distance_format">Distance: %d</string>
     <string name="total_activity_time_format">%1$dh %2$dm</string>
 
-    <string name="settings_user_weight_hint">Type Your Weight:</string>
-    <string name="settings_user_height_hint">Type Your Height:</string>
+    <string name="settings_user_weight_hint">TYPE YOUR WEIGHT:</string>
+    <string name="settings_user_height_hint">TYPE YOUR HEIGHT:</string>
 
     <string name="settings_delete_history_header">Clean Activity History</string>
     <string name="settings_delete_history_button_text">Clean</string>
@@ -50,7 +50,7 @@
     <string name="saved_data_toast">Data saved!</string>
     <string name="share_to_google_plus">Share to G+</string>
     <string name="share_map">Share the map</string>
-    <string name="settings_daily_goal_string">Type your daily goal:</string>
+    <string name="settings_daily_goal_string">TYPE YOUR DAILY GOAL:</string>
     <string name="settings_empty_error">This field can\'t be empty!</string>
     <string name="main_fragment_distance_text">Distance:</string>
     <string name="main_fragment_time_text">Time:</string>

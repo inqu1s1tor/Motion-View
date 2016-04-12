@@ -77,6 +77,7 @@
                     android:imeOptions="actionNext"
                     android:hint="@string/settings_user_weight_hint"
                     android:textStyle="bold"
+                    android:maxLength="3"
                     android:textSize="@dimen/edit_text_user_info_text_size" />
             </android.support.design.widget.TextInputLayout>
 
@@ -96,6 +97,7 @@
                     android:imeOptions="actionNext"
                     android:hint="@string/settings_user_height_hint"
                     android:textStyle="bold"
+                    android:maxLength="3"
                     android:textSize="@dimen/edit_text_user_info_text_size"/>
             </android.support.design.widget.TextInputLayout>
 
