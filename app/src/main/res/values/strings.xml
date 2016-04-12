@@ -59,4 +59,6 @@
     <string name="map_fragment_distance_value">km</string>
     <string name="map_fragment_time_value">hours</string>
     <string name="map_fragment_calories_value">kcal</string>
+    <string name="map_fragment_start_tracking_text">START TRACK</string>
+    <string name="map_fragment_stop_tracking_text">STOP TRACK</string>
 </resources>

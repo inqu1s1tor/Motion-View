@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -177,22 +178,28 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         Person person = (Person) data;
 
         String coverPath;
+        String placeholder;
 
-        if (person.getCover() == null) {
-            coverPath = ContentResolver.SCHEME_ANDROID_RESOURCE +
+        if (person.getCover() != null) {
+            placeholder = ContentResolver.SCHEME_ANDROID_RESOURCE +
                     "://" + getResources().getResourcePackageName(R.drawable.default_cover)
                     + '/' + getResources().getResourceTypeName(R.drawable.default_cover)
                     + '/' + getResources().getResourceEntryName(R.drawable.default_cover);
-        } else {
-            coverPath = person.getCover().getCoverPhoto().getUrl();
-        }
-        ImageView coverView = (ImageView) findViewById(R.id.settings_profile_cover_image);
 
-        Picasso.with(this)
-                .load(coverPath)
-                .centerCrop()
-                .resize(coverView.getWidth(), coverView.getHeight())
-                .into(coverView);
+            coverPath = person.getCover().getCoverPhoto().getUrl();
+
+            ImageView coverView = (ImageView) findViewById(R.id.settings_profile_cover_image);
+
+            Picasso.with(this)
+                    .load(coverPath)
+                    .placeholder(Drawable.createFromPath(placeholder))
+                    .centerCrop()
+                    .resize(coverView.getWidth(), coverView.getHeight())
+                    .into(coverView);
+        }
+
+
+
 
         String avatarURL = person.getImage().getUrl();
         StringBuilder builder = new StringBuilder(avatarURL);
