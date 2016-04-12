@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -46,6 +47,9 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private ImageView gpsStatus;
     private LocationManager locationManager;
     private TextView startStopTracking;
+    private ImageView gpsIcon;
+    private TextView gpsTextTop;
+    private TextView gpsTextBottom;
 
 
     @Nullable
@@ -54,10 +58,13 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         mStartWalkRouter = (ImageButton) view.findViewById(R.id.activity_maps_steps_button);
 
-        shareButton = (Button) view.findViewById(R.id.map_share_dialog);
-        gpsStatus = (ImageView) view.findViewById(R.id.gps_status);
+        /*shareButton = (Button) view.findViewById(R.id.map_share_dialog);
+        gpsStatus = (ImageView) view.findViewById(R.id.gps_status);*/
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         startStopTracking = (TextView) view.findViewById(R.id.map_fragment_start_tracking_text);
+        gpsIcon = (ImageView) view.findViewById(R.id.map_fragment_gps_icon);
+        gpsTextTop = (TextView) view.findViewById(R.id.map_fragment_gps_top_text);
+        gpsTextBottom = (TextView) view.findViewById(R.id.map_fragment_gps_bottom_text);
 
         if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -106,8 +113,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
             @Override
             public void onClick(View v) {
                 if (!routerStarted) {
-                    //mStartWalkRouter.setImageResource(R.drawable.stop);
-                    mStartWalkRouter.setBackgroundResource(R.drawable.stop);
+                    mStartWalkRouter.setImageResource(R.drawable.stop);
                     shareButton.setVisibility(View.GONE);
                     startStopTracking.setText(R.string.map_fragment_stop_tracking_text);
                     routerStarted = true;
@@ -127,7 +133,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                     mGoogleFitnessFacade.startLocation();
                 } else {
                     mStartWalkRouter.setImageResource(R.drawable.play);
-                    //mStartWalkRouter.setBackgroundResource(R.drawable.play);
                     shareButton.setVisibility(View.VISIBLE);
                     startStopTracking.setText(R.string.map_fragment_start_tracking_text);
                     routerStarted = false;
@@ -173,9 +178,13 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                 }
             }
             if (satellitesInFix > 0) {
-                gpsStatus.setImageResource(R.drawable.gps_on);
+                gpsIcon.setImageResource(R.drawable.ic_gps_on);
+                gpsTextTop.setTextColor(Color.parseColor("#199BAE"));
+                gpsTextBottom.setTextColor(Color.parseColor("#199BAE"));
             } else {
-                gpsStatus.setImageResource(R.drawable.gps_off);
+                gpsStatus.setImageResource(R.drawable.gps);
+                gpsTextTop.setTextColor(Color.parseColor("#B8B8B8"));
+                gpsTextBottom.setTextColor(Color.parseColor("#B8B8B8"));
             }
         }
     }
