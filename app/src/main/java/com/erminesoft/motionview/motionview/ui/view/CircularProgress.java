@@ -42,7 +42,6 @@ public class CircularProgress extends View {
     private Paint dividerPaint;
 
     private Paint percentageText;
-    private Paint grayText;
     private Paint blackText;
 
     private float textSize;
@@ -145,12 +144,9 @@ public class CircularProgress extends View {
         emptyPart = new Paint(Paint.ANTI_ALIAS_FLAG);
         emptyPart.setColor(Color.parseColor("#a9a9a9"));
         emptyPart.setStyle(Paint.Style.STROKE);
-        emptyPart.setShadowLayer(7f, -3f, -3f, Color.DKGRAY);
-
-        setLayerType(LAYER_TYPE_SOFTWARE, emptyPart);
 
         dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        dividerPaint.setColor(Color.WHITE);
+        dividerPaint.setColor(Color.parseColor("#eeeeee"));
         dividerPaint.setStyle(Paint.Style.STROKE);
 
         percentageText = new Paint(Paint.LINEAR_TEXT_FLAG);
@@ -161,12 +157,9 @@ public class CircularProgress extends View {
 
         setLayerType(LAYER_TYPE_SOFTWARE, percentageText);
 
-        grayText = new Paint(Paint.LINEAR_TEXT_FLAG);
-        grayText.setColor(Color.parseColor("#999999"));
-        grayText.setTextAlign(Paint.Align.CENTER);
-        grayText.setTypeface(TypeFaceHelper.getInstance().getTypeFace(ROBOTO_REGULAR));
-
-        blackText = new Paint(grayText);
+        blackText = new Paint(Paint.LINEAR_TEXT_FLAG);
+        blackText.setTextAlign(Paint.Align.CENTER);
+        blackText.setTypeface(TypeFaceHelper.getInstance().getTypeFace(ROBOTO_REGULAR));
         blackText.setColor(Color.BLACK);
     }
 
@@ -181,20 +174,22 @@ public class CircularProgress extends View {
         canvas.drawArc(oval, START_ANGLE, AVAILABLE_ANGLE, false, emptyPart);
 
         float percentageTextX = diameter / 2 + diameter * 0.055f;
-        float percentageTextY = diameter / 2;
+        float percentageTextY = diameter / 2 - 10;
 
         percentageText.setTextSize(textSize);
-        grayText.setTextSize(textSize / 3.5f);
-        blackText.setTextSize(textSize / 3.5f);
 
         canvas.drawText(String.format(Locale.getDefault(), "%.0f%%", percentageProgress * 100),
-                percentageTextX, percentageTextY * 1.25f,
+                percentageTextX, percentageTextY * 1.2f,
                 percentageText);
+
+        blackText.setTextSize(textSize / 3.5f);
 
         canvas.drawText("ACTIVITY SCORE",
                 percentageTextX,
                 percentageTextY + percentageText.getTextSize(),
                 blackText);
+
+        blackText.setTextSize(textSize / 2.8f);
 
         canvas.drawText(currentProgress + "/" + maxProgress, percentageTextX,
                 percentageTextY + percentageText.getTextSize() + blackText.getTextSize(), blackText);
