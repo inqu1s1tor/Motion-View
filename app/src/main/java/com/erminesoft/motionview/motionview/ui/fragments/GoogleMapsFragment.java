@@ -16,9 +16,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -76,6 +78,8 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
 
     private Timer timer;
 
+    private FloatingActionButton centerMapButton;
+
     private DataReceiver receiver;
 
     @Nullable
@@ -100,6 +104,8 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
             return null;
         }
         locationManager.addGpsStatusListener(this);
+        centerMapButton = (FloatingActionButton) view.findViewById(R.id.map_menu_button);
+        centerMapButton.setOnClickListener(new CenterMapListener());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -322,6 +328,14 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
             }
         }
     }
+
+    private final class CenterMapListener implements OnClickListener{
+        @Override
+        public void onClick(View v) {
+            showShortToast("!!!!");
+        }
+    }
+
 
     private class DataReceiver implements Receiver {
         @Override
