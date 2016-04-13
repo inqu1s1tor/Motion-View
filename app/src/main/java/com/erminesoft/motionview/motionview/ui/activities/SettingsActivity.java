@@ -98,49 +98,57 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     }
 
 
-    private void saveData() {
+    private boolean saveData() {
         String weightStr = String.valueOf(mUserWeightText.getText());
-
         if (TextUtils.isEmpty(weightStr)) {
             mUserWeightTextIl.setError(getString(R.string.settings_empty_error));
-        } else {
-            int weight = Integer.parseInt(weightStr);
-            if (weight > 300) {
-                mUserWeightTextIl.setError(getString(R.string.settings_validate_weight_field));
-            }
+            return false;
+        }
 
-            mUserWeightTextIl.setErrorEnabled(false);
-            mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
-            mGoogleFitnessFacade.saveUserHeight(weight);
+        int weight = Integer.parseInt(weightStr);
+        if (weight > 300) {
+            mUserWeightTextIl.setError(getString(R.string.settings_validate_weight_field));
+            return false;
         }
 
         String heightStr = String.valueOf(mUserHeightText.getText());
-
         if (TextUtils.isEmpty(heightStr)) {
             mUserHeightTextIl.setError(getString(R.string.settings_empty_error));
-        } else {
-            int height = Integer.parseInt(heightStr);
-            if (height > 300) {
-                mUserHeightTextIl.setError(getString(R.string.settings_validate_height_field));
-            }
-            mUserHeightTextIl.setErrorEnabled(false);
-            mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(heightStr));
-            mGoogleFitnessFacade.saveUserWeight((float) height);
+            return false;
+        }
+
+        int height = Integer.parseInt(heightStr);
+        if (height > 300) {
+            mUserHeightTextIl.setError(getString(R.string.settings_validate_height_field));
+            return false;
         }
 
         String dailyGoalStr = String.valueOf(mUserDailyGoalText.getText());
-
         if (TextUtils.isEmpty(dailyGoalStr)) {
             mUserDailyGoalTextIl.setError(getString(R.string.settings_empty_error));
-        } else {
-            int dailyGoal = Integer.parseInt(dailyGoalStr);
-            if (dailyGoal < 10000 && dailyGoal >= 100000) {
-                mUserDailyGoalTextIl.setError(getString(R.string.settings_daily_goal_error));
-            }
-            mUserDailyGoalTextIl.setErrorEnabled(false);
-            mSharedDataManager.writeInt(SharedDataManager.USER_DAILY_GOAL, dailyGoal);
+            return false;
         }
 
+        int dailyGoal = Integer.parseInt(dailyGoalStr);
+        if (dailyGoal < 1000 || dailyGoal >= 100000) {
+            mUserDailyGoalTextIl.setError(getString(R.string.settings_daily_goal_error));
+            return false;
+        }
+
+        mUserWeightTextIl.setErrorEnabled(false);
+        mUserHeightTextIl.setErrorEnabled(false);
+        mUserDailyGoalTextIl.setErrorEnabled(false);
+
+
+        mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
+        mGoogleFitnessFacade.saveUserHeight(weight);
+
+        mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(heightStr));
+        mGoogleFitnessFacade.saveUserWeight((float) height);
+
+        mSharedDataManager.writeInt(SharedDataManager.USER_DAILY_GOAL, dailyGoal);
+
+        return true;
     }
 
     @Override
@@ -193,8 +201,6 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
         String coverPath;
 
-        person.getCover().getCoverPhoto().getUrl();
-
         if (person.getCover() != null) {
 
             coverPath = person.getCover().getCoverPhoto().getUrl();
@@ -225,16 +231,23 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     }
 
     private void buttonSavePressed() {
-        saveData();
 
-        InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if(saveData()) {
+            InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-        View view = getCurrentFocus();
-        if (view != null) {
-            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            View view = getCurrentFocus();
+            if (view != null) {
+                manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
+            showShortToast(getString(R.string.saved_data_toast));
+
+        }else {
+//            showShortToast("data not save");
+
+
         }
 
-        showShortToast(getString(R.string.saved_data_toast));
     }
 
     private void buttonClearPressed() {
