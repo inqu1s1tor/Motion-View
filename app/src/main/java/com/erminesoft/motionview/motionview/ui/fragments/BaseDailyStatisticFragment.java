@@ -67,7 +67,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
 
         mProgress = (CircularProgress) view.findViewById(R.id.circular_progress);
-        mProgress.setMaxProgress(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
 
         lineChart = (LineChart) view.findViewById(R.id.fragment_today_hours_chart);
 
@@ -109,6 +108,21 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         DataBuffer.getInstance().register(CommandType.GENERATE_COMBINED_CHART_DATA, this);
 
         initCharts();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mProgress.setMaxProgress(mSharedDataManager.readInt(SharedDataManager.USER_DAILY_GOAL));
+        mProgress.invalidate();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        Log.e(TAG, String.valueOf(hidden));
     }
 
     protected void processData(List<DataSet> dataSets) {

@@ -101,7 +101,14 @@ public class CircularProgress extends View {
                 break;
         }
 
-        strokeWidth = w / 10;
+        strokeWidth = w / 8;
+
+        setMeasuredDimension(w, h);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
 
         int paddingOffset = strokeWidth / 2;
 
@@ -111,13 +118,6 @@ public class CircularProgress extends View {
         int paddingRight = getPaddingRight() + paddingOffset;
 
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-
-        setMeasuredDimension(w, h);
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
 
         int ww = w - getPaddingRight();
         int hh = h - getPaddingBottom();
@@ -173,13 +173,13 @@ public class CircularProgress extends View {
 
         canvas.drawArc(oval, START_ANGLE, AVAILABLE_ANGLE, false, emptyPart);
 
-        float percentageTextX = diameter / 2 + diameter * 0.055f;
-        float percentageTextY = diameter / 2 - 10;
+        float percentageTextX = diameter / 1.8f;
+        float percentageTextY = diameter / 2.5f;
 
         percentageText.setTextSize(textSize);
 
         canvas.drawText(String.format(Locale.getDefault(), "%.0f%%", percentageProgress * 100),
-                percentageTextX, percentageTextY * 1.2f,
+                percentageTextX, percentageTextY * 1.35f,
                 percentageText);
 
         blackText.setTextSize(textSize / 3.5f);
