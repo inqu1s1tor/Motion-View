@@ -7,13 +7,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.erminesoft.motionview.motionview.util.TypeFaceHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -266,10 +266,18 @@ public class CircularProgress extends View {
         });
     }
 
-    public void addPart(@NonNull Part part) {
-        parts.add(part);
+    public void addParts(Part[] p) {
+        parts = new ArrayList<>(Arrays.asList(p));
 
-        totalTime += part.getTime();
+        for (int i = 0; i < parts.size(); i++) {
+            Part part = parts.get(i);
+            if (part == null) {
+                parts.remove(i--);
+                continue;
+            }
+
+            totalTime += part.getTime();
+        }
     }
 
     public void setCurrentProgress(int currentProgress) {

@@ -239,45 +239,44 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
 
         int totalActivityTime = 0;
 
-        addProgressPart(10, Color.parseColor("#c6c754"));
-        addProgressPart(7, Color.parseColor("#e08a4a"));
-        addProgressPart(4, Color.parseColor("#47a74e"));
+        CircularProgress.Part[] parts = new CircularProgress.Part[3];
 
         for (DataPoint dataPoint : dataPoints) {
             int activityType = dataPoint.getValue(Field.FIELD_ACTIVITY).asInt();
             int color;
 
-/*
-
             switch (activityType) {
                 case 7:
-                    color = Color.GREEN;
+                    color = Color.parseColor("#c6c754");
 
                     int time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
                     totalActivityTime += time;
 
-                    addProgressPart(time, color);
+                    parts[0] = new CircularProgress.Part(time, color);
                     break;
                 case 8:
-                    color = Color.YELLOW;
+                    color = Color.parseColor("#e08a4a");
 
                     time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
                     totalActivityTime += time;
 
-                    addProgressPart(time, color);
+                    parts[1] = new CircularProgress.Part(time, color);
+                    break;
+                case 0:
+                    color = Color.parseColor("#47a74e");
+
+                    time = dataPoint.getValue(Field.FIELD_DURATION).asInt();
+                    totalActivityTime += time;
+
+                    parts[2] = new CircularProgress.Part(time, color);
                     break;
             }
-*/
-
         }
 
+        mProgress.addParts(parts);
+
         String format = DateFormat.format("h:mm", totalActivityTime).toString();
-        activityTimeText.setText(format+" h");
-
-    }
-
-    protected void addProgressPart(int time, int color) {
-        mProgress.addPart(new CircularProgress.Part(time, color));
+        activityTimeText.setText(String.format("%s h", format));
     }
 
     private void onDistanceChanged(List<DataPoint> dataPoints) {
