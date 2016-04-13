@@ -143,6 +143,8 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mGoogleFitnessFacade.createLocationRequest(UPDATE_INTERVAL, FATEST_INTERVAL, DISPLACEMENT);
         mGoogleFitnessFacade.setMarkerAtFirstShow();
 
+
+
         mStartWalkRouter.setOnCheckedChangeListener(new CheckedListener());
     }
 
@@ -335,7 +337,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private final class CenterMapListener implements OnClickListener{
         @Override
         public void onClick(View v) {
-            showShortToast("!!!!");
+            mGoogleFitnessFacade.centerMap();
         }
     }
 

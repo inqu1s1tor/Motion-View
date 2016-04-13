@@ -146,9 +146,13 @@ public class GoogleFitnessFacade {
         mMapManager.stopRouteOnMap();
     }
 
-    public void drawRouteByPointsOnMap(List<LatLng> points,GoogleMap googleMap){ mMapManager.drawRouteByPointsOnMap(points,googleMap);}
+    public void drawRouteByPointsOnMap(List<LatLng> points,GoogleMap googleMap){ mMapManager.drawRouteByPointsOnMap(points, googleMap);}
 
     public boolean isMapReady() {
         return mMapManager.isMapReady();
+    }
+
+    public void centerMap(){
+        mMapManager.centerMap();
     }
 }

@@ -220,4 +220,15 @@ class GoogleMapManager {
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_orang)).visible(true);
         googleMap.addMarker(endMarkerOptions);
     }
+
+    void centerMap(){
+        LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
+        latLngBuilder.include(new LatLng(getCurrentLocation().getLatitude(), getCurrentLocation().getLongitude()));
+        LatLngBounds latLngBounds = latLngBuilder.build();
+        int size = mGoogleApiClient.getContext().getResources().getDisplayMetrics().widthPixels;
+        CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 15);
+        mMap.moveCamera(track);
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+    }
+
 }
