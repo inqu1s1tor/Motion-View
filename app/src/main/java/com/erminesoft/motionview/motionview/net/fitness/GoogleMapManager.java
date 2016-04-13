@@ -184,7 +184,6 @@ class GoogleMapManager {
     void drawRouteByPointsOnMap(List<LatLng> pointsOnMap, GoogleMap googleMap){
         PolylineOptions lineOptions = new PolylineOptions().visible(true).color(R.color.greenRoute).geodesic(true).width(12f);
         for(LatLng lt:pointsOnMap){
-            Log.d("!!!!", "" + lt.toString());
             lineOptions.add(lt);
         }
 

@@ -1,10 +1,8 @@
 package com.erminesoft.motionview.motionview.ui.activities;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -42,7 +40,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
     private TextInputLayout mUserDailyGoalTextIl;
     private EditText mUserDailyGoalText;
-
+    private ImageView coverView;
     private TextView cleanActivityHistory;
 
     private GooglePlusFacade mGooglePlusFacade;
@@ -64,6 +62,8 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         mGooglePlusFacade.buildGoogleApiClient(this);
 
         findViewById(R.id.settings_save_weight_height_button).setOnClickListener(new Clicker());
+
+        coverView = (ImageView) findViewById(R.id.settings_profile_cover_image);
 
         mUserDailyGoalText = (EditText) findViewById(R.id.settings_daily_goal);
         mUserDailyGoalText.setText(
@@ -190,18 +190,18 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         String placeholder;
 
         if (person.getCover() != null) {
-            placeholder = ContentResolver.SCHEME_ANDROID_RESOURCE +
+            /*placeholder = ContentResolver.SCHEME_ANDROID_RESOURCE +
                     "://" + getResources().getResourcePackageName(R.drawable.default_cover)
                     + '/' + getResources().getResourceTypeName(R.drawable.default_cover)
                     + '/' + getResources().getResourceEntryName(R.drawable.default_cover);
-
+*/
             coverPath = person.getCover().getCoverPhoto().getUrl();
 
-            ImageView coverView = (ImageView) findViewById(R.id.settings_profile_cover_image);
+
 
             Picasso.with(this)
                     .load(coverPath)
-                    .placeholder(Drawable.createFromPath(placeholder))
+                    //.placeholder(Drawable.createFromPath(placeholder))
                     .centerCrop()
                     .resize(coverView.getWidth(), coverView.getHeight())
                     .into(coverView);

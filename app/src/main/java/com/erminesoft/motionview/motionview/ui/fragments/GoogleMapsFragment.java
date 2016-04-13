@@ -17,7 +17,6 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +47,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -56,6 +56,10 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private static final int UPDATE_INTERVAL = 10000;
     private static final int FATEST_INTERVAL = 5000;
     private static final int DISPLACEMENT = 10;
+    private static final String TOTAL_TIME = "totaltime";
+    private static final String TOTAL_DISTANCE = "totaldistance";
+    private static final String TOTAL_CALORIES = "totalcalories";
+    private static final String TOTAL_ROUTE = "totalroute";
 
     private CheckBox mStartWalkRouter;
     private LocationManager locationManager;
@@ -159,7 +163,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("!!!!!!", "req code: " + requestCode + " res code:  " + resultCode);
     }
 
     @Override
@@ -239,6 +242,12 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         totalTime = 0;
         totalDistance = 0;
 
+        Bundle dataForShare = new Bundle();
+        dataForShare.putString(TOTAL_TIME, totalTimeTw.getText().toString());
+        dataForShare.putString(TOTAL_DISTANCE, totalTimeTw.getText().toString());
+        dataForShare.putString(TOTAL_CALORIES, totalTimeTw.getText().toString());
+        dataForShare.putParcelableArrayList(TOTAL_ROUTE, (ArrayList<LatLng>) mGoogleFitnessFacade.getTrackPoints());
+
         totalTimeTw.setText("00:00:00");
         totalKCalTw.setText("0.0");
         totalDistanceTw.setText("0.0");
@@ -247,7 +256,10 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mGoogleFitnessFacade.stopLocation();
         mGoogleFitnessFacade.stopRouteOnMap();
 
-        ShareMapActivity.start(getActivity(), mGoogleFitnessFacade.getTrackPoints());
+
+        if(mGoogleFitnessFacade.getTrackPoints().size() > 1) {
+            ShareMapActivity.start(getActivity(), dataForShare);
+        }
     }
 
     private void processData(List<DataSet> data) {
