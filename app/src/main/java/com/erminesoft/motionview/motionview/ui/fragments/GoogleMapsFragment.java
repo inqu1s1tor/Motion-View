@@ -240,6 +240,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
 
     private void stopWalking() {
         mActivity.getMVApplication().getCommander().denyAll(ExecutorType.MAIN_FRAGMENT_ACTIVITY);
+        startStopTracking.setEnabled(false);
         timer.cancel();
         if (mGoogleFitnessFacade.getTrackPoints().size() > 1) {
             ShareMapActivity.start(getActivity(),
@@ -263,6 +264,8 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         startStopTracking.setText(R.string.map_fragment_start_tracking_text);
         mGoogleFitnessFacade.stopLocation();
         mGoogleFitnessFacade.stopRouteOnMap();
+
+        startStopTracking.setEnabled(true);
     }
 
     private void processData(List<DataSet> data) {
@@ -291,7 +294,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
             }
         }
 
-        totalDistance = totalDistance + distance - startDistance;
+        totalDistance = distance - startDistance;
 
         if (isVisible()) {
             totalDistanceTw.setText(String.valueOf(totalDistance));
@@ -311,7 +314,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
             }
         }
 
-        totalKCal = totalKCal + calories - startKCal;
+        totalKCal = calories - startKCal;
 
         if (isVisible()) {
             totalKCalTw.setText(String.valueOf(totalKCal));

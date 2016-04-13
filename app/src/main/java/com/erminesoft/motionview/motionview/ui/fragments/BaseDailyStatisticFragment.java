@@ -118,13 +118,6 @@ abstract class BaseDailyStatisticFragment extends GenericFragment implements Rec
         mProgress.invalidate();
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-
-        Log.e(TAG, String.valueOf(hidden));
-    }
-
     protected void processData(List<DataSet> dataSets) {
         for (DataSet dataSet : dataSets) {
             DataType dataType = dataSet.getDataType();
