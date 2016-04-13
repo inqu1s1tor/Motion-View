@@ -12,7 +12,7 @@
             <item
                 android:id="@+id/settings"
                 android:title="@string/settings"
-                app:showAsAction="never"/>
+                app:showAsAction="never" />
         </menu>
     </item>
 </menu>

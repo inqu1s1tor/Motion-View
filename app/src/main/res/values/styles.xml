@@ -15,6 +15,7 @@
     <style name="MotionViewActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">#CBCD54</item>
+        <item name="android:itemBackground">#05A531</item>
     </style>
 
     <style name="MainPageContentPart">

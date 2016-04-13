@@ -62,4 +62,7 @@
     <string name="map_fragment_stop_tracking_text">STOP TRACK</string>
     <string name="share_activity_tracking_text">TRACK INFORMATION</string>
     <string name="share_activity_title">Map</string>
+    <string name="settings_validate_weight_field">Incorrect weight</string>
+    <string name="settings_validate_height_field">Incorrect height</string>
+    <string name="settings_daily_goal_error">Incorrect daily goal</string>
 </resources>

@@ -91,15 +91,19 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         mGooglePlusFacade.signIn(this);
     }
 
+
     private void saveData() {
         String weightStr = String.valueOf(mUserWeightText.getText());
 
         if (TextUtils.isEmpty(weightStr)) {
             mUserWeightTextIl.setError(getString(R.string.settings_empty_error));
         } else {
-            mUserWeightTextIl.setErrorEnabled(false);
-
             int weight = Integer.parseInt(weightStr);
+            if (weight > 300) {
+                mUserWeightTextIl.setError(getString(R.string.settings_validate_weight_field));
+            }
+
+            mUserWeightTextIl.setErrorEnabled(false);
             mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
             mGoogleFitnessFacade.saveUserHeight(weight);
         }
@@ -109,9 +113,11 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         if (TextUtils.isEmpty(heightStr)) {
             mUserHeightTextIl.setError(getString(R.string.settings_empty_error));
         } else {
-            mUserHeightTextIl.setErrorEnabled(false);
-
             int height = Integer.parseInt(heightStr);
+            if(height > 300) {
+                mUserHeightTextIl.setError(getString(R.string.settings_validate_height_field));
+            }
+            mUserHeightTextIl.setErrorEnabled(false);
             mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(heightStr));
             mGoogleFitnessFacade.saveUserWeight((float) height);
         }
@@ -121,11 +127,14 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         if (TextUtils.isEmpty(dailyGoalStr)) {
             mUserDailyGoalTextIl.setError(getString(R.string.settings_empty_error));
         } else {
-            mUserDailyGoalTextIl.setErrorEnabled(false);
-
             int dailyGoal = Integer.parseInt(dailyGoalStr);
+            if (dailyGoal < 10000 && dailyGoal >= 100000) {
+                mUserDailyGoalTextIl.setError(getString(R.string.settings_daily_goal_error));
+            }
+            mUserDailyGoalTextIl.setErrorEnabled(false);
             mSharedDataManager.writeInt(SharedDataManager.USER_DAILY_GOAL,dailyGoal);
         }
+
     }
 
     @Override
