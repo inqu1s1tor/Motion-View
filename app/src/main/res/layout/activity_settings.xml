@@ -22,7 +22,6 @@
                 android:id="@+id/settings_profile_cover_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:maxHeight="200dp"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"/>
 

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 public class SharedDataManager {
     private static final int DEFAULT_DAILY_GOAL = 10000;
+    private static final String COVER_URL = "COVER";
 
     private final SharedPreferences sharedPreferences;
 
@@ -35,5 +36,13 @@ public class SharedDataManager {
 
     public long readLong(String fieldName) {
         return sharedPreferences.getLong(fieldName, 0);
+    }
+
+    public String getCoverURL() {
+        return sharedPreferences.getString(COVER_URL, null);
+    }
+
+    public void setCoverURL(String coverURL) {
+        sharedPreferences.edit().putString(COVER_URL, coverURL).apply();
     }
 }

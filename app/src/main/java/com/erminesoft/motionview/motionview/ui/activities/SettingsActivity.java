@@ -41,7 +41,6 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     private TextInputLayout mUserDailyGoalTextIl;
     private EditText mUserDailyGoalText;
     private ImageView coverView;
-    private TextView cleanActivityHistory;
 
     private GooglePlusFacade mGooglePlusFacade;
 
@@ -71,12 +70,19 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
         mUserDailyGoalTextIl = (TextInputLayout) findViewById(R.id.settings_daily_goal_il);
 
-        cleanActivityHistory = (TextView) findViewById(R.id.settings_delete_history_header);
+        TextView cleanActivityHistory = (TextView) findViewById(R.id.settings_delete_history_header);
         cleanActivityHistory.setOnClickListener(new Clicker());
 
         findViewById(R.id.settings_clean_history_button).setOnClickListener(new Clicker());
 
-        cleanActivityHistory.setPaintFlags(cleanActivityHistory.getPaintFlags() |   Paint.UNDERLINE_TEXT_FLAG);
+        cleanActivityHistory.setPaintFlags(cleanActivityHistory.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+        String coverURL = getMVApplication().getSharedDataManager().getCoverURL();
+
+        Picasso.with(this)
+                .load(coverURL)
+                .placeholder(getResources().getDrawable(R.drawable.default_cover))
+                .into(coverView);
 
         setTitle(getString(R.string.settings));
         initSettings();
@@ -114,7 +120,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
             mUserHeightTextIl.setError(getString(R.string.settings_empty_error));
         } else {
             int height = Integer.parseInt(heightStr);
-            if(height > 300) {
+            if (height > 300) {
                 mUserHeightTextIl.setError(getString(R.string.settings_validate_height_field));
             }
             mUserHeightTextIl.setErrorEnabled(false);
@@ -132,7 +138,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
                 mUserDailyGoalTextIl.setError(getString(R.string.settings_daily_goal_error));
             }
             mUserDailyGoalTextIl.setErrorEnabled(false);
-            mSharedDataManager.writeInt(SharedDataManager.USER_DAILY_GOAL,dailyGoal);
+            mSharedDataManager.writeInt(SharedDataManager.USER_DAILY_GOAL, dailyGoal);
         }
 
     }
@@ -155,7 +161,6 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     private void initSettings() {
         initWeight();
         initHeight();
-//        initCleanHistory();
     }
 
     private void initWeight() {
@@ -173,8 +178,8 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     }
 
     private void initCleanHistory() {
-                Intent fitnessSettings = new Intent(FITNESS_HISTORY_INTENT);
-                startActivity(fitnessSettings);
+        Intent fitnessSettings = new Intent(FITNESS_HISTORY_INTENT);
+        startActivity(fitnessSettings);
     }
 
     @Override
@@ -187,28 +192,20 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         Person person = (Person) data;
 
         String coverPath;
-        String placeholder;
+
+        person.getCover().getCoverPhoto().getUrl();
 
         if (person.getCover() != null) {
-            /*placeholder = ContentResolver.SCHEME_ANDROID_RESOURCE +
-                    "://" + getResources().getResourcePackageName(R.drawable.default_cover)
-                    + '/' + getResources().getResourceTypeName(R.drawable.default_cover)
-                    + '/' + getResources().getResourceEntryName(R.drawable.default_cover);
-*/
+
             coverPath = person.getCover().getCoverPhoto().getUrl();
-
-
+            getMVApplication().getSharedDataManager().setCoverURL(coverPath);
 
             Picasso.with(this)
                     .load(coverPath)
-                    //.placeholder(Drawable.createFromPath(placeholder))
                     .centerCrop()
                     .resize(coverView.getWidth(), coverView.getHeight())
                     .into(coverView);
         }
-
-
-
 
         String avatarURL = person.getImage().getUrl();
         StringBuilder builder = new StringBuilder(avatarURL);
@@ -249,7 +246,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     private class Clicker implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            switch(v.getId()) {
+            switch (v.getId()) {
                 case R.id.settings_delete_history_header:
                     initCleanHistory();
                     break;
