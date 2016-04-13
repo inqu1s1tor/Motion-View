@@ -27,12 +27,16 @@ public class TimeWorker {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    public static String processSecondsToString(int milliseconds) {
-        long minutes = TimeUnit.SECONDS.toMinutes(milliseconds) % MINUTES_IN_HOUR;
-        long hours = TimeUnit.SECONDS.toHours(milliseconds);
-        long seconds = TimeUnit.SECONDS.toSeconds(milliseconds) % MINUTES_IN_HOUR;
+    public static String processSecondsToString(int s) {
+        long minutes = TimeUnit.SECONDS.toMinutes(s) % MINUTES_IN_HOUR;
+        long hours = TimeUnit.SECONDS.toHours(s);
+        long seconds = TimeUnit.SECONDS.toSeconds(s) % MINUTES_IN_HOUR;
 
-        return String.format(Locale.getDefault(), "%1$d:%2$d:%3$d", hours, minutes, seconds);
+        String hs = hours < 10 ? "0" + hours : String.valueOf(hours);
+        String ms = minutes < 10 ? "0" + minutes : String.valueOf(minutes);
+        String ss = seconds < 10 ? "0" + seconds : String.valueOf(seconds);
+
+        return String.format(Locale.getDefault(), "%1$s:%2$s:%3$s", hs, ms, ss);
     }
 
     public static int getDay(long timestamp) {

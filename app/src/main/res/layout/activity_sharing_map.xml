@@ -82,7 +82,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="12"
                 android:textColor="#44a64b"
                 android:textSize="15sp" />
 
@@ -118,7 +117,6 @@
                 android:id="@+id/sharing_activity_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="06:20:05"
                 android:textColor="#c6c754"
                 android:textSize="15sp" />
 
@@ -154,7 +152,6 @@
                 android:id="@+id/sharing_activity_calories"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1024"
                 android:textColor="#ec7c2a"
                 android:textSize="15sp" />
 

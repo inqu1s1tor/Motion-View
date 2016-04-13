@@ -47,7 +47,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -56,10 +55,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private static final int UPDATE_INTERVAL = 10000;
     private static final int FATEST_INTERVAL = 5000;
     private static final int DISPLACEMENT = 10;
-    private static final String TOTAL_TIME = "totaltime";
-    private static final String TOTAL_DISTANCE = "totaldistance";
-    private static final String TOTAL_CALORIES = "totalcalories";
-    private static final String TOTAL_ROUTE = "totalroute";
 
     private CheckBox mStartWalkRouter;
     private LocationManager locationManager;
@@ -152,6 +147,14 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
 
         receiver = new DataReceiver();
         DataBuffer.getInstance().register(CommandType.PROCESS_DAY_DATA, receiver);
+
+        if (!mGoogleFitnessFacade.isMapReady()) {
+            return;
+        }
+
+        mGoogleFitnessFacade.clearPoints();
+        mGoogleFitnessFacade.clearMap();
+        mGoogleFitnessFacade.setStartMarker();
     }
 
     @Override
@@ -161,15 +164,11 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
 
         DataBuffer.getInstance().unregister(receiver);
+        receiver = null;
     }
 
     @Override
@@ -216,7 +215,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
             }
         }, 0, 1000);
 
-
         startStopTracking.setText(R.string.map_fragment_stop_tracking_text);
         mGoogleFitnessFacade.clearPoints();
         mGoogleFitnessFacade.clearMap();
@@ -237,16 +235,20 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private void stopWalking() {
         mActivity.getMVApplication().getCommander().denyAll(ExecutorType.MAIN_FRAGMENT_ACTIVITY);
         timer.cancel();
+        if (mGoogleFitnessFacade.getTrackPoints().size() > 1) {
+            ShareMapActivity.start(getActivity(),
+                    mGoogleFitnessFacade.getTrackPoints(),
+                    totalDistance,
+                    totalTime,
+                    totalKCal);
+        }
 
         totalKCal = 0;
         totalTime = 0;
         totalDistance = 0;
 
-        Bundle dataForShare = new Bundle();
-        dataForShare.putString(TOTAL_TIME, totalTimeTw.getText().toString());
-        dataForShare.putString(TOTAL_DISTANCE, totalTimeTw.getText().toString());
-        dataForShare.putString(TOTAL_CALORIES, totalTimeTw.getText().toString());
-        dataForShare.putParcelableArrayList(TOTAL_ROUTE, (ArrayList<LatLng>) mGoogleFitnessFacade.getTrackPoints());
+        startDistance = 0;
+        startKCal = 0;
 
         totalTimeTw.setText("00:00:00");
         totalKCalTw.setText("0.0");
@@ -255,11 +257,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         startStopTracking.setText(R.string.map_fragment_start_tracking_text);
         mGoogleFitnessFacade.stopLocation();
         mGoogleFitnessFacade.stopRouteOnMap();
-
-
-        if(mGoogleFitnessFacade.getTrackPoints().size() > 1) {
-            ShareMapActivity.start(getActivity(), dataForShare);
-        }
     }
 
     private void processData(List<DataSet> data) {

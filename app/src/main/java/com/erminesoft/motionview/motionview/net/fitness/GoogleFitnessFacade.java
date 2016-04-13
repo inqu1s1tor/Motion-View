@@ -147,4 +147,8 @@ public class GoogleFitnessFacade {
     }
 
     public void drawRouteByPointsOnMap(List<LatLng> points,GoogleMap googleMap){ mMapManager.drawRouteByPointsOnMap(points,googleMap);}
+
+    public boolean isMapReady() {
+        return mMapManager.isMapReady();
+    }
 }

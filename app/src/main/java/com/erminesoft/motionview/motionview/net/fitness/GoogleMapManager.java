@@ -59,6 +59,10 @@ class GoogleMapManager {
         mMap.clear();
     }
 
+    boolean isMapReady() {
+        return mMap != null;
+    }
+
     void createLocationRequest(int updateInterval, int fastestInterval, int displacement) {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(updateInterval);

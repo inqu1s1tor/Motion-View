@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.erminesoft.motionview.motionview.util.Utils;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -41,32 +42,31 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     private static final int SHARE_TYPE_FACEBOOK = 64206;
     private static final int SHARE_TYPE_TWITTER = 170;
 
-    private static final String DATA_FOR_SHARE = "dataforshare";
-    private static final String TOTAL_ROUTE = "totalroute";
-    private static final String TOTAL_TIME = "totaltime";
-    private static final String TOTAL_DISTANCE = "totaldistance";
-    private static final String TOTAL_CALORIES = "totalcalories";
+    private static final String DATA_POINTS_EXTRA = "datapoints";
+    private static final String SHARE_DISTANCE = "distance";
+    private static final String SHARE_TIME = "time";
+    private static final String SHARE_KCAL = "kcal";
 
     private List<LatLng> pointsOnMap = new ArrayList<>();
     private Button shareToFacebook;
     private Button shareToGooglePlus;
     private Button shareToTwitter;
-    private TextView distance;
-    private TextView trackTime;
-    private TextView calories;
-
-    private Bundle dataForShareBundle;
-
     private CallbackManager callbackManager;
     private LoginManager loginManager;
     private GoogleMap mMap;
     private Utils utils;
 
+    private TextView distance;
+    private TextView trackTime;
+    private TextView calories;
 
-
-    public static void start(Activity activity, Bundle dataForShare) {
+    public static void start(Activity activity, List<LatLng> dataPoints, float totalDistance, int totalTime, float totalKCal) {
         Intent intent = new Intent(activity, ShareMapActivity.class);
-        intent.putExtra(DATA_FOR_SHARE, dataForShare);
+        intent.putParcelableArrayListExtra(DATA_POINTS_EXTRA, (ArrayList<LatLng>) dataPoints);
+        intent.putExtra(SHARE_DISTANCE, totalDistance);
+        intent.putExtra(SHARE_TIME, totalTime);
+        intent.putExtra(SHARE_KCAL, totalKCal);
+
         activity.startActivityForResult(intent, 100);
     }
 
@@ -82,18 +82,18 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         setHomeAsUpEnabled(true);
         setTitle(getString(R.string.share_activity_title));
 
-        dataForShareBundle = new Bundle(getIntent().getBundleExtra(DATA_FOR_SHARE));
-
         utils = new Utils();
 
         distance = (TextView) findViewById(R.id.sharing_activity_distance);
         trackTime = (TextView) findViewById(R.id.sharing_activity_time);
         calories = (TextView) findViewById(R.id.sharing_activity_calories);
 
-        pointsOnMap =  dataForShareBundle.getParcelableArrayList(TOTAL_ROUTE);
-        distance.setText(dataForShareBundle.getString(TOTAL_DISTANCE));
-        trackTime.setText(dataForShareBundle.getString(TOTAL_TIME));
-        calories.setText(dataForShareBundle.getString(TOTAL_CALORIES));
+        Intent intent = getIntent();
+        distance.setText(String.valueOf(intent.getFloatExtra(SHARE_DISTANCE, 0)));
+        trackTime.setText(TimeWorker.processSecondsToString(intent.getIntExtra(SHARE_TIME, 0)));
+        calories.setText(String.valueOf(intent.getFloatExtra(SHARE_KCAL, 0)));
+
+        pointsOnMap = intent.getParcelableArrayListExtra(DATA_POINTS_EXTRA);
 
         shareToFacebook = (Button) view.findViewById(R.id.share_map_button);
         shareToGooglePlus = (Button) findViewById(R.id.share_google_button);
