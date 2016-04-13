@@ -1,4 +1,11 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#494949"
@@ -20,13 +27,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <fragment
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/map_for_share"
-        tools:context=".ui.activities.GoogleMapActivityMapsActivity"
+        tools:context=".ui.activities.ShareMapActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
 
 
@@ -215,7 +221,17 @@
     </LinearLayout>
 </LinearLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/share_menu_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        app:backgroundTint="#E08A4A"
+        android:src="@drawable/share"
+        app:layout_anchorGravity="bottom|right|end"
+        app:layout_anchor="@id/map_for_share"
+        app:fabSize="normal" />
 
-
-
+</android.support.design.widget.CoordinatorLayout>
 

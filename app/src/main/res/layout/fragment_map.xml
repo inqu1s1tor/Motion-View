@@ -231,6 +231,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
+        app:backgroundTint="#E08A4A"
         android:src="@drawable/location"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_anchor="@id/map"
