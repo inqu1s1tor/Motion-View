@@ -133,12 +133,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/settings_save_button_text"
+                    android:background="@drawable/green"
                     android:layout_gravity="center_horizontal|end"
                     android:layout_weight="1"
-                    android:background="@drawable/new_button_green"
                     android:layout_marginRight="8dp"
                     android:textSize="@dimen/settings_button_save_text_size"
-                    android:minHeight="@dimen/settings_save_button_min_height"/>
+                    />
 
 
                 <Button

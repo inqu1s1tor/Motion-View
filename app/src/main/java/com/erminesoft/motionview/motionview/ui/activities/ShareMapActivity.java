@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.BuildConfig;
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.ui.ButtonsAnimationHelper;
 import com.erminesoft.motionview.motionview.util.DialogHelper;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.erminesoft.motionview.motionview.util.Utils;
@@ -41,6 +43,8 @@ import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 
+
+
 public class ShareMapActivity extends GenericActivity implements OnMapReadyCallback {
     private static final int SHARE_TYPE_GPLUS = 160;
     private static final int SHARE_TYPE_FACEBOOK = 64206;
@@ -51,6 +55,18 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     private static final String SHARE_TIME = "time";
     private static final String SHARE_KCAL = "kcal";
 
+    private FloatingActionButton commonActionButton;
+    private FloatingActionButton facebookActionButton;
+    private FloatingActionButton twitterActionButton;
+    private FloatingActionButton googlePlusActionButton;
+
+
+/*
+    private Animation showFacebookButtonAnimation;
+    private Animation hideFacebookButtonAnimation;*/
+
+    private ButtonsAnimationHelper animationHelper;
+
     private List<LatLng> pointsOnMap = new ArrayList<>();
     private Button shareToFacebook;
     private Button shareToGooglePlus;
@@ -58,6 +74,7 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     private CallbackManager callbackManager;
     private LoginManager loginManager;
     private GoogleMap mMap;
+
 
     private TextView distance;
     private TextView trackTime;
@@ -101,6 +118,15 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
 
         pointsOnMap = intent.getParcelableArrayListExtra(DATA_POINTS_EXTRA);
 
+
+        commonActionButton = (FloatingActionButton) view.findViewById(R.id.share_menu_button);
+        facebookActionButton = (FloatingActionButton) view.findViewById(R.id.facebookActionButton);
+        twitterActionButton = (FloatingActionButton) view.findViewById(R.id.twitterActionButton);
+        googlePlusActionButton = (FloatingActionButton) view.findViewById(R.id.googlePlusActionButton);
+
+        animationHelper = new ButtonsAnimationHelper(view,commonActionButton);
+        animationHelper.setActionCallback(new ShareButtonListener());
+
         shareToFacebook = (Button) view.findViewById(R.id.share_map_button);
         shareToGooglePlus = (Button) findViewById(R.id.share_google_button);
         shareToTwitter = (Button) findViewById(R.id.share_to_twitter_button);
@@ -110,6 +136,7 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_for_share);
         mapFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -154,13 +181,13 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         AppEventsLogger.deactivateApp(this);
     }
 
+
     private void initShareButtons(final GoogleMap googleMap) {
 
         shareToFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressDialog.show();
-
                 FacebookSdk.sdkInitialize(getApplicationContext());
                 callbackManager = CallbackManager.Factory.create();
                 List<String> permissionNeeds = Collections.singletonList("publish_actions");
@@ -224,6 +251,29 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                 });
             }
         });
+    }
+
+    private class ShareButtonListener implements FloatingActionButton.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.share_menu_button:
+                    animationHelper.showAction();
+                    break;
+
+                case R.id.facebookActionButton:
+                    Log.d("!!!!!!!","facebookActionButton");
+                    break;
+
+                case R.id.twitterActionButton:
+                    Log.d("!!!!!!!","twitterActionButton");
+                    break;
+
+                case R.id.googlePlusActionButton:
+                    Log.d("!!!!!!!","googlePlusActionButton");
+                    break;
+            }
+        }
     }
 
     private class FacebookLoginPostCallback implements FacebookCallback<LoginResult> {
