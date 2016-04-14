@@ -278,7 +278,7 @@
                 android:id="@+id/fragment_today_hours_chart"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="@drawable/line_chart_container"/>
+                android:background="@drawable/white_bg" />
         </LinearLayout>
 
     </LinearLayout>

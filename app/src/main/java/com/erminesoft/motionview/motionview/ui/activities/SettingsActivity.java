@@ -107,7 +107,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
         int weight = Integer.parseInt(weightStr);
         if (weight > 300) {
-            mUserWeightTextIl.setError(getString(R.string.settings_validate_weight_field));
+            mUserWeightTextIl.setError(getString(R.string.weight_must_not_be_above_300) );
             return false;
         }
 
@@ -119,7 +119,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
         int height = Integer.parseInt(heightStr);
         if (height > 300) {
-            mUserHeightTextIl.setError(getString(R.string.settings_validate_height_field));
+            mUserHeightTextIl.setError(getString(R.string.height_must_not_be_above_300));
             return false;
         }
 
@@ -130,7 +130,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         }
 
         int dailyGoal = Integer.parseInt(dailyGoalStr);
-        if (dailyGoal < 1000 || dailyGoal >= 100000) {
+        if (dailyGoal < 10000 || dailyGoal >= 100000) {
             mUserDailyGoalTextIl.setError(getString(R.string.settings_daily_goal_error));
             return false;
         }
@@ -138,7 +138,6 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         mUserWeightTextIl.setErrorEnabled(false);
         mUserHeightTextIl.setErrorEnabled(false);
         mUserDailyGoalTextIl.setErrorEnabled(false);
-
 
         mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
         mGoogleFitnessFacade.saveUserHeight(weight);
