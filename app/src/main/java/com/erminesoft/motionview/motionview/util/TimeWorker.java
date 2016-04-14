@@ -39,6 +39,16 @@ public class TimeWorker {
         return String.format(Locale.getDefault(), "%1$s:%2$s:%3$s", hs, ms, ss);
     }
 
+    public static String processMilliSecondToHoursMinutes(int s) {
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(s) % MINUTES_IN_HOUR;
+        long hours = TimeUnit.MILLISECONDS.toHours(s);
+
+        String hs = hours < 10 ? "0" + hours : String.valueOf(hours);
+        String ms = minutes < 10 ? "0" + minutes : String.valueOf(minutes);
+
+        return String.format(Locale.getDefault(), "%1$s:%2$s", hs, ms);
+    }
+
     public static int getDay(long timestamp) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timestamp);
