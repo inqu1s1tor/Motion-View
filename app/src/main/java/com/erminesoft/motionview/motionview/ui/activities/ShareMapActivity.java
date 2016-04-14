@@ -43,7 +43,6 @@ import java.util.Locale;
 import io.fabric.sdk.android.Fabric;
 
 
-
 public class ShareMapActivity extends GenericActivity implements OnMapReadyCallback {
     private static final int SHARE_TYPE_GPLUS = 160;
     private static final int SHARE_TYPE_FACEBOOK = 64206;
@@ -64,7 +63,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     private LoginManager loginManager;
     private GoogleMap mMap;
 
-
     private TextView distance;
     private TextView trackTime;
     private TextView calories;
@@ -79,7 +77,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         intent.putExtra(SHARE_DISTANCE, totalDistance);
         intent.putExtra(SHARE_TIME, totalTime);
         intent.putExtra(SHARE_KCAL, totalKCal);
-
         activity.startActivityForResult(intent, 100);
     }
 
@@ -110,8 +107,7 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
 
         FloatingActionButton commonActionButton = (FloatingActionButton) view.findViewById(R.id.share_menu_button);
 
-        animationHelper = new ButtonsAnimationHelper(view, commonActionButton);
-        animationHelper.setActionCallback(new ShareButtonListener());
+        animationHelper = new ButtonsAnimationHelper(view,commonActionButton);
 
         shareToFacebook = (FloatingActionButton) view.findViewById(R.id.facebookActionButton);
         shareToGooglePlus = (FloatingActionButton) findViewById(R.id.googlePlusActionButton);
@@ -151,9 +147,8 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         } else {
             Log.d("!!!!", "No data from intent");
         }
-        initShareButtons(googleMap);
+        animationHelper.setActionCallback(new ShareButtonListener(googleMap));
     }
-
 
     @Override
     public void onStart() {
@@ -167,79 +162,67 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         AppEventsLogger.deactivateApp(this);
     }
 
+    private void shareToFacebook(GoogleMap googleMap){
+        progressDialog.show();
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+        List<String> permissionNeeds = Collections.singletonList("publish_actions");
+        loginManager = LoginManager.getInstance();
+        loginManager.logInWithPublishPermissions(ShareMapActivity.this, permissionNeeds);
+        loginManager.registerCallback(callbackManager, new FacebookLoginPostCallback(ShareMapActivity.this, googleMap, pointsOnMap));
+    }
 
-    private void initShareButtons(final GoogleMap googleMap) {
-
-        shareToFacebook.setOnClickListener(new View.OnClickListener() {
+    private void shareToGooglePlus(){
+        if (!Utils.isPackageInstalled("com.google.android.apps.plus", ShareMapActivity.this)) {
+            showShortToast("Google Plus Application must be installed");
+            return;
+        }
+        progressDialog.show();
+        mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             @Override
-            public void onClick(View v) {
-                progressDialog.show();
-                FacebookSdk.sdkInitialize(getApplicationContext());
-                callbackManager = CallbackManager.Factory.create();
-                List<String> permissionNeeds = Collections.singletonList("publish_actions");
-                loginManager = LoginManager.getInstance();
-                loginManager.logInWithPublishPermissions(ShareMapActivity.this, permissionNeeds);
-                loginManager.registerCallback(callbackManager, new FacebookLoginPostCallback(ShareMapActivity.this, googleMap, pointsOnMap));
+            public void onSnapshotReady(Bitmap bitmap) {
+                String formattedText = String.format("I just done %.3f km for %s\n with application Motion View ", distanceValue, trackTime.getText());
+                Intent shareIntent = Utils.shareToGooglePlus(bitmap, ShareMapActivity.this, formattedText);
+                startActivityForResult(shareIntent, SHARE_TYPE_GPLUS);
+                progressDialog.dismiss();
             }
         });
+    }
 
-        shareToGooglePlus.setOnClickListener(new View.OnClickListener() {
+    private void setShareToTwitter(){
+        if (!Utils.isPackageInstalled("com.twitter.android", ShareMapActivity.this)) {
+            showShortToast("Twitter Application must be installed");
+            return;
+        }
+
+        progressDialog.show();
+
+        mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
             @Override
-            public void onClick(View v) {
-                if (!Utils.isPackageInstalled("com.google.android.apps.plus", ShareMapActivity.this)) {
-                    showShortToast("Google Plus Application must be installed");
-                    return;
-                }
+            public void onSnapshotReady(Bitmap bitmap) {
+                TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.TWITTER_CONSUMER_KEY, BuildConfig.TWITTER_SECRET_KEY);
+                Fabric.with(ShareMapActivity.this, new Twitter(authConfig));
 
-                progressDialog.show();
+                TweetComposer.Builder builder = new TweetComposer.Builder(ShareMapActivity.this);
 
-                mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
-                    @Override
-                    public void onSnapshotReady(Bitmap bitmap) {
-                        String formattedText = String.format("I just done %.3f km for %s\n with application Motion View ", distanceValue, trackTime.getText());
+                String formattedText = String.format("I just done %.3f km for %s\n with application Motion View ", distanceValue, trackTime.getText());
 
-                        Intent shareIntent = Utils.shareToGooglePlus(bitmap, ShareMapActivity.this, formattedText);
-                        startActivityForResult(shareIntent, SHARE_TYPE_GPLUS);
+                builder.image(Utils.getImageUri(ShareMapActivity.this, bitmap));
+                builder.text(formattedText);
 
-                        progressDialog.dismiss();
-                    }
-                });
-            }
-        });
+                startActivityForResult(builder.createIntent(), SHARE_TYPE_TWITTER);
 
-        shareToTwitter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!Utils.isPackageInstalled("com.twitter.android", ShareMapActivity.this)) {
-                    showShortToast("Twitter Application must be installed");
-                    return;
-                }
-
-                progressDialog.show();
-
-                mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
-                    @Override
-                    public void onSnapshotReady(Bitmap bitmap) {
-                        TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.TWITTER_CONSUMER_KEY, BuildConfig.TWITTER_SECRET_KEY);
-                        Fabric.with(ShareMapActivity.this, new Twitter(authConfig));
-
-                        TweetComposer.Builder builder = new TweetComposer.Builder(ShareMapActivity.this);
-
-                        String formattedText = String.format("I just done %.3f km for %s\n with application Motion View ", distanceValue, trackTime.getText());
-
-                        builder.image(Utils.getImageUri(ShareMapActivity.this, bitmap));
-                        builder.text(formattedText);
-
-                        startActivityForResult(builder.createIntent(), SHARE_TYPE_TWITTER);
-
-                        progressDialog.dismiss();
-                    }
-                });
+                progressDialog.dismiss();
             }
         });
     }
 
     private class ShareButtonListener implements FloatingActionButton.OnClickListener{
+        private GoogleMap googleMap;
+        public ShareButtonListener(GoogleMap googleMap) {
+            this.googleMap = googleMap;
+        }
+
         @Override
         public void onClick(View v) {
             switch (v.getId()){
@@ -248,15 +231,15 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                     break;
 
                 case R.id.facebookActionButton:
-                    Log.d("!!!!!!!","facebookActionButton");
+                    shareToFacebook(googleMap);
                     break;
 
                 case R.id.twitterActionButton:
-                    Log.d("!!!!!!!","twitterActionButton");
+                    setShareToTwitter();
                     break;
 
                 case R.id.googlePlusActionButton:
-                    Log.d("!!!!!!!","googlePlusActionButton");
+                    shareToGooglePlus();
                     break;
             }
         }
