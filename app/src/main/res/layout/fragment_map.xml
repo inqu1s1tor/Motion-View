@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0"
+                    android:text="0.0"
                     android:textColor="#44a64b"
                     android:textSize="15sp" />
 
@@ -152,7 +152,7 @@
                     android:id="@+id/main_fragment_calories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="0.0"
                     android:textColor="#ec7c2a"
                     android:textSize="15sp" />
 

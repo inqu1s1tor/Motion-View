@@ -55,7 +55,7 @@
     <string name="main_fragment_time_text">Time:</string>
     <string name="main_fragment_calories_text">Calories:</string>
     <string name="t">t</string>
-    <string name="map_fragment_distance_value">km</string>
+    <string name="map_fragment_distance_value">m</string>
     <string name="map_fragment_time_value">hours</string>
     <string name="map_fragment_calories_value">kcal</string>
     <string name="map_fragment_start_tracking_text">START TRACK</string>
