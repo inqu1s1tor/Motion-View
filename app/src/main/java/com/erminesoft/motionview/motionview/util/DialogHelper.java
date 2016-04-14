@@ -1,20 +1,22 @@
 package com.erminesoft.motionview.motionview.util;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 
-public class DialogHelper extends AlertDialog.Builder{
-    private final String message;
+public class DialogHelper {
 
-    public DialogHelper(Context context, String message ) {
-        super(context);
-        this.message = message;
+    public static AlertDialog.Builder createAlertDialog(Context context, String message) {
+        return new AlertDialog.Builder(context)
+                .setTitle("Attention")
+                .setMessage(message);
     }
 
-    public void showAlertDialog(){
-        this.setMessage(message);
-        this.setTitle("Attention");
-        this.create();
-        this.show();
+    public static ProgressDialog createProgressDialog(Context context) {
+        ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setMessage("Loading...");
+        dialog.setCancelable(false);
+
+        return dialog;
     }
 }

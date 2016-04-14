@@ -9,7 +9,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.FacebookCallback;
@@ -22,10 +21,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.plus.PlusShare;
 
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 
 public class Utils {
-    public void sharePhotoToFacebook(Bitmap bitmap, final Context context,String textContent) {
+    public static void sharePhotoToFacebook(Bitmap bitmap, final Context context, String textContent) {
         StringBuilder string = new StringBuilder();
         if(!TextUtils.isEmpty(textContent)){
             string.append(textContent);
@@ -52,13 +50,12 @@ public class Utils {
             }
             @Override
             public void onError(FacebookException error) {
-                Log.d("!!!!!!", "" + error.toString());
                 Toast.makeText(context, "Sharing Error: " + error.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public Intent shareToGooglePlus(Bitmap bitmap, final Context context,String textContent){
+    public static Intent shareToGooglePlus(Bitmap bitmap, final Context context, String textContent) {
         Uri uri;
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         ContentResolver contentResolver = context.getContentResolver();
@@ -76,26 +73,22 @@ public class Utils {
         return shareIntent;
     }
 
-    public float calculateDistanceBetweenPoints(List<LatLng> points){
-        Location startLocation = new Location("");
-        startLocation.setLatitude(points.get(0).latitude);
-        startLocation.setLongitude(points.get(0).longitude);
+    public static float calculateDistanceBetweenPoints(LatLng p1, LatLng p2) {
+        float[] distance = new float[1];
 
-        Location endPosition = new Location("");
-        endPosition.setLatitude(points.get(points.size() - 1).latitude);
-        endPosition.setLongitude(points.get(points.size() - 1).longitude);
+        Location.distanceBetween(p1.latitude, p1.longitude, p2.latitude, p2.longitude, distance);
 
-        return startLocation.distanceTo(endPosition)/1000;
+        return distance[0] / 1000;
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
+    public static Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
 
-    public boolean isPackageInstalled(String packagename, Context context) {
+    public static boolean isPackageInstalled(String packagename, Context context) {
         PackageManager pm = context.getPackageManager();
         try {
             pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);

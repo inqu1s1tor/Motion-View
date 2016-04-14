@@ -2,6 +2,8 @@ package com.erminesoft.motionview.motionview.ui.fragments;
 
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,6 +40,7 @@ import com.erminesoft.motionview.motionview.ui.activities.ShareMapActivity;
 import com.erminesoft.motionview.motionview.util.ConnectivityChecker;
 import com.erminesoft.motionview.motionview.util.DialogHelper;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
+import com.erminesoft.motionview.motionview.util.Utils;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -50,6 +53,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -69,7 +73,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private TextView totalKCalTw;
     private TextView totalTimeTw;
 
-    private float startDistance;
     private float startKCal;
 
     private int totalTime;
@@ -81,6 +84,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
     private FloatingActionButton centerMapButton;
 
     private DataReceiver receiver;
+    private Location previousLocation;
 
     @Nullable
     @Override
@@ -110,27 +114,27 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        DialogHelper dialogCreator;
+        AlertDialog.Builder dialogCreator;
         if (!ConnectivityChecker.isNetworkAvailable(getContext())) {
-            dialogCreator = new DialogHelper(getContext(), "Wi-Fi/Internet is not active. \n Wi-Fi/Internet connection gives you faster location");
+            dialogCreator = DialogHelper.createAlertDialog(getContext(), "Wi-Fi/Internet is not active. \n Wi-Fi/Internet connection gives you faster location");
             dialogCreator.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), 100);
                 }
             });
-            dialogCreator.showAlertDialog();
+            dialogCreator.create().show();
         }
 
         if (!ConnectivityChecker.isLocationActive(getContext())) {
-            dialogCreator = new DialogHelper(getContext(), "GPS is not active. \n" + " Activated GPS gives you more accuracy location");
+            dialogCreator = DialogHelper.createAlertDialog(getContext(), "GPS is not active. \n" + " Activated GPS gives you more accuracy location");
             dialogCreator.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 200);
                 }
             });
-            dialogCreator.showAlertDialog();
+            dialogCreator.create().show();
         }
 
         return view;
@@ -142,7 +146,6 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mGoogleFitnessFacade.setGoogleMap(googleMap);
         mGoogleFitnessFacade.createLocationRequest(UPDATE_INTERVAL, FATEST_INTERVAL, DISPLACEMENT);
         mGoogleFitnessFacade.setMarkerAtFirstShow();
-
 
 
         mStartWalkRouter.setOnCheckedChangeListener(new CheckedListener());
@@ -227,22 +230,46 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mGoogleFitnessFacade.clearPoints();
         mGoogleFitnessFacade.clearMap();
         mGoogleFitnessFacade.setStartMarker();
-        mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(mGoogleFitnessFacade.getCurrentLocation().getLatitude(), mGoogleFitnessFacade.getCurrentLocation().getLongitude()));
+        LatLng currentPos = new LatLng(mGoogleFitnessFacade.getCurrentLocation().getLatitude(), mGoogleFitnessFacade.getCurrentLocation().getLongitude());
+        mGoogleFitnessFacade.addPointsToLineForRoute(currentPos);
+
+        previousLocation = new Location("");
+        previousLocation.setLongitude(currentPos.longitude);
+        previousLocation.setLatitude(currentPos.latitude);
+
         mGoogleFitnessFacade.setOnLocationChangeListener(new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                if (location.getAccuracy() < 100) {
-                    mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
-                    mGoogleFitnessFacade.startRouteOnMap();
+                if (location.getAccuracy() >= 100) {
+                    return;
                 }
+
+                if (previousLocation == null) {
+                    return;
+                }
+
+                mGoogleFitnessFacade.addPointsToLineForRoute(new LatLng(location.getLatitude(), location.getLongitude()));
+                mGoogleFitnessFacade.startRouteOnMap();
+
+                totalDistance += Utils.calculateDistanceBetweenPoints(
+                        new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
+                        new LatLng(location.getLatitude(), location.getLongitude()));
+
+                if (isVisible()) {
+                    totalDistanceTw.setText(String.format(Locale.getDefault(), "%.3f", totalDistance));
+                }
+
+                previousLocation = location;
             }
         });
         mGoogleFitnessFacade.startLocation();
     }
 
     private void stopWalking() {
+        ProgressDialog progressDialog = DialogHelper.createProgressDialog(getContext());
+        progressDialog.show();
+
         mActivity.getMVApplication().getCommander().denyAll(ExecutorType.MAIN_FRAGMENT_ACTIVITY);
-        startStopTracking.setEnabled(false);
         timer.cancel();
         if (mGoogleFitnessFacade.getTrackPoints().size() > 1) {
             ShareMapActivity.start(getActivity(),
@@ -256,8 +283,13 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         totalTime = 0;
         totalDistance = 0;
 
-        startDistance = 0;
         startKCal = 0;
+
+        previousLocation = null;
+
+        mGoogleFitnessFacade.clearPoints();
+        mGoogleFitnessFacade.clearMap();
+        mGoogleFitnessFacade.setStartMarker();
 
         totalTimeTw.setText("00:00:00");
         totalKCalTw.setText("0.0");
@@ -267,39 +299,14 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         mGoogleFitnessFacade.stopLocation();
         mGoogleFitnessFacade.stopRouteOnMap();
 
-        startStopTracking.setEnabled(true);
+        progressDialog.dismiss();
     }
 
     private void processData(List<DataSet> data) {
         for (DataSet dataSet : data) {
-            if (dataSet.getDataType().equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
-                onDistanceChanged(dataSet.getDataPoints());
-                continue;
-            }
-
             if (dataSet.getDataType().equals(DataType.AGGREGATE_CALORIES_EXPENDED)) {
                 onCaloriesChanged(dataSet.getDataPoints());
             }
-        }
-    }
-
-    private void onDistanceChanged(List<DataPoint> dataPoints) {
-        float distance = 0;
-
-        if (dataPoints.size() > 0) {
-            DataPoint dataPoint = dataPoints.get(0);
-
-            distance = dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
-
-            if (startDistance == 0) {
-                startDistance = distance;
-            }
-        }
-
-        totalDistance = distance - startDistance;
-
-        if (isVisible()) {
-            totalDistanceTw.setText(String.valueOf(totalDistance));
         }
     }
 
@@ -334,7 +341,7 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
         }
     }
 
-    private final class CenterMapListener implements OnClickListener{
+    private final class CenterMapListener implements OnClickListener {
         @Override
         public void onClick(View v) {
             mGoogleFitnessFacade.centerMap();

@@ -3,12 +3,6 @@ package com.erminesoft.motionview.motionview.util;
 import android.content.Context;
 
 import com.erminesoft.motionview.motionview.R;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.google.android.gms.fitness.FitnessActivities;
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.Field;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,24 +22,6 @@ public class ChartDataWorker {
         for (int i = 0; i < months.size(); i++) {
             MONTHS_LIST.add(new Month(i, months.get(i)));
         }
-    }
-
-    public static PieData processActivitiesData(List<DataPoint> dataPoints) {
-        List<String> xVals = new ArrayList<>();
-        List<Entry> entries = new ArrayList<>();
-
-        int index = 0;
-        for (DataPoint point : dataPoints) {
-            if (point.getValue(Field.FIELD_ACTIVITY).asInt() == 3) {
-                continue;
-            }
-
-            xVals.add(FitnessActivities.getName(point.getValue(Field.FIELD_ACTIVITY).asInt()));
-
-            entries.add(new Entry(point.getValue(Field.FIELD_DURATION).asInt(), index++));
-        }
-
-        return new PieData(xVals, new PieDataSet(entries, "Activities"));
     }
 
     public static Map<Integer, List<Month>> getAvailableYearsMonthsForSpinner(long firstInstallTime) {

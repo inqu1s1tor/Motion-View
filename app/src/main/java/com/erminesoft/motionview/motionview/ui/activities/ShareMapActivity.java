@@ -2,6 +2,7 @@ package com.erminesoft.motionview.motionview.ui.activities;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.BuildConfig;
 import com.erminesoft.motionview.motionview.R;
+import com.erminesoft.motionview.motionview.util.DialogHelper;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.erminesoft.motionview.motionview.util.Utils;
 import com.facebook.CallbackManager;
@@ -35,6 +37,7 @@ import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -55,11 +58,14 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     private CallbackManager callbackManager;
     private LoginManager loginManager;
     private GoogleMap mMap;
-    private Utils utils;
 
     private TextView distance;
     private TextView trackTime;
     private TextView calories;
+
+    private float distanceValue;
+
+    private ProgressDialog progressDialog;
 
     public static void start(Activity activity, List<LatLng> dataPoints, float totalDistance, int totalTime, float totalKCal) {
         Intent intent = new Intent(activity, ShareMapActivity.class);
@@ -70,7 +76,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
 
         activity.startActivityForResult(intent, 100);
     }
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,14 +88,14 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         setHomeAsUpEnabled(true);
         setTitle(getString(R.string.share_activity_title));
 
-        utils = new Utils();
-
         distance = (TextView) findViewById(R.id.sharing_activity_distance);
         trackTime = (TextView) findViewById(R.id.sharing_activity_time);
         calories = (TextView) findViewById(R.id.sharing_activity_calories);
 
         Intent intent = getIntent();
-        distance.setText(String.valueOf(intent.getFloatExtra(SHARE_DISTANCE, 0)));
+
+        distanceValue = intent.getFloatExtra(SHARE_DISTANCE, 0);
+        distance.setText(String.format(Locale.getDefault(), "%.3f", distanceValue));
         trackTime.setText(TimeWorker.processSecondsToString(intent.getIntExtra(SHARE_TIME, 0)));
         calories.setText(String.valueOf(intent.getFloatExtra(SHARE_KCAL, 0)));
 
@@ -100,11 +105,12 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToGooglePlus = (Button) findViewById(R.id.share_google_button);
         shareToTwitter = (Button) findViewById(R.id.share_to_twitter_button);
 
+        progressDialog = DialogHelper.createProgressDialog(this);
+
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_for_share);
         mapFragment.getMapAsync(this);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -113,19 +119,16 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
             switch (requestCode) {
                 case SHARE_TYPE_FACEBOOK:
                     callbackManager.onActivityResult(requestCode, resultCode, data);
-                    finish();
                     break;
                 case SHARE_TYPE_GPLUS:
                     showShortToast("Successfully Shared to G+");
-                    finish();
                     break;
                 case SHARE_TYPE_TWITTER:
                     showShortToast("Successfully Shared to Twitter");
-                    finish();
+                    break;
             }
         }
     }
-
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
@@ -145,19 +148,19 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         AppEventsLogger.activateApp(this);
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
         AppEventsLogger.deactivateApp(this);
     }
 
-
     private void initShareButtons(final GoogleMap googleMap) {
 
         shareToFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
+
                 FacebookSdk.sdkInitialize(getApplicationContext());
                 callbackManager = CallbackManager.Factory.create();
                 List<String> permissionNeeds = Collections.singletonList("publish_actions");
@@ -170,18 +173,22 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToGooglePlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!utils.isPackageInstalled("com.google.android.apps.plus",ShareMapActivity.this)) {
+                if (!Utils.isPackageInstalled("com.google.android.apps.plus", ShareMapActivity.this)) {
                     showShortToast("Google Plus Application must be installed");
                     return;
                 }
+
+                progressDialog.show();
+
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
-                        float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
-                        String formattedText = String.format("I just done %.3f m for %s\n with application Motion View ", distance, trackTime.getText());
+                        String formattedText = String.format("I just done %.3f km for %s\n with application Motion View ", distanceValue, trackTime.getText());
 
-                        Intent shareIntent = utils.shareToGooglePlus(bitmap, ShareMapActivity.this, formattedText);
+                        Intent shareIntent = Utils.shareToGooglePlus(bitmap, ShareMapActivity.this, formattedText);
                         startActivityForResult(shareIntent, SHARE_TYPE_GPLUS);
+
+                        progressDialog.dismiss();
                     }
                 });
             }
@@ -190,10 +197,13 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         shareToTwitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!utils.isPackageInstalled("com.twitter.android", ShareMapActivity.this)) {
+                if (!Utils.isPackageInstalled("com.twitter.android", ShareMapActivity.this)) {
                     showShortToast("Twitter Application must be installed");
                     return;
                 }
+
+                progressDialog.show();
+
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
@@ -202,29 +212,25 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
 
                         TweetComposer.Builder builder = new TweetComposer.Builder(ShareMapActivity.this);
 
-                        float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
-                        String formattedText = String.format("I just done %.3f m for %s\n with application Motion View ", distance, trackTime.getText());
+                        String formattedText = String.format("I just done %.3f km for %s\n with application Motion View ", distanceValue, trackTime.getText());
 
-                        builder.image(utils.getImageUri(ShareMapActivity.this, bitmap));
+                        builder.image(Utils.getImageUri(ShareMapActivity.this, bitmap));
                         builder.text(formattedText);
 
                         startActivityForResult(builder.createIntent(), SHARE_TYPE_TWITTER);
 
+                        progressDialog.dismiss();
                     }
                 });
             }
         });
     }
 
-
     private class FacebookLoginPostCallback implements FacebookCallback<LoginResult> {
-        private final Utils utils;
         private final Context context;
         private final GoogleMap mMap;
-        private final List<LatLng> pointsOnMap;
 
         FacebookLoginPostCallback(Context ctx, GoogleMap map, List<LatLng> points) {
-            utils = new Utils();
             mMap = map;
             context = ctx;
             pointsOnMap = points;
@@ -233,27 +239,26 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         @Override
         public void onSuccess(LoginResult loginResult) {
             makeMapSnapShot(mMap);
-            Log.d("!!!!!!", "Login Success");
         }
 
         @Override
         public void onCancel() {
-            Log.d("!!!!!!", "Login Canceled");
+            progressDialog.dismiss();
         }
 
         @Override
         public void onError(FacebookException error) {
-            Log.d("!!!!!!", "Login Error - " + error.toString());
+            progressDialog.dismiss();
         }
 
         void makeMapSnapShot(GoogleMap mMap) {
             mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                 @Override
                 public void onSnapshotReady(Bitmap bitmap) {
-                    float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
-                    String formattedText = String.format("I just done %.3f m for %s\n with application Motion View ", distance, trackTime.getText());
+                    String formattedText = String.format("I just done %.3f km for %s\n with application Motion View ", distanceValue, trackTime.getText());
 
-                    utils.sharePhotoToFacebook(bitmap, context, formattedText);
+                    progressDialog.dismiss();
+                    Utils.sharePhotoToFacebook(bitmap, context, formattedText);
                 }
             });
         }
