@@ -115,6 +115,7 @@
                     android:imeOptions="actionDone"
                     android:textStyle="bold"
                     android:hint="@string/settings_daily_goal_string"
+                    android:maxLength="5"
                     android:textSize="@dimen/edit_text_user_info_text_size"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -134,7 +135,7 @@
                     android:text="@string/settings_save_button_text"
                     android:layout_gravity="center_horizontal|end"
                     android:layout_weight="1"
-                    android:background="@drawable/rounded_button_save"
+                    android:background="@drawable/new_button_green"
                     android:layout_marginRight="8dp"
                     android:textSize="@dimen/settings_button_save_text_size"
                     android:minHeight="@dimen/settings_save_button_min_height"/>

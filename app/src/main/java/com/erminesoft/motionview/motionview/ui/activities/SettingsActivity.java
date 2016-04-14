@@ -140,10 +140,10 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         mUserDailyGoalTextIl.setErrorEnabled(false);
 
         mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
-        mGoogleFitnessFacade.saveUserHeight(weight);
+        mGoogleFitnessFacade.saveUserHeight(height);
 
         mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(heightStr));
-        mGoogleFitnessFacade.saveUserWeight((float) height);
+        mGoogleFitnessFacade.saveUserWeight((float) weight);
 
         mSharedDataManager.writeInt(SharedDataManager.USER_DAILY_GOAL, dailyGoal);
 
