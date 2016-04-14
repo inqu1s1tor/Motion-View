@@ -17,12 +17,28 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
-        signingConfig signingConfigs.debug
     }
     buildTypes {
         release {
             minifyEnabled false
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildConfigField "String", "TWITTER_CONSUMER_KEY", "\"oHn7BE22MILtYKAgjPvFgxA2k\""
+            buildConfigField "String", "TWITTER_SECRET_KEY", "\"DxkB7exzqaR8sdvLFvBqPBew8vUkB81BY1fI1UiDfKO6VQiWtl\""
+
+            signingConfig signingConfigs.debug
+        }
+
+        debug {
+            buildConfigField "String", "TWITTER_CONSUMER_KEY", "\"oHn7BE22MILtYKAgjPvFgxA2k\""
+            buildConfigField "String", "TWITTER_SECRET_KEY", "\"DxkB7exzqaR8sdvLFvBqPBew8vUkB81BY1fI1UiDfKO6VQiWtl\""
+
+            minifyEnabled false
+            debuggable true
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     productFlavors {
@@ -32,19 +48,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.google.android.gms:play-services-fitness:8.4.0'
-    compile 'com.google.android.gms:play-services-wearable:8.4.0'
-    compile 'com.google.android.gms:play-services-maps:8.4.0'
-    compile 'com.google.android.gms:play-services-location:8.4.0'
-    compile 'com.google.android.gms:play-services-plus:8.4.0'
-    compile 'com.google.android.gms:play-services-auth:8.4.0'
-    compile 'com.android.support:design:23.1.1'
-    compile 'com.github.PhilJay:MPAndroidChart:v2.2.2'
-    compile 'com.android.support:support-v4:23.1.1'
-    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.pkmmte.view:circularimageview:1.1'
     compile files('src/main/lib/twitter4j-core-4.0.4.jar')
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
@@ -56,6 +59,19 @@ dependencies {
     compile('com.twitter.sdk.android:twitter:1.8.0@aar') {
         transitive = true;
     }
-    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
 
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.google.android.gms:play-services-fitness:8.4.0'
+    compile 'com.google.android.gms:play-services-wearable:8.4.0'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.android.gms:play-services-location:8.4.0'
+    compile 'com.google.android.gms:play-services-plus:8.4.0'
+    compile 'com.google.android.gms:play-services-auth:8.4.0'
+    compile 'com.android.support:design:23.3.0'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.2'
+    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.pkmmte.view:circularimageview:1.1'
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
 }

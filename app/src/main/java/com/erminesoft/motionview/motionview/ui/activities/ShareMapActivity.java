@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.erminesoft.motionview.motionview.BuildConfig;
 import com.erminesoft.motionview.motionview.R;
 import com.erminesoft.motionview.motionview.util.TimeWorker;
 import com.erminesoft.motionview.motionview.util.Utils;
@@ -176,10 +177,8 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
-                        String additionalText = "";
                         float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
-                        String formattedText = String.format("I just done %.3f km\n"
-                                + additionalText + " with application Motion View ", distance);
+                        String formattedText = String.format("I just done %.3f m for %s\n with application Motion View ", distance, trackTime.getText());
 
                         Intent shareIntent = utils.shareToGooglePlus(bitmap, ShareMapActivity.this, formattedText);
                         startActivityForResult(shareIntent, SHARE_TYPE_GPLUS);
@@ -198,19 +197,17 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                 mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                     @Override
                     public void onSnapshotReady(Bitmap bitmap) {
-                        TwitterAuthConfig authConfig = new TwitterAuthConfig("oHn7BE22MILtYKAgjPvFgxA2k", "DxkB7exzqaR8sdvLFvBqPBew8vUkB81BY1fI1UiDfKO6VQiWtl");
+                        TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.TWITTER_CONSUMER_KEY, BuildConfig.TWITTER_SECRET_KEY);
                         Fabric.with(ShareMapActivity.this, new Twitter(authConfig));
 
                         TweetComposer.Builder builder = new TweetComposer.Builder(ShareMapActivity.this);
 
-                        String additionalText = "";
                         float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
-                        String formattedText = String.format("I just done %.3f km\n"
-                                + additionalText + " with application Motion View ", distance);
+                        String formattedText = String.format("I just done %.3f m for %s\n with application Motion View ", distance, trackTime.getText());
 
                         builder.image(utils.getImageUri(ShareMapActivity.this, bitmap));
                         builder.text(formattedText);
-                        //builder.show();
+
                         startActivityForResult(builder.createIntent(), SHARE_TYPE_TWITTER);
 
                     }
@@ -253,10 +250,8 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
             mMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                 @Override
                 public void onSnapshotReady(Bitmap bitmap) {
-                    String additionalText = "";
                     float distance = utils.calculateDistanceBetweenPoints(pointsOnMap);
-                    String formattedText = String.format("I just done %.3f km\n"
-                            + additionalText + " with application Motion View ", distance);
+                    String formattedText = String.format("I just done %.3f m for %s\n with application Motion View ", distance, trackTime.getText());
 
                     utils.sharePhotoToFacebook(bitmap, context, formattedText);
                 }
