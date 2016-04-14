@@ -65,4 +65,10 @@
     <string name="settings_daily_goal_error">Daily goal must be between 100 and 100000</string>
     <string name="height_must_not_be_above_300">Height must not be above 300</string>
     <string name="weight_must_not_be_above_300">Weight must not be above 300</string>
+    <string name="maps_fragment_gps_on_text">ON</string>
+    <string name="maps_fragment_gps_off_text">OFF</string>
+    <string name="maps_fragment_gps_text">GPS</string>
+    <string name="maps_fragment_time_text_default">00:00:00</string>
+    <string name="maps_fragment_distance_text_default">0.0</string>
+    <string name="maps_fragment_calories_text_default">0.0</string>
 </resources>

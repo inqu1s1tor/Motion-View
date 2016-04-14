@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0.0"
+                    android:text="@string/maps_fragment_distance_text_default"
                     android:textColor="#44a64b"
                     android:textSize="15sp" />
 
@@ -116,7 +116,7 @@
                     android:id="@+id/main_fragment_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="00:00:00"
+                    android:text="@string/maps_fragment_time_text_default"
                     android:textColor="#c6c754"
                     android:textSize="15sp" />
 
@@ -152,7 +152,7 @@
                     android:id="@+id/main_fragment_calories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0.0"
+                    android:text="@string/maps_fragment_calories_text_default"
                     android:textColor="#ec7c2a"
                     android:textSize="15sp" />
 
@@ -207,7 +207,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:height="0dp"
-                        android:text="GPS"
+                        android:text="@string/maps_fragment_gps_text"
                         android:textSize="10sp" />
 
                     <TextView
@@ -216,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:height="0dp"
-                        android:text="OFF"
+                        android:text="@string/maps_fragment_gps_off_text"
                         android:textSize="10sp" />
                 </LinearLayout>
 
@@ -231,8 +231,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
-        app:backgroundTint="#E08A4A"
         android:src="@drawable/location"
+        app:backgroundTint="#E08A4A"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_anchor="@id/map"
         app:fabSize="normal" />

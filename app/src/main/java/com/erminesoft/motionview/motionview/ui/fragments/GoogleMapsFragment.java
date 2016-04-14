@@ -195,10 +195,12 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
                 gpsIcon.setImageResource(R.drawable.ic_gps_on);
                 gpsTextTop.setTextColor(Color.parseColor("#199BAE"));
                 gpsTextBottom.setTextColor(Color.parseColor("#199BAE"));
+                gpsTextBottom.setText(R.string.maps_fragment_gps_on_text);
             } else {
                 gpsIcon.setImageResource(R.drawable.gps);
                 gpsTextTop.setTextColor(Color.parseColor("#B8B8B8"));
                 gpsTextBottom.setTextColor(Color.parseColor("#B8B8B8"));
+                gpsTextBottom.setText(R.string.maps_fragment_gps_off_text);
             }
         }
     }
