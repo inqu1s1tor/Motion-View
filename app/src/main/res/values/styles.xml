@@ -5,10 +5,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">#CBCD54</item>
+        <item name="cpbStyle">@style/CircularProgressBarStyle</item>
     </style>
 
 
-
+    <style name="CircularProgressBarStyle">
+        <item name="cpb_color">#CBCD54</item>
+        <item name="cpb_stroke_width">10dp</item>
+    </style>
 
 
 

@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.erminesoft.motionview.motionview.R;
@@ -54,7 +54,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     private BarChart mBarChart;
     private Spinner mMonthSpinner;
     private Spinner mYearSpinner;
-    private ProgressBar mProgressBar;
+    private LinearLayout mProgressBar;
 
 
     @Nullable
@@ -71,7 +71,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
 
         mYearSpinner = (Spinner) view.findViewById(R.id.fragment_history_year_spinner);
         mMonthSpinner = (Spinner) view.findViewById(R.id.fragment_history_month_spinner);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_history_progress_bar);
+        mProgressBar = (LinearLayout) view.findViewById(R.id.fragment_history_progress_bar);
 
         monthsForAdapter = new ArrayList<>();
     }
@@ -106,8 +106,6 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     }
 
     private void initSpinners() {
-        mProgressBar.setVisibility(View.VISIBLE);
-
         initAdapters();
 
         mYearSpinner.setAdapter(mYearAdapter);
@@ -241,6 +239,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             updateMonthAndChart(position);
+            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -254,6 +253,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             updateChartData(mMonthAdapter.getItem(position));
+            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
