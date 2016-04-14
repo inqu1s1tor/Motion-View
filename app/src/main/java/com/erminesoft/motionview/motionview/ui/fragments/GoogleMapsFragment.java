@@ -271,14 +271,13 @@ public class GoogleMapsFragment extends GenericFragment implements OnMapReadyCal
 
         mActivity.getMVApplication().getCommander().denyAll(ExecutorType.MAIN_FRAGMENT_ACTIVITY);
         timer.cancel();
-        //// TODO: 14.04.2016 remove comments for release
-        //if (mGoogleFitnessFacade.getTrackPoints().size() > 1) {
+        if (mGoogleFitnessFacade.getTrackPoints().size() > 1) {
             ShareMapActivity.start(getActivity(),
                     mGoogleFitnessFacade.getTrackPoints(),
                     totalDistance,
                     totalTime,
                     totalKCal);
-        //}
+        }
 
         totalKCal = 0;
         totalTime = 0;

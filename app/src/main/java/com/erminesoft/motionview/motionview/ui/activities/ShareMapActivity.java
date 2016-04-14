@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -142,11 +141,9 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
-        if (pointsOnMap.size() > 1) {
             mGoogleFitnessFacade.drawRouteByPointsOnMap(pointsOnMap, googleMap);
-        } else {
-            Log.d("!!!!", "No data from intent");
-        }
+
+
         animationHelper.setActionCallback(new ShareButtonListener(googleMap));
     }
 
@@ -163,7 +160,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     }
 
     private void shareToFacebook(GoogleMap googleMap){
-        progressDialog.show();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         List<String> permissionNeeds = Collections.singletonList("publish_actions");
@@ -262,12 +258,10 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
 
         @Override
         public void onCancel() {
-            progressDialog.dismiss();
         }
 
         @Override
         public void onError(FacebookException error) {
-            progressDialog.dismiss();
         }
 
         void makeMapSnapShot(GoogleMap mMap) {
@@ -276,7 +270,6 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
                 public void onSnapshotReady(Bitmap bitmap) {
                     String formattedText = String.format("I just done %.3f km for %s\n with application Motion View ", distanceValue, trackTime.getText());
 
-                    progressDialog.dismiss();
                     Utils.sharePhotoToFacebook(bitmap, context, formattedText);
                 }
             });
