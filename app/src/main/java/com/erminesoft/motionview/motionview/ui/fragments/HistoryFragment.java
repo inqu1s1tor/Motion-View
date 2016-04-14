@@ -106,8 +106,6 @@ public class HistoryFragment extends GenericFragment implements Receiver {
     }
 
     private void initSpinners() {
-        mProgressBar.setVisibility(View.VISIBLE);
-
         initAdapters();
 
         mYearSpinner.setAdapter(mYearAdapter);
@@ -241,6 +239,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             updateMonthAndChart(position);
+            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -254,6 +253,7 @@ public class HistoryFragment extends GenericFragment implements Receiver {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             updateChartData(mMonthAdapter.getItem(position));
+            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
