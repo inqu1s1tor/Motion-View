@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.erminesoft.motionview.motionview.BuildConfig;
@@ -55,22 +54,12 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
     private static final String SHARE_TIME = "time";
     private static final String SHARE_KCAL = "kcal";
 
-    private FloatingActionButton commonActionButton;
-    private FloatingActionButton facebookActionButton;
-    private FloatingActionButton twitterActionButton;
-    private FloatingActionButton googlePlusActionButton;
-
-
-/*
-    private Animation showFacebookButtonAnimation;
-    private Animation hideFacebookButtonAnimation;*/
-
     private ButtonsAnimationHelper animationHelper;
 
     private List<LatLng> pointsOnMap = new ArrayList<>();
-    private Button shareToFacebook;
-    private Button shareToGooglePlus;
-    private Button shareToTwitter;
+    private FloatingActionButton shareToFacebook;
+    private FloatingActionButton shareToGooglePlus;
+    private FloatingActionButton shareToTwitter;
     private CallbackManager callbackManager;
     private LoginManager loginManager;
     private GoogleMap mMap;
@@ -119,17 +108,14 @@ public class ShareMapActivity extends GenericActivity implements OnMapReadyCallb
         pointsOnMap = intent.getParcelableArrayListExtra(DATA_POINTS_EXTRA);
 
 
-        commonActionButton = (FloatingActionButton) view.findViewById(R.id.share_menu_button);
-        facebookActionButton = (FloatingActionButton) view.findViewById(R.id.facebookActionButton);
-        twitterActionButton = (FloatingActionButton) view.findViewById(R.id.twitterActionButton);
-        googlePlusActionButton = (FloatingActionButton) view.findViewById(R.id.googlePlusActionButton);
+        FloatingActionButton commonActionButton = (FloatingActionButton) view.findViewById(R.id.share_menu_button);
 
-        animationHelper = new ButtonsAnimationHelper(view,commonActionButton);
+        animationHelper = new ButtonsAnimationHelper(view, commonActionButton);
         animationHelper.setActionCallback(new ShareButtonListener());
 
-        shareToFacebook = (Button) view.findViewById(R.id.share_map_button);
-        shareToGooglePlus = (Button) findViewById(R.id.share_google_button);
-        shareToTwitter = (Button) findViewById(R.id.share_to_twitter_button);
+        shareToFacebook = (FloatingActionButton) view.findViewById(R.id.facebookActionButton);
+        shareToGooglePlus = (FloatingActionButton) findViewById(R.id.googlePlusActionButton);
+        shareToTwitter = (FloatingActionButton) findViewById(R.id.twitterActionButton);
 
         progressDialog = DialogHelper.createProgressDialog(this);
 
