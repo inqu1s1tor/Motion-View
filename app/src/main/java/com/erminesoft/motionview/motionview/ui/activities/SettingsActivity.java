@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -105,7 +106,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
             return false;
         }
 
-        int weight = Integer.parseInt(weightStr);
+        float weight = Float.parseFloat(weightStr);
         if (weight > 300) {
             mUserWeightTextIl.setError(getString(R.string.weight_must_not_be_above_300) );
             return false;
@@ -117,7 +118,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
             return false;
         }
 
-        int height = Integer.parseInt(heightStr);
+        float height = Float.parseFloat(heightStr);
         if (height > 300) {
             mUserHeightTextIl.setError(getString(R.string.height_must_not_be_above_300));
             return false;
@@ -130,7 +131,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         }
 
         int dailyGoal = Integer.parseInt(dailyGoalStr);
-        if (dailyGoal < 10000 || dailyGoal >= 100000) {
+        if (dailyGoal < 100 || dailyGoal >= 100000) {
             mUserDailyGoalTextIl.setError(getString(R.string.settings_daily_goal_error));
             return false;
         }
@@ -139,11 +140,11 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         mUserHeightTextIl.setErrorEnabled(false);
         mUserDailyGoalTextIl.setErrorEnabled(false);
 
-        mSharedDataManager.writeInt(SharedDataManager.USER_WEIGHT, weight);
-        mGoogleFitnessFacade.saveUserHeight(height);
+        mSharedDataManager.writeFloat(SharedDataManager.USER_WEIGHT, weight);
+        mGoogleFitnessFacade.saveUserWeight(weight);
 
-        mSharedDataManager.writeInt(SharedDataManager.USER_HEIGHT, Integer.parseInt(heightStr));
-        mGoogleFitnessFacade.saveUserWeight((float) weight);
+        mSharedDataManager.writeFloat(SharedDataManager.USER_HEIGHT, height);
+        mGoogleFitnessFacade.saveUserHeight(height);
 
         mSharedDataManager.writeInt(SharedDataManager.USER_DAILY_GOAL, dailyGoal);
 
@@ -172,14 +173,14 @@ public class SettingsActivity extends GenericActivity implements Receiver {
 
     private void initWeight() {
         mUserWeightText = (EditText) findViewById(R.id.settings_user_weight);
-        mUserWeightText.setText(String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_WEIGHT)));
+        mUserWeightText.setText(String.valueOf(mSharedDataManager.readFloat(SharedDataManager.USER_WEIGHT)));
         mUserWeightTextIl = (TextInputLayout) findViewById(R.id.settings_user_weight_il);
         mUserWeightText.clearFocus();
     }
 
     private void initHeight() {
         mUserHeightText = (EditText) findViewById(R.id.settings_user_height);
-        mUserHeightText.setText(String.valueOf(mSharedDataManager.readInt(SharedDataManager.USER_HEIGHT)));
+        mUserHeightText.setText(String.valueOf(mSharedDataManager.readFloat(SharedDataManager.USER_HEIGHT)));
         mUserHeightTextIl = (TextInputLayout) findViewById(R.id.settings_user_height_il);
         mUserHeightText.clearFocus();
     }
@@ -230,7 +231,6 @@ public class SettingsActivity extends GenericActivity implements Receiver {
     }
 
     private void buttonSavePressed() {
-
         if(saveData()) {
             InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
@@ -238,16 +238,17 @@ public class SettingsActivity extends GenericActivity implements Receiver {
             if (view != null) {
                 manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-
             showShortToast(getString(R.string.saved_data_toast));
-
-        }else {
-//            showShortToast("data not save");
-
-
         }
-
     }
+
+//    private void getPx () {
+//        DisplayMetrics dm = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(dm);
+//        Log.d("myLog", " getWindowManager().getDefaultDisplay().getMetrics(dm)", getWindowManager().getDefaultDisplay().getMetrics(dm));
+////        getResources().getDisplayMetrics().density;
+//
+//    }
 
     private void buttonClearPressed() {
         mUserWeightText.setText("");

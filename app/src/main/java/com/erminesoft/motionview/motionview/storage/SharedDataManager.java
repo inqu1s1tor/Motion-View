@@ -30,12 +30,20 @@ public class SharedDataManager {
         sharedPreferences.edit().putInt(fieldName, data).apply();
     }
 
+    public void writeFloat(String fieldName, float data) {
+        sharedPreferences.edit().putFloat(fieldName, data).apply();
+    }
+
     public int readInt(String fieldName) {
         return sharedPreferences.getInt(fieldName, 0);
     }
 
     public long readLong(String fieldName) {
         return sharedPreferences.getLong(fieldName, 0);
+    }
+
+    public float readFloat(String fieldName) {
+        return sharedPreferences.getFloat(fieldName, 0);
     }
 
     public String getCoverURL() {

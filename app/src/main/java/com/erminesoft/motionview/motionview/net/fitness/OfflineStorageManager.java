@@ -105,8 +105,8 @@ class OfflineStorageManager {
         Fitness.HistoryApi.insertData(mClient, weightDataSet);
     }
 
-    void saveUserHeight(final int heightCentimeters) {
-        float height = ((float) heightCentimeters) / 100.0f;
+    void saveUserHeight(final float heightCentimeters) {
+        float height = (heightCentimeters) / 100.0f;
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
         cal.setTime(now);

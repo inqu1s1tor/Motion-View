@@ -65,7 +65,7 @@ public class GoogleFitnessFacade {
         return mOfflineStorageManager.getHoursDataPerDay(timeStamp);
     }
 
-    public void saveUserHeight(int heightCentimeters) {
+    public void saveUserHeight(float heightCentimeters) {
         mOfflineStorageManager.saveUserHeight(heightCentimeters);
     }
 
