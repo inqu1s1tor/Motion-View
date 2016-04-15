@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,6 +23,7 @@ import com.erminesoft.motionview.motionview.core.command.GetPersonCommand;
 import com.erminesoft.motionview.motionview.net.plus.GooglePlusFacade;
 import com.erminesoft.motionview.motionview.storage.DataBuffer;
 import com.erminesoft.motionview.motionview.storage.SharedDataManager;
+import com.erminesoft.motionview.motionview.util.ConvertDimension;
 import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
 
@@ -88,6 +88,7 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         setTitle(getString(R.string.settings));
         initSettings();
         setHomeAsUpEnabled(true);
+
     }
 
     @Override
@@ -242,13 +243,6 @@ public class SettingsActivity extends GenericActivity implements Receiver {
         }
     }
 
-//    private void getPx () {
-//        DisplayMetrics dm = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(dm);
-//        Log.d("myLog", " getWindowManager().getDefaultDisplay().getMetrics(dm)", getWindowManager().getDefaultDisplay().getMetrics(dm));
-////        getResources().getDisplayMetrics().density;
-//
-//    }
 
     private void buttonClearPressed() {
         mUserWeightText.setText("");
